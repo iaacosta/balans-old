@@ -5,6 +5,10 @@ export default class Currency {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ unique: true })
   name!: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 }

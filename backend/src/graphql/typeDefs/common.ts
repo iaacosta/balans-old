@@ -5,4 +5,10 @@ export default gql`
     getCurrencies: [Currency!]
     getCurrency(id: ID!): Currency!
   }
+
+  type Mutation {
+    createCurrency(name: String!): Currency!
+    updateCurrency(id: ID!, name: String!): ID!
+    deleteCurrency(id: ID!): ID!
+  }
 `;
