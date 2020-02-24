@@ -10,6 +10,7 @@
   },
   "rules": {
     "no-console": 0,
-    "@typescript-eslint/explicit-function-return-type": 0
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "implicit-arrow-linebreak": 0
   }
 }

@@ -1,26 +1,17 @@
 import express from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
+import { createConnection } from 'typeorm';
+
+import typeDefs from './graphql/typeDefs';
+import resolvers from './graphql/resolvers';
 
 const { PORT } = process.env;
 const app = express();
 
-const server = new ApolloServer({
-  typeDefs: gql`
-    type Response {
-      id: ID!
-      message: String!
-    }
-
-    type Query {
-      response: Response!
-    }
-  `,
-  resolvers: {
-    Query: {
-      response: () => ({ id: 0, message: 'Hello GraphQL' }),
-    },
-  },
-});
-
+const server = new ApolloServer({ typeDefs, resolvers });
 server.applyMiddleware({ app });
-app.listen(PORT, () => console.log(`Express app running on port ${PORT}`));
+
+createConnection().then(() => {
+  console.log('TypeORM connected to Postgres database');
+  app.listen(PORT, () => console.log(`Express app running on port ${PORT}`));
+});
