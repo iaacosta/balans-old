@@ -12,8 +12,7 @@
     "dev": "nodemon -e ts --watch src --exec \"ts-node ./src/index.ts\"",
     "build": "tsc -p .",
     "start": "node ./dist/index.js",
-    "lint": "eslint **/*.ts",
-    "lint-fix": "eslint **/*.ts --fix"
+    "lint": "eslint src/**/*.ts --ext ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.20.0",
