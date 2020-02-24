@@ -12,6 +12,7 @@ export default gql`
     Accounts
     """
     getDebitAccounts: [DebitAccount!]
+    getDebitAccount(id: ID!): DebitAccount!
   }
 
   type Mutation {
@@ -32,5 +33,15 @@ export default gql`
       allowsNegative: Boolean!
       currencyId: ID!
     ): DebitAccount!
+
+    updateDebitAccount(
+      id: ID!
+      name: String
+      bank: String
+      initialBalance: Int
+      currencyId: ID
+    ): DebitAccount!
+
+    deleteDebitAccount(id: ID!): ID!
   }
 `;
