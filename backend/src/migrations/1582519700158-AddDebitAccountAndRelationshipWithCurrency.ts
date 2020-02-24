@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/quotes */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddDebitAccountAndRelationshipWithCurrency1582519700158 implements MigrationInterface {
+export class AddDebitAccountAndRelationshipWithCurrency1582519700158
+  implements MigrationInterface {
   name = 'AddDebitAccountAndRelationshipWithCurrency1582519700158';
 
   public async up(queryRunner: QueryRunner): Promise<any> {
