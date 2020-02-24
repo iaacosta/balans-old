@@ -1,0 +1,15 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "airbnb-typescript/base"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "no-console": 0,
+    "@typescript-eslint/explicit-function-return-type": 0
+  }
+}
