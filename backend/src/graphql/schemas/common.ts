@@ -13,6 +13,8 @@ export default gql`
     """
     getDebitAccounts: [DebitAccount!]
     getDebitAccount(id: ID!): DebitAccount!
+    getCreditAccounts: [CreditAccount!]
+    getCreditAccount(id: ID!): CreditAccount!
   }
 
   type Mutation {
@@ -43,5 +45,26 @@ export default gql`
     ): DebitAccount!
 
     deleteDebitAccount(id: ID!): ID!
+
+    createCreditAccount(
+      name: String!
+      bank: String!
+      initialBalance: Int!
+      currencyId: ID!
+      billingDay: Int!
+      paymentDay: Int!
+    ): CreditAccount!
+
+    updateCreditAccount(
+      id: ID!
+      name: String
+      bank: String
+      initialBalance: Int
+      currencyId: ID
+      billingDay: Int
+      paymentDay: Int
+    ): CreditAccount!
+
+    deleteCreditAccount(id: ID!): ID!
   }
 `;

@@ -2,20 +2,31 @@ import { getRepository, Repository } from 'typeorm';
 
 import Currency from '../../models/Currency';
 import { Resolvers } from '../../@types/common';
-import { debitAccountById } from './account';
+import { debitAccountById, creditAccountById } from './account';
 import DebitAccount from '../../models/DebitAccount';
+import CreditAccount from '../../models/CreditAccount';
 
 export const currencyById = async (repo: Repository<Currency>, id: number) => {
-  const currency = await repo.findOne(id, { relations: ['debitAccounts'] });
+  const currency = await repo.findOne(id, {
+    relations: ['debitAccounts', 'creditAccounts'],
+  });
   if (!currency) throw new Error('no currency with such id');
   return currencyResolver(currency);
 };
 
-export const currencyResolver = ({ debitAccounts, ...currency }: Currency) => ({
+export const currencyResolver = ({
+  debitAccounts,
+  creditAccounts,
+  ...currency
+}: Currency) => ({
   ...currency,
   debitAccounts: () =>
     debitAccounts.map(({ id }) =>
       debitAccountById(getRepository(DebitAccount), id),
+    ),
+  creditAccounts: () =>
+    creditAccounts.map(({ id }) =>
+      creditAccountById(getRepository(CreditAccount), id),
     ),
 });
 
