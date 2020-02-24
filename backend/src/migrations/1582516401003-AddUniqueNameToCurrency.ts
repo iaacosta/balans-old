@@ -4,7 +4,8 @@
 /* eslint-disable import/prefer-default-export */
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddUniqueNameToCurrency1582516401003 implements MigrationInterface {
+export class AddUniqueNameToCurrency1582516401003
+  implements MigrationInterface {
   name = 'AddUniqueNameToCurrency1582516401003';
 
   public async up(queryRunner: QueryRunner): Promise<any> {
