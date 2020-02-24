@@ -11,8 +11,12 @@
   "rules": {
     "no-console": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/no-use-before-define": 0,
     "implicit-arrow-linebreak": 0,
     "object-curly-newline": 0,
-    "import/no-cycle": 0
+    "import/no-cycle": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "no-underscore-dangle": 0,
+    "function-paren-newline": 0
   }
 }

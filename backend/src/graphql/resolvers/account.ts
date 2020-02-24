@@ -1,8 +1,9 @@
-import { getRepository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 
 import DebitAccount from '../../models/DebitAccount';
 import { Resolvers } from '../../@types/common';
 import Currency from '../../models/Currency';
+import { currencyById } from './currency';
 
 type Input = {
   id: number;
@@ -13,12 +14,32 @@ type Input = {
   currencyId: number;
 };
 
+export const debitAccountById = async (
+  repo: Repository<DebitAccount>,
+  id: number,
+) => {
+  const debitAccount = await repo.findOne(id, { relations: ['currency'] });
+  if (!debitAccount) throw new Error('no currency with this id');
+  return debitAccountResolver(debitAccount);
+};
+
+export const debitAccountResolver = ({
+  currency,
+  ...debitAccount
+}: DebitAccount) => ({
+  ...debitAccount,
+  currency: () => currencyById(getRepository(Currency), currency.id),
+});
+
 export default {
   Query: {
-    getDebitAccounts: () =>
-      getRepository(DebitAccount).find({
+    getDebitAccounts: async () => {
+      const accounts = await getRepository(DebitAccount).find({
         relations: ['currency'],
-      }),
+      });
+
+      return accounts.map(debitAccountResolver);
+    },
   },
   Mutation: {
     createDebitAccount: async (
@@ -33,6 +54,7 @@ export default {
         allowsNegative,
         currency,
       );
+
       return getRepository(DebitAccount).save(acc);
     },
   },

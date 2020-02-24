@@ -4,5 +4,6 @@ export default gql`
   type Currency {
     id: ID!
     name: String!
+    debitAccounts: [DebitAccount!]
   }
 `;
