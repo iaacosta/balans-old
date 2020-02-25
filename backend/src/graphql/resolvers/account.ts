@@ -4,7 +4,7 @@ import DebitAccount from '../../models/DebitAccount';
 import Currency from '../../models/Currency';
 import CreditAccount from '../../models/CreditAccount';
 import { currencyById } from './currency';
-import { Resolvers } from '../../@types/common';
+import { Resolvers } from '../../@types';
 
 type DebitAccountInput = {
   id: number;

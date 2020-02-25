@@ -1,7 +1,7 @@
 import { getRepository, Repository } from 'typeorm';
 
 import Currency from '../../models/Currency';
-import { Resolvers } from '../../@types/common';
+import { Resolvers } from '../../@types';
 import { debitAccountById, creditAccountById } from './account';
 import DebitAccount from '../../models/DebitAccount';
 import CreditAccount from '../../models/CreditAccount';
