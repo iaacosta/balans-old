@@ -1,18 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
-import {
-  query,
-  mutate,
-  seedCurrencies,
+import { query, mutate, seedCurrencies, currency } from '../../utils';
+import { currencies } from '../../utils/data.json';
+import Currency from '../../../models/Currency';
+
+const {
   GET_CURRENCIES,
   GET_CURRENCY,
   CREATE_CURRENCY,
   UPDATE_CURRENCY,
   DELETE_CURRENCY,
-} from '../../utils';
-import { currencies } from '../../utils/data.json';
-import Currency from '../../../models/Currency';
-
+} = currency;
 console.log = jest.fn();
 
 describe('currency API calls', () => {
