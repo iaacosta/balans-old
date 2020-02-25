@@ -1,6 +1,24 @@
 {
   "currencies": [
-    { "id": 0, "name": "Example currency 1" },
-    { "id": 1, "name": "Example currency 2" }
+    { "id": 1, "name": "Example currency 1" },
+    { "id": 2, "name": "Example currency 2" }
+  ],
+  "debitAccounts": [
+    {
+      "id": 1,
+      "name": "Example account 1",
+      "bank": "Example bank 1",
+      "initialBalance": 0,
+      "allowsNegative": false,
+      "currencyId": 1
+    },
+    {
+      "id": 2,
+      "name": "Example account 2",
+      "bank": "Example bank 2",
+      "initialBalance": 1,
+      "allowsNegative": true,
+      "currencyId": 2
+    }
   ]
 }
