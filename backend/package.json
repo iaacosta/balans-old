@@ -15,7 +15,8 @@
     "build": "tsc -p .",
     "start": "node ./dist/index.js",
     "lint": "eslint src/**/*.ts --ext ts",
-    "test": "env DB_NAME=finanzie_test jest"
+    "test": "env DB_NAME=finanzie_test jest --runInBand",
+    "test:dev": "env DB_NAME=finanzie_test jest --watch -o --runInBand"
   },
   "devDependencies": {
     "@types/jest": "^25.1.3",
