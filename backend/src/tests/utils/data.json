@@ -1,0 +1,6 @@
+{
+  "currencies": [
+    { "id": 0, "name": "Example currency 1" },
+    { "id": 1, "name": "Example currency 2" }
+  ]
+}

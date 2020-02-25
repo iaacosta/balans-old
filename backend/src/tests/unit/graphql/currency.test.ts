@@ -108,10 +108,9 @@ describe('Currency resolvers', () => {
       const getCurrencies = currencyResolvers.default.Query
         .getCurrencies as any;
 
-      it('should call find without args when invoked getCurrencies', async () => {
+      it('should call find when invoked getCurrencies', async () => {
         await getCurrencies();
         expect(find).toHaveBeenCalledTimes(1);
-        expect(find).toHaveBeenCalledWith();
       });
 
       it('should map results of query into currencyResolver', async () => {
@@ -167,15 +166,6 @@ describe('Currency resolvers', () => {
       const createCurrency = currencyResolvers.default.Mutation
         .createCurrency as any;
 
-      beforeEach(() => {
-        currencyResolver = jest
-          .spyOn(currencyResolvers, 'currencyResolver')
-          .mockImplementation();
-      });
-
-      afterEach(() => currencyResolver.mockClear());
-      afterAll(() => currencyResolver.mockRestore());
-
       it('should construct new Currency when invoked', async () => {
         await createCurrency(null, { name: 'Example' });
         expect(Currency).toHaveBeenCalledTimes(1);
@@ -186,12 +176,6 @@ describe('Currency resolvers', () => {
         await createCurrency(null, { name: 'Example' });
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(new Currency('Example'));
-      });
-
-      it('should wrap repository save result in currencyResolver', async () => {
-        await createCurrency(null, { name: 'Example' });
-        expect(currencyResolver).toHaveBeenCalledTimes(1);
-        expect(currencyResolver).toHaveBeenCalledWith(save());
       });
     });
 

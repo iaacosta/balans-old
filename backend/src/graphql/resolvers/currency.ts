@@ -33,7 +33,11 @@ export const currencyResolver = ({
 export default {
   Query: {
     getCurrencies: async () => {
-      const currencies = await getRepository(Currency).find();
+      const currencies = await getRepository(Currency).find({
+        relations: ['debitAccounts', 'creditAccounts'],
+        order: { id: 1 },
+      });
+
       return currencies.map(currencyResolver);
     },
     getCurrency: async (parent, { id }) =>
@@ -42,7 +46,7 @@ export default {
   Mutation: {
     createCurrency: async (parent, { name }) => {
       const curr = new Currency(name);
-      return currencyResolver(await getRepository(Currency).save(curr));
+      return getRepository(Currency).save(curr);
     },
     updateCurrency: async (parent, { id, name }) => {
       const repo = getRepository(Currency);
