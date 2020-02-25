@@ -17,12 +17,14 @@ export default class Currency {
   @OneToMany(
     () => DebitAccount,
     (acc) => acc.currency,
+    { onDelete: 'SET NULL' },
   )
   debitAccounts!: DebitAccount[];
 
   @OneToMany(
     () => CreditAccount,
     (acc) => acc.currency,
+    { onDelete: 'SET NULL' },
   )
   creditAccounts!: CreditAccount[];
 }
