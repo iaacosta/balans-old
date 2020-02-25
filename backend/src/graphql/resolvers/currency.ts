@@ -42,14 +42,20 @@ export default {
   Mutation: {
     createCurrency: async (parent, { name }) => {
       const curr = new Currency(name);
-      return getRepository(Currency).save(curr);
+      return currencyResolver(await getRepository(Currency).save(curr));
     },
     updateCurrency: async (parent, { id, name }) => {
-      await getRepository(Currency).update(id, { name });
-      return id;
+      const repo = getRepository(Currency);
+      const currency = await repo.findOne(id);
+      if (!currency) throw new Error('no currency with such id');
+      if (currency.name !== name) currency.name = name;
+      return currencyResolver(await repo.save(currency));
     },
     deleteCurrency: async (parent, { id }) => {
-      await getRepository(Currency).delete(id);
+      const repo = getRepository(Currency);
+      const currency = await repo.findOne(id);
+      if (!currency) throw new Error('no currency with such id');
+      await getRepository(Currency).remove(currency);
       return id;
     },
   },

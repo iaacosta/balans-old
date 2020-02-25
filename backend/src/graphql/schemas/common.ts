@@ -22,7 +22,7 @@ export default gql`
     Currency
     """
     createCurrency(name: String!): Currency!
-    updateCurrency(id: ID!, name: String!): ID!
+    updateCurrency(id: ID!, name: String!): Currency!
     deleteCurrency(id: ID!): ID!
 
     """
