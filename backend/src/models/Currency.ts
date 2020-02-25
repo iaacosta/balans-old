@@ -4,11 +4,15 @@ import CreditAccount from './CreditAccount';
 
 @Entity()
 export default class Currency {
+  constructor(name: string) {
+    this.name = name;
+  }
+
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ unique: true })
-  name!: string;
+  name: string;
 
   @OneToMany(
     () => DebitAccount,
@@ -21,8 +25,4 @@ export default class Currency {
     (acc) => acc.currency,
   )
   creditAccounts!: CreditAccount[];
-
-  constructor(name: string) {
-    this.name = name;
-  }
 }
