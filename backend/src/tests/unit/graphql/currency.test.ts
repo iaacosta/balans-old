@@ -3,10 +3,8 @@
 import * as typeorm from 'typeorm';
 import * as currencyResolvers from '../../../graphql/resolvers/currency';
 import * as currencyModel from '../../../models/Currency';
-import {
-  creditAccountById,
-  debitAccountById,
-} from '../../../graphql/resolvers/account';
+import { creditAccountById } from '../../../graphql/resolvers/creditAccount';
+import { debitAccountById } from '../../../graphql/resolvers/debitAccount';
 
 const exampleCurrency: any = {
   id: 0,
@@ -15,8 +13,11 @@ const exampleCurrency: any = {
   creditAccounts: [1, 2],
 };
 
-jest.mock('../../../graphql/resolvers/account', () => ({
+jest.mock('../../../graphql/resolvers/debitAccount', () => ({
   debitAccountById: jest.fn(),
+}));
+
+jest.mock('../../../graphql/resolvers/creditAccount', () => ({
   creditAccountById: jest.fn(),
 }));
 

@@ -1,21 +1,11 @@
 import { getRepository, Repository } from 'typeorm';
 
-import DebitAccount from '../../models/DebitAccount';
 import Currency from '../../models/Currency';
 import CreditAccount from '../../models/CreditAccount';
 import { currencyById } from './currency';
 import { Resolvers } from '../../@types';
 
-type DebitAccountInput = {
-  id: number;
-  name: string;
-  bank: string;
-  initialBalance: number;
-  allowsNegative: boolean;
-  currencyId: number;
-};
-
-type CreditAccountInput = {
+type Input = {
   id: number;
   name: string;
   bank: string;
@@ -23,15 +13,6 @@ type CreditAccountInput = {
   currencyId: number;
   billingDay: number;
   paymentDay: number;
-};
-
-export const debitAccountById = async (
-  repo: Repository<DebitAccount>,
-  id: number,
-) => {
-  const debitAccount = await repo.findOne(id, { relations: ['currency'] });
-  if (!debitAccount) throw new Error('no debit account with such id');
-  return debitAccountResolver(debitAccount);
 };
 
 export const creditAccountById = async (
@@ -43,14 +24,6 @@ export const creditAccountById = async (
   return creditAccountResolver(creditAccount);
 };
 
-export const debitAccountResolver = ({
-  currency,
-  ...debitAccount
-}: DebitAccount) => ({
-  ...debitAccount,
-  currency: () => currencyById(getRepository(Currency), currency.id),
-});
-
 export const creditAccountResolver = ({
   currency,
   ...creditAccount
@@ -59,76 +32,7 @@ export const creditAccountResolver = ({
   currency: () => currencyById(getRepository(Currency), currency.id),
 });
 
-const debitAccountResolvers = {
-  Query: {
-    getDebitAccounts: async () => {
-      const accounts = await getRepository(DebitAccount).find({
-        relations: ['currency'],
-      });
-
-      return accounts.map(debitAccountResolver);
-    },
-    getDebitAccount: (parent, { id }) =>
-      debitAccountById(getRepository(DebitAccount), id),
-  },
-  Mutation: {
-    createDebitAccount: async (
-      parent,
-      { name, bank, allowsNegative, currencyId, initialBalance },
-    ) => {
-      const currency = await getRepository(Currency).findOne(currencyId);
-      if (!currency) throw new Error('no currency with such id');
-      const acc = new DebitAccount(
-        name,
-        bank,
-        initialBalance,
-        allowsNegative,
-        currency,
-      );
-
-      return debitAccountResolver(await getRepository(DebitAccount).save(acc));
-    },
-    updateDebitAccount: async (
-      parent,
-      { id, name, bank, initialBalance, currencyId },
-    ) => {
-      const repo = getRepository(DebitAccount);
-      const account = await repo.findOne(id, { relations: ['currency'] });
-      if (!account) throw new Error('no debit account with such id');
-
-      /* Base attributes */
-      if (name && account.name !== name) account.name = name;
-      if (bank && account.bank !== bank) account.bank = bank;
-      if (
-        initialBalance !== undefined &&
-        account.initialBalance !== initialBalance
-      ) {
-        account.initialBalance = initialBalance;
-      }
-
-      /* Currency */
-      if (currencyId && account.currency.id !== currencyId) {
-        const currency = await getRepository(Currency).findOne(currencyId);
-        if (!currency) throw new Error('no currency with such id');
-        account.currency = currency;
-      }
-
-      return debitAccountResolver(await repo.save(account));
-    },
-    deleteDebitAccount: async (parent, { id }) => {
-      const repo = getRepository(DebitAccount);
-      const account = await repo.findOne(id);
-      if (!account) throw new Error('no account with such id');
-      await repo.remove(account);
-      return id;
-    },
-  },
-} as {
-  Query: Resolvers<DebitAccountInput>;
-  Mutation: Resolvers<DebitAccountInput>;
-};
-
-const creditAccountResolvers = {
+export default {
   Query: {
     getCreditAccounts: async () => {
       const accounts = await getRepository(CreditAccount).find({
@@ -202,17 +106,6 @@ const creditAccountResolvers = {
     },
   },
 } as {
-  Query: Resolvers<CreditAccountInput>;
-  Mutation: Resolvers<CreditAccountInput>;
-};
-
-export default {
-  Query: {
-    ...debitAccountResolvers.Query,
-    ...creditAccountResolvers.Query,
-  },
-  Mutation: {
-    ...debitAccountResolvers.Mutation,
-    ...creditAccountResolvers.Mutation,
-  },
+  Query: Resolvers<Input>;
+  Mutation: Resolvers<Input>;
 };

@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-empty */
 import * as typeorm from 'typeorm';
-import * as resolvers from '../../../graphql/resolvers/account';
+import * as resolvers from '../../../graphql/resolvers/debitAccount';
 import * as debitAccountModel from '../../../models/DebitAccount';
 import { currencyById } from '../../../graphql/resolvers/currency';
 
