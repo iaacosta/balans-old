@@ -76,7 +76,8 @@ const debitAccountResolvers = {
       parent,
       { name, bank, allowsNegative, currencyId, initialBalance },
     ) => {
-      const currency = await getRepository(Currency).findOneOrFail(currencyId);
+      const currency = await getRepository(Currency).findOne(currencyId);
+      if (!currency) throw new Error('no currency with such id');
       const acc = new DebitAccount(
         name,
         bank,
@@ -98,12 +99,15 @@ const debitAccountResolvers = {
       /* Base attributes */
       if (name && account.name !== name) account.name = name;
       if (bank && account.bank !== bank) account.bank = bank;
-      if (initialBalance && account.initialBalance !== initialBalance) {
+      if (
+        initialBalance !== undefined &&
+        account.initialBalance !== initialBalance
+      ) {
         account.initialBalance = initialBalance;
       }
 
       /* Currency */
-      if (account.currency.id !== currencyId) {
+      if (currencyId && account.currency.id !== currencyId) {
         const currency = await getRepository(Currency).findOne(currencyId);
         if (!currency) throw new Error('no currency with such id');
         account.currency = currency;
@@ -141,7 +145,8 @@ const creditAccountResolvers = {
       parent,
       { name, bank, currencyId, initialBalance, billingDay, paymentDay },
     ) => {
-      const currency = await getRepository(Currency).findOneOrFail(currencyId);
+      const currency = await getRepository(Currency).findOne(currencyId);
+      if (!currency) throw new Error('no currency with such id');
       const acc = new CreditAccount(
         name,
         bank,
@@ -166,7 +171,10 @@ const creditAccountResolvers = {
       /* Base attributes */
       if (name && account.name !== name) account.name = name;
       if (bank && account.bank !== bank) account.bank = bank;
-      if (initialBalance && account.initialBalance !== initialBalance) {
+      if (
+        initialBalance !== undefined &&
+        account.initialBalance !== initialBalance
+      ) {
         account.initialBalance = initialBalance;
       }
       if (billingDay && account.billingDay !== billingDay) {
@@ -177,7 +185,7 @@ const creditAccountResolvers = {
       }
 
       /* Currency */
-      if (account.currency.id !== currencyId) {
+      if (currencyId && account.currency.id !== currencyId) {
         const currency = await getRepository(Currency).findOne(currencyId);
         if (!currency) throw new Error('no currency with such id');
         account.currency = currency;
