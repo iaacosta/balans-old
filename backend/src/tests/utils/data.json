@@ -40,5 +40,10 @@
       "billingDay": 3,
       "paymentDay": 4
     }
+  ],
+  "categories": [
+    { "id": 1, "name": "Example Category 1", "type": "income", "icon": "ex1" },
+    { "id": 2, "name": "Example Category 2", "type": "expense", "icon": "ex2" },
+    { "id": 3, "name": "Example Category 3", "type": "income", "icon": "ex3" }
   ]
 }
