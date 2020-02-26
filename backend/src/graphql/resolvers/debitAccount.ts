@@ -1,11 +1,12 @@
 import { getRepository, Repository } from 'typeorm';
+import { validateOrReject } from 'class-validator';
 
 import { currencyById } from './currency';
 import DebitAccount from '../../models/DebitAccount';
 import { Resolvers } from '../../@types';
 import Currency from '../../models/Currency';
 
-type DebitAccountInput = {
+type Input = {
   id: number;
   name: string;
   bank: string;
@@ -50,7 +51,7 @@ export default {
     ) => {
       const currency = await getRepository(Currency).findOne(currencyId);
       if (!currency) throw new Error('no currency with such id');
-      const acc = new DebitAccount(
+      const account = new DebitAccount(
         name,
         bank,
         initialBalance,
@@ -58,7 +59,10 @@ export default {
         currency,
       );
 
-      return debitAccountResolver(await getRepository(DebitAccount).save(acc));
+      await validateOrReject(account);
+      return debitAccountResolver(
+        await getRepository(DebitAccount).save(account),
+      );
     },
     updateDebitAccount: async (
       parent,
@@ -85,6 +89,7 @@ export default {
         account.currency = currency;
       }
 
+      await validateOrReject(account);
       return debitAccountResolver(await repo.save(account));
     },
     deleteDebitAccount: async (parent, { id }) => {
@@ -96,6 +101,6 @@ export default {
     },
   },
 } as {
-  Query: Resolvers<DebitAccountInput>;
-  Mutation: Resolvers<DebitAccountInput>;
+  Query: Resolvers<Input>;
+  Mutation: Resolvers<Input>;
 };
