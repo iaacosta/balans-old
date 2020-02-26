@@ -1,4 +1,5 @@
 import { getRepository, Repository } from 'typeorm';
+import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import { Resolvers } from '../../@types';
@@ -46,14 +47,16 @@ export default {
   },
   Mutation: {
     createCurrency: async (parent, { name }) => {
-      const curr = new Currency(name);
-      return getRepository(Currency).save(curr);
+      const currency = new Currency(name);
+      await validateOrReject(currency);
+      return getRepository(Currency).save(currency);
     },
     updateCurrency: async (parent, { id, name }) => {
       const repo = getRepository(Currency);
       const currency = await repo.findOne(id);
       if (!currency) throw new Error('no currency with such id');
       if (currency.name !== name) currency.name = name;
+      await validateOrReject(currency);
       return currencyResolver(await repo.save(currency));
     },
     deleteCurrency: async (parent, { id }) => {

@@ -1,17 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Length } from 'class-validator';
 import DebitAccount from './DebitAccount';
 import CreditAccount from './CreditAccount';
 
 @Entity()
 export default class Currency {
-  constructor(name: string) {
-    this.name = name;
-  }
-
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ unique: true })
+  @Length(3, 3)
   name: string;
 
   @OneToMany(
@@ -27,4 +25,8 @@ export default class Currency {
     { onDelete: 'SET NULL' },
   )
   creditAccounts!: CreditAccount[];
+
+  constructor(name: string) {
+    this.name = name;
+  }
 }
