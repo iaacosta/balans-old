@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsNotEmpty, Min, Max } from 'class-validator';
 import Currency from './Currency';
 
@@ -30,6 +37,12 @@ export default class CreditAccount {
   @Min(1)
   @Max(30)
   paymentDay: number;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   constructor(
     name: string,

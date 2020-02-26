@@ -1,6 +1,8 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
+  scalar Date
+
   type Query {
     """
     Currency
@@ -15,6 +17,12 @@ export default gql`
     getDebitAccount(id: ID!): DebitAccount!
     getCreditAccounts: [CreditAccount!]
     getCreditAccount(id: ID!): CreditAccount!
+
+    """
+    Category
+    """
+    getCategories: [Category!]
+    getCategory(id: ID!): Category!
   }
 
   type Mutation {
@@ -66,5 +74,12 @@ export default gql`
     ): CreditAccount!
 
     deleteCreditAccount(id: ID!): ID!
+
+    """
+    Category
+    """
+    createCategory(name: String!, type: String!, icon: String!): Category!
+    updateCategory(id: ID!, name: String, type: String, icon: String): Category!
+    deleteCategory(id: ID!): ID!
   }
 `;

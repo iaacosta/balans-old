@@ -36,15 +36,16 @@ describe('debit account API calls', () => {
       expect(data!.getDebitAccounts).toHaveLength(2);
 
       debitAccounts.forEach((acc, idx) => {
+        const currency = getCurrencyById(acc.currencyId)!;
+        delete (currency as any).createdAt;
+        delete (currency as any).updatedAt;
+
         expect(data!.getDebitAccounts[idx]).toMatchObject({
           name: acc.name,
           bank: acc.bank,
           initialBalance: acc.initialBalance,
           allowsNegative: acc.allowsNegative,
-          currency: {
-            ...getCurrencyById(acc.currencyId)!,
-            id: acc.currencyId.toString(),
-          },
+          currency: { ...currency, id: acc.currencyId.toString() },
         });
       });
     });

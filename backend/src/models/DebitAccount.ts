@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ValidateIf, Min, IsNotEmpty } from 'class-validator';
 import Currency from './Currency';
 
@@ -25,6 +32,12 @@ export default class DebitAccount {
 
   @ManyToOne(() => Currency, { onDelete: 'SET NULL' })
   currency: Currency;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   constructor(
     name: string,

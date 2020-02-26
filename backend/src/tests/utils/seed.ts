@@ -3,7 +3,13 @@ import { getConnection } from 'typeorm';
 import Currency from '../../models/Currency';
 import DebitAccount from '../../models/DebitAccount';
 import CreditAccount from '../../models/CreditAccount';
-import { currencies, debitAccounts, creditAccounts } from './data.json';
+import {
+  currencies,
+  debitAccounts,
+  creditAccounts,
+  categories,
+} from './data.json';
+import Category from '../../models/Category';
 
 export const seedCurrencies = async () => {
   const connection = getConnection();
@@ -66,5 +72,23 @@ export const seedCreditAccounts = async () => {
         currency: currencies.find(({ id }) => currencyId === id),
       })),
     )
+    .execute();
+};
+
+export const seedCategories = async () => {
+  const connection = getConnection();
+  const queryBuilder = connection.createQueryBuilder();
+
+  await connection.query('ALTER SEQUENCE category_id_seq RESTART');
+
+  await queryBuilder
+    .delete()
+    .from(Category)
+    .execute();
+
+  await queryBuilder
+    .insert()
+    .into(Category)
+    .values(categories as Category[])
     .execute();
 };

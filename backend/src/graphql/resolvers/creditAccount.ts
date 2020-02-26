@@ -4,8 +4,13 @@ import { validateOrReject } from 'class-validator';
 import Currency from '../../models/Currency';
 import CreditAccount from '../../models/CreditAccount';
 import { currencyById } from './currency';
-import { Resolvers } from '../../@types';
+import { ResolverMap } from '../../@types';
 
+type Queries = 'getCreditAccount' | 'getCreditAccounts';
+type Mutations =
+  | 'createCreditAccount'
+  | 'updateCreditAccount'
+  | 'deleteCreditAccount';
 type Input = {
   id: number;
   name: string;
@@ -33,7 +38,7 @@ export const creditAccountResolver = ({
   currency: () => currencyById(getRepository(Currency), currency.id),
 });
 
-export default {
+const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getCreditAccounts: async () => {
       const accounts = await getRepository(CreditAccount).find({
@@ -108,7 +113,6 @@ export default {
       return id;
     },
   },
-} as {
-  Query: Resolvers<Input>;
-  Mutation: Resolvers<Input>;
 };
+
+export default resolvers;

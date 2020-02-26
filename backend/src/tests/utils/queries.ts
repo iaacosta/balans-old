@@ -233,3 +233,51 @@ export const currency = {
     }
   `,
 };
+
+export const category = {
+  GET_CATEGORIES: gql`
+    query {
+      getCategories {
+        id
+        name
+        type
+        icon
+      }
+    }
+  `,
+  GET_CATEGORY: gql`
+    query($id: ID!) {
+      getCategory(id: $id) {
+        id
+        name
+        type
+        icon
+      }
+    }
+  `,
+  CREATE_CATEGORY: gql`
+    mutation($name: String!, $type: String!, $icon: String!) {
+      createCategory(name: $name, type: $type, icon: $icon) {
+        id
+        name
+        type
+        icon
+      }
+    }
+  `,
+  UPDATE_CATEGORY: gql`
+    mutation($id: ID!, $name: String, $type: String, $icon: String) {
+      updateCategory(id: $id, name: $name, type: $type, icon: $icon) {
+        id
+        name
+        type
+        icon
+      }
+    }
+  `,
+  DELETE_CATEGORY: gql`
+    mutation($id: ID!) {
+      deleteCategory(id: $id)
+    }
+  `,
+};

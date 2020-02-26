@@ -1,5 +1,6 @@
 import common from './common';
 import currency from './currency';
 import account from './account';
+import category from './category';
 
-export default [account, currency, common];
+export default [account, currency, common, category];

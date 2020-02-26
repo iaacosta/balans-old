@@ -2,11 +2,15 @@ import { getRepository, Repository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
-import { Resolvers } from '../../@types';
+import { ResolverMap } from '../../@types';
 import { creditAccountById } from './creditAccount';
 import { debitAccountById } from './debitAccount';
 import DebitAccount from '../../models/DebitAccount';
 import CreditAccount from '../../models/CreditAccount';
+
+type Queries = 'getCurrency' | 'getCurrencies';
+type Mutations = 'createCurrency' | 'updateCurrency' | 'deleteCurrency';
+type Input = { id: number; name: string };
 
 export const currencyById = async (repo: Repository<Currency>, id: number) => {
   const currency = await repo.findOne(id, {
@@ -32,7 +36,7 @@ export const currencyResolver = ({
     ),
 });
 
-export default {
+const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getCurrencies: async () => {
       const currencies = await getRepository(Currency).find({
@@ -67,4 +71,6 @@ export default {
       return id;
     },
   },
-} as { Query: Resolvers<Currency>; Mutation: Resolvers<Currency> };
+};
+
+export default resolvers;

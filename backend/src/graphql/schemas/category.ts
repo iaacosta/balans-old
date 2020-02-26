@@ -1,11 +1,11 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
-  type Currency {
+  type Category {
     id: ID!
     name: String!
-    debitAccounts: [DebitAccount!]
-    creditAccounts: [CreditAccount!]
+    type: String!
+    icon: String!
     createdAt: Date!
     updatedAt: Date!
   }
