@@ -1,8 +1,10 @@
 import { getRepository, Repository } from 'typeorm';
+import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import { Resolvers } from '../../@types';
-import { debitAccountById, creditAccountById } from './account';
+import { creditAccountById } from './creditAccount';
+import { debitAccountById } from './debitAccount';
 import DebitAccount from '../../models/DebitAccount';
 import CreditAccount from '../../models/CreditAccount';
 
@@ -33,7 +35,11 @@ export const currencyResolver = ({
 export default {
   Query: {
     getCurrencies: async () => {
-      const currencies = await getRepository(Currency).find();
+      const currencies = await getRepository(Currency).find({
+        relations: ['debitAccounts', 'creditAccounts'],
+        order: { id: 1 },
+      });
+
       return currencies.map(currencyResolver);
     },
     getCurrency: async (parent, { id }) =>
@@ -41,15 +47,23 @@ export default {
   },
   Mutation: {
     createCurrency: async (parent, { name }) => {
-      const curr = new Currency(name);
-      return getRepository(Currency).save(curr);
+      const currency = new Currency(name);
+      await validateOrReject(currency);
+      return getRepository(Currency).save(currency);
     },
     updateCurrency: async (parent, { id, name }) => {
-      await getRepository(Currency).update(id, { name });
-      return id;
+      const repo = getRepository(Currency);
+      const currency = await repo.findOne(id);
+      if (!currency) throw new Error('no currency with such id');
+      if (currency.name !== name) currency.name = name;
+      await validateOrReject(currency);
+      return currencyResolver(await repo.save(currency));
     },
     deleteCurrency: async (parent, { id }) => {
-      await getRepository(Currency).delete(id);
+      const repo = getRepository(Currency);
+      const currency = await repo.findOne(id);
+      if (!currency) throw new Error('no currency with such id');
+      await getRepository(Currency).remove(currency);
       return id;
     },
   },

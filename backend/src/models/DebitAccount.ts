@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { ValidateIf, Min, IsNotEmpty } from 'class-validator';
 import Currency from './Currency';
 
 @Entity()
@@ -7,12 +8,16 @@ export default class DebitAccount {
   id!: number;
 
   @Column({ unique: true })
+  @IsNotEmpty()
   name: string;
 
   @Column()
+  @IsNotEmpty()
   bank: string;
 
   @Column()
+  @ValidateIf((self) => !self.allowsNegative)
+  @Min(0)
   initialBalance: number;
 
   @Column()
