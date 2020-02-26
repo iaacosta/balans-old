@@ -1,14 +1,18 @@
 language: node_js
 node_js:
   - 12.13.0
+services: postgresql
 cache:
   directories:
     - $HOME/.npm
 before_script:
   - cd ./backend
   - yarn install
+  - psql -c 'CREATE DATABASE finanzie_test;' -U postgres
+  - yarn db:migrate-test
 script:
   - yarn lint
+  - yarn test --coverage
 branches:
   only:
     - master
