@@ -1,6 +1,7 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-empty */
 import * as typeorm from 'typeorm';
+import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/creditAccount';
 import * as creditAccountModel from '../../../models/CreditAccount';
 import { currencyById } from '../../../graphql/resolvers/currency';
@@ -21,6 +22,7 @@ jest.mock('../../../graphql/resolvers/currency', () => ({
 
 describe('Debit account resolvers', () => {
   let getRepository: jest.SpyInstance;
+  let validateOrReject: jest.SpyInstance;
   let creditAccountResolver: jest.SpyInstance;
   let creditAccountById: jest.SpyInstance;
   let find: jest.Mock;
@@ -38,10 +40,15 @@ describe('Debit account resolvers', () => {
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
       .mockImplementation(() => ({ find, findOne, save, remove } as any));
+
+    validateOrReject = jest
+      .spyOn(classValidator, 'validateOrReject')
+      .mockImplementation();
   });
 
   afterEach(() => {
     getRepository.mockClear();
+    validateOrReject.mockClear();
     find.mockClear();
     findOne.mockClear();
     save.mockClear();
@@ -203,6 +210,14 @@ describe('Debit account resolvers', () => {
         getRepository.mockImplementation(() => ({ findOne: () => null }));
         expect(createCreditAccount(null, { id: 0 })).rejects.toBeTruthy();
       });
+
+      it('should call rejectOrValidate when invoked', async () => {
+        await createCreditAccount(null, { name: 'Example' });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(
+          new CreditAccount('Example'),
+        );
+      });
     });
 
     describe('updateCreditAccount', () => {
@@ -283,6 +298,12 @@ describe('Debit account resolvers', () => {
         await updateCreditAccount(null, { id: 0 });
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(exampleCreditAccount);
+      });
+
+      it('should call rejectOrValidate on happy path', async () => {
+        await updateCreditAccount(null, { id: 0 });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(exampleCreditAccount);
       });
 
       it('should wrap result on creditAccountResolver on happy path', async () => {
