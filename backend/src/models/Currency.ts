@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Length } from 'class-validator';
 import DebitAccount from './DebitAccount';
 import CreditAccount from './CreditAccount';
 
@@ -8,17 +9,20 @@ export default class Currency {
   id!: number;
 
   @Column({ unique: true })
-  name!: string;
+  @Length(3, 3)
+  name: string;
 
   @OneToMany(
     () => DebitAccount,
     (acc) => acc.currency,
+    { onDelete: 'SET NULL' },
   )
   debitAccounts!: DebitAccount[];
 
   @OneToMany(
     () => CreditAccount,
     (acc) => acc.currency,
+    { onDelete: 'SET NULL' },
   )
   creditAccounts!: CreditAccount[];
 
