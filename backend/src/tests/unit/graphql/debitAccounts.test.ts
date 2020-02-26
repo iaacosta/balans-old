@@ -191,6 +191,11 @@ describe('Debit account resolvers', () => {
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(new DebitAccount('Example'));
       });
+
+      it('should reject if no account found', async () => {
+        getRepository.mockImplementation(() => ({ findOne: () => null }));
+        expect(createDebitAccount(null, { id: 0 })).rejects.toBeTruthy();
+      });
     });
 
     describe('updateDebitAccount', () => {
@@ -251,6 +256,17 @@ describe('Debit account resolvers', () => {
 
         await updateDebitAccount(null, { id: 0, currencyId: 1 });
         expect(reference.currency).toMatchObject({ id: 1, name: 'Modified' });
+      });
+
+      it('should reject if no currency found with given id', async () => {
+        getRepository.mockImplementation((model: jest.Mock) => {
+          if (model === DebitAccount) return { findOne };
+          return { findOne: () => null };
+        });
+
+        expect(
+          updateDebitAccount(null, { id: 0, currencyId: 1 }),
+        ).rejects.toBeTruthy();
       });
 
       it('should call save on happy path', async () => {

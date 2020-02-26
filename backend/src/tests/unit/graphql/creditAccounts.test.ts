@@ -198,6 +198,11 @@ describe('Debit account resolvers', () => {
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(new CreditAccount('Example'));
       });
+
+      it('should reject if no account found', async () => {
+        getRepository.mockImplementation(() => ({ findOne: () => null }));
+        expect(createCreditAccount(null, { id: 0 })).rejects.toBeTruthy();
+      });
     });
 
     describe('updateCreditAccount', () => {
@@ -228,7 +233,8 @@ describe('Debit account resolvers', () => {
           name: 'Not modified',
           bank: 'Not modified',
           initialBalance: 1,
-          allowsNegative: true,
+          billingDay: 1,
+          paymentDay: 2,
         };
 
         findOne.mockImplementation(() => reference);
@@ -238,13 +244,15 @@ describe('Debit account resolvers', () => {
           name: 'Modified',
           bank: 'Modified',
           initialBalance: 0,
-          allowsNegative: false,
+          billingDay: 2,
+          paymentDay: 3,
         });
 
         expect(reference.name).toBe('Modified');
         expect(reference.bank).toBe('Modified');
         expect(reference.initialBalance).toBe(0);
-        expect(reference.allowsNegative).toBe(true);
+        expect(reference.billingDay).toBe(2);
+        expect(reference.paymentDay).toBe(3);
       });
 
       it('should change currency if id given', async () => {
@@ -258,6 +266,17 @@ describe('Debit account resolvers', () => {
 
         await updateCreditAccount(null, { id: 0, currencyId: 1 });
         expect(reference.currency).toMatchObject({ id: 1, name: 'Modified' });
+      });
+
+      it('should reject if no currency found with given id', async () => {
+        getRepository.mockImplementation((model: jest.Mock) => {
+          if (model === CreditAccount) return { findOne };
+          return { findOne: () => null };
+        });
+
+        expect(
+          updateCreditAccount(null, { id: 0, currencyId: 1 }),
+        ).rejects.toBeTruthy();
       });
 
       it('should call save on happy path', async () => {
