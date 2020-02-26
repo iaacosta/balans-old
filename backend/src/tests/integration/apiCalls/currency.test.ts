@@ -23,69 +23,115 @@ describe('currency API calls', () => {
   beforeEach(seedCurrencies);
   afterAll(() => connection.close());
 
-  it('should get correct currencies on getCurrencies query', async () => {
-    const { data } = await query({ query: GET_CURRENCIES });
+  describe('getCurrencies', () => {
+    it('should get correct currencies', async () => {
+      const { data } = await query({ query: GET_CURRENCIES });
 
-    expect(data!.getCurrencies).toHaveLength(2);
-    expect(data!.getCurrencies[0].name).toBe(currencies[0].name);
-    expect(data!.getCurrencies[1].name).toBe(currencies[1].name);
-  });
-
-  it('should get correct currency on getCurrency query', async () => {
-    const { data } = await query({ query: GET_CURRENCY, variables: { id: 1 } });
-    expect(data!.getCurrency).toMatchObject({
-      id: '1',
-      name: currencies[0].name,
+      expect(data!.getCurrencies).toHaveLength(2);
+      expect(data!.getCurrencies[0].name).toBe(currencies[0].name);
+      expect(data!.getCurrencies[1].name).toBe(currencies[1].name);
     });
   });
 
-  it('should create a currency on createCurrency mutation', async () => {
-    await mutate({
-      mutation: CREATE_CURRENCY,
-      variables: { name: 'Created currency' },
+  describe('getCurrency', () => {
+    it('should get correct currency', async () => {
+      const { data } = await query({
+        query: GET_CURRENCY,
+        variables: { id: 1 },
+      });
+      expect(data!.getCurrency).toMatchObject({
+        id: '1',
+        name: currencies[0].name,
+      });
     });
-
-    const result = await getConnection()
-      .createQueryBuilder()
-      .select('currency')
-      .from(Currency, 'currency')
-      .where('currency.name = :name', { name: 'Created currency' })
-      .getOne();
-
-    expect(result).not.toBeUndefined();
-    expect(result!.name).toBe('Created currency');
   });
 
-  it('should update a currency on updateCurrency mutation', async () => {
-    await mutate({
-      mutation: UPDATE_CURRENCY,
-      variables: { id: 1, name: 'Modified currency' },
+  describe('createCurrency', () => {
+    it('should create a currency', async () => {
+      await mutate({
+        mutation: CREATE_CURRENCY,
+        variables: { name: 'CCR' },
+      });
+
+      const result = await getConnection()
+        .createQueryBuilder()
+        .select('currency')
+        .from(Currency, 'currency')
+        .where('currency.name = :name', { name: 'CCR' })
+        .getOne();
+
+      expect(result).not.toBeUndefined();
+      expect(result!.name).toBe('CCR');
     });
 
-    const result = await getConnection()
-      .createQueryBuilder()
-      .select('currency')
-      .from(Currency, 'currency')
-      .where('currency.id = :id', { id: 1 })
-      .getOne();
+    it('should not create a currency', async () => {
+      await mutate({
+        mutation: CREATE_CURRENCY,
+        variables: { name: 'Not valid' },
+      });
 
-    expect(result).not.toBeUndefined();
-    expect(result!.name).toBe('Modified currency');
+      const result = await getConnection()
+        .createQueryBuilder()
+        .select('currency')
+        .from(Currency, 'currency')
+        .where('currency.name = :name', { name: 'CCR' })
+        .getOne();
+
+      expect(result).toBeUndefined();
+    });
   });
 
-  it('should delete a currency on deleteCurrency mutation', async () => {
-    await mutate({
-      mutation: DELETE_CURRENCY,
-      variables: { id: 1 },
+  describe('updateCurrency', () => {
+    it('should update a currency', async () => {
+      await mutate({
+        mutation: UPDATE_CURRENCY,
+        variables: { id: 1, name: 'MCR' },
+      });
+
+      const result = await getConnection()
+        .createQueryBuilder()
+        .select('currency')
+        .from(Currency, 'currency')
+        .where('currency.id = :id', { id: 1 })
+        .getOne();
+
+      expect(result).not.toBeUndefined();
+      expect(result!.name).toBe('MCR');
     });
 
-    const result = await getConnection()
-      .createQueryBuilder()
-      .select('currency')
-      .from(Currency, 'currency')
-      .where('currency.id = :id', { id: 1 })
-      .getOne();
+    it('should not update a currency', async () => {
+      await mutate({
+        mutation: UPDATE_CURRENCY,
+        variables: { id: 1, name: 'Not valid' },
+      });
 
-    expect(result).toBeUndefined();
+      const result = await getConnection()
+        .createQueryBuilder()
+        .select('currency')
+        .from(Currency, 'currency')
+        .where('currency.id = :id', { id: 1 })
+        .getOne();
+
+      expect(result).not.toBeUndefined();
+      expect(result!.name).toBe('CR1');
+    });
+  });
+
+  describe('deleteCurrency', () => {
+    it('should delete a currency ', async () => {
+      await mutate({
+        mutation: DELETE_CURRENCY,
+        variables: { id: 1 },
+      });
+
+      const result = await getConnection()
+        .createQueryBuilder()
+        .select('currency')
+        .from(Currency, 'currency')
+        .where('currency.id = :id', { id: 1 })
+        .getOne();
+
+      expect(result).toBeUndefined();
+    });
   });
 });

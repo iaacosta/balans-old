@@ -1,6 +1,7 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-empty */
 import * as typeorm from 'typeorm';
+import * as classValidator from 'class-validator';
 import * as currencyResolvers from '../../../graphql/resolvers/currency';
 import * as currencyModel from '../../../models/Currency';
 import { creditAccountById } from '../../../graphql/resolvers/creditAccount';
@@ -25,16 +26,21 @@ describe('Currency resolvers', () => {
   let getRepository: jest.SpyInstance;
   let currencyResolver: jest.SpyInstance;
   let currencyById: jest.SpyInstance;
+  let validateOrReject: jest.SpyInstance;
   const Currency = ((currencyModel.default as any) = jest.fn());
 
   const [find, findOne, save, remove] = [
-    jest.fn(() => ['find']),
-    jest.fn(() => ({ k: 'findOne' })),
-    jest.fn(() => ({ k: 'save' })),
-    jest.fn(() => ({ k: 'remove' })),
+    jest.fn(() => [exampleCurrency]),
+    jest.fn(() => exampleCurrency),
+    jest.fn(() => exampleCurrency),
+    jest.fn(() => 0),
   ];
 
   beforeEach(() => {
+    validateOrReject = jest
+      .spyOn(classValidator, 'validateOrReject')
+      .mockImplementation();
+
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
       .mockImplementation(() => ({ find, findOne, save, remove } as any));
@@ -42,6 +48,7 @@ describe('Currency resolvers', () => {
 
   afterEach(() => {
     getRepository.mockClear();
+    validateOrReject.mockClear();
     find.mockClear();
     findOne.mockClear();
     save.mockClear();
@@ -154,7 +161,7 @@ describe('Currency resolvers', () => {
         expect(currencyById).toHaveBeenCalledWith('Example repository', 0);
       });
 
-      it('should call Currency model on getRepository', async () => {
+      it('should call getRepository with Currency model', async () => {
         await getCurrency(null, { id: 0 });
         expect(getRepository).toHaveBeenCalledTimes(1);
         expect(getRepository).toHaveBeenCalledWith(Currency);
@@ -177,6 +184,12 @@ describe('Currency resolvers', () => {
         await createCurrency(null, { name: 'Example' });
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(new Currency('Example'));
+      });
+
+      it('should call rejectOrValidate when invoked', async () => {
+        await createCurrency(null, { name: 'Example' });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(new Currency('Example'));
       });
     });
 
@@ -215,7 +228,13 @@ describe('Currency resolvers', () => {
       it('should call save on happy path', async () => {
         await updateCurrency(null, { id: 0 });
         expect(save).toHaveBeenCalledTimes(1);
-        expect(save).toHaveBeenCalledWith({ k: 'findOne' });
+        expect(save).toHaveBeenCalledWith(exampleCurrency);
+      });
+
+      it('should call rejectOrValidate on happy path', async () => {
+        await updateCurrency(null, { id: 0 });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(exampleCurrency);
       });
     });
 
@@ -243,7 +262,7 @@ describe('Currency resolvers', () => {
       it('should call remove on happy path', async () => {
         await deleteCurrency(null, { id: 0, name: 'Modified' });
         expect(remove).toHaveBeenCalledTimes(1);
-        expect(remove).toHaveBeenCalledWith({ k: 'findOne' });
+        expect(remove).toHaveBeenCalledWith(exampleCurrency);
       });
     });
   });

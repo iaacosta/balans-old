@@ -1,7 +1,7 @@
 {
   "currencies": [
-    { "id": 1, "name": "Example currency 1" },
-    { "id": 2, "name": "Example currency 2" }
+    { "id": 1, "name": "CR1" },
+    { "id": 2, "name": "CR2" }
   ],
   "debitAccounts": [
     {
