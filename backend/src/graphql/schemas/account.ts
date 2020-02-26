@@ -8,6 +8,8 @@ export default gql`
     initialBalance: Int!
     allowsNegative: Boolean!
     currency: Currency!
+    createdAt: Date!
+    updatedAt: Date!
   }
 
   type CreditAccount {
@@ -18,5 +20,7 @@ export default gql`
     billingDay: Int!
     paymentDay: Int!
     currency: Currency!
+    createdAt: Date!
+    updatedAt: Date!
   }
 `;

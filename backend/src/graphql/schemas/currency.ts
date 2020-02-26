@@ -6,5 +6,7 @@ export default gql`
     name: String!
     debitAccounts: [DebitAccount!]
     creditAccounts: [CreditAccount!]
+    createdAt: Date!
+    updatedAt: Date!
   }
 `;

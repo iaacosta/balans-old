@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Length } from 'class-validator';
 import DebitAccount from './DebitAccount';
 import CreditAccount from './CreditAccount';
@@ -23,6 +30,12 @@ export default class Currency {
     (acc) => acc.currency,
   )
   creditAccounts!: CreditAccount[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   constructor(name: string) {
     this.name = name;

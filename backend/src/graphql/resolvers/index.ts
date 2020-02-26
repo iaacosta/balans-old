@@ -1,6 +1,7 @@
 import currencyResolvers from './currency';
 import creditAccountResolvers from './creditAccount';
 import debitAccountResolvers from './debitAccount';
+import scalars from './scalars';
 
 export default {
   Query: {
@@ -13,4 +14,5 @@ export default {
     ...creditAccountResolvers.Mutation,
     ...debitAccountResolvers.Mutation,
   },
+  ...scalars,
 };
