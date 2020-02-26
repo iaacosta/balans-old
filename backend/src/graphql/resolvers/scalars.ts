@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
+
+dayjs.extend(utc);
 
 export default {
   Date: new GraphQLScalarType({
@@ -9,10 +12,10 @@ export default {
     parseValue: dayjs,
     serialize: (value) => dayjs(value).valueOf(),
     parseLiteral(ast) {
-      if (ast.kind === Kind.INT || ast.kind === Kind.STRING)
+      if (ast.kind === Kind.INT || ast.kind === Kind.STRING) {
         return dayjs(ast.value);
-      else if (ast.kind === Kind.NULL) return dayjs();
-      return null;
+      }
+      return dayjs();
     },
   }),
 };
