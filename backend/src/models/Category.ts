@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty, IsIn } from 'class-validator';
 import { CategoryType } from '../@types';
+import SubCategory from './SubCategory';
 
 @Entity()
 export default class Category {
@@ -24,6 +26,12 @@ export default class Category {
   @Column()
   @IsNotEmpty()
   icon: string;
+
+  @OneToMany(
+    () => SubCategory,
+    (subCat) => subCat.category,
+  )
+  subCategories!: SubCategory[];
 
   @CreateDateColumn()
   createdAt!: Date;
