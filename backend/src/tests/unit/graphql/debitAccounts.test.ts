@@ -1,6 +1,7 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-empty */
 import * as typeorm from 'typeorm';
+import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/debitAccount';
 import * as debitAccountModel from '../../../models/DebitAccount';
 import { currencyById } from '../../../graphql/resolvers/currency';
@@ -22,6 +23,7 @@ describe('Debit account resolvers', () => {
   let getRepository: jest.SpyInstance;
   let debitAccountResolver: jest.SpyInstance;
   let debitAccountById: jest.SpyInstance;
+  let validateOrReject: jest.SpyInstance;
   let find: jest.Mock;
   let findOne: jest.Mock;
   let save: jest.Mock;
@@ -37,10 +39,16 @@ describe('Debit account resolvers', () => {
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
       .mockImplementation(() => ({ find, findOne, save, remove } as any));
+
+    validateOrReject = jest
+      .spyOn(classValidator, 'validateOrReject')
+      .mockImplementation();
   });
 
   afterEach(() => {
     getRepository.mockClear();
+
+    validateOrReject.mockClear();
     find.mockClear();
     findOne.mockClear();
     save.mockClear();
@@ -196,6 +204,14 @@ describe('Debit account resolvers', () => {
         getRepository.mockImplementation(() => ({ findOne: () => null }));
         expect(createDebitAccount(null, { id: 0 })).rejects.toBeTruthy();
       });
+
+      it('should call rejectOrValidate when invoked', async () => {
+        await createDebitAccount(null, { name: 'Example' });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(
+          new DebitAccount('Example'),
+        );
+      });
     });
 
     describe('updateDebitAccount', () => {
@@ -273,6 +289,12 @@ describe('Debit account resolvers', () => {
         await updateDebitAccount(null, { id: 0 });
         expect(save).toHaveBeenCalledTimes(1);
         expect(save).toHaveBeenCalledWith(exampleDebitAccount);
+      });
+
+      it('should call rejectOrValidate on happy path', async () => {
+        await updateDebitAccount(null, { id: 0 });
+        expect(validateOrReject).toHaveBeenCalledTimes(1);
+        expect(validateOrReject).toHaveBeenCalledWith(exampleDebitAccount);
       });
 
       it('should wrap result on debitAccountResolver on happy path', async () => {
