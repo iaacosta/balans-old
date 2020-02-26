@@ -23,7 +23,7 @@ export default class DebitAccount {
   @Column()
   allowsNegative: boolean;
 
-  @ManyToOne(() => Currency)
+  @ManyToOne(() => Currency, { onDelete: 'SET NULL' })
   currency: Currency;
 
   constructor(

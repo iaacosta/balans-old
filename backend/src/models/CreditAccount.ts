@@ -18,7 +18,7 @@ export default class CreditAccount {
   @Column()
   initialBalance: number;
 
-  @ManyToOne(() => Currency)
+  @ManyToOne(() => Currency, { onDelete: 'SET NULL' })
   currency: Currency;
 
   @Column()
