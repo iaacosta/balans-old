@@ -1,8 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { getConnection } from 'typeorm';
-import { currencies, debitAccounts } from './data.json';
 import Currency from '../../models/Currency';
 import DebitAccount from '../../models/DebitAccount';
+import CreditAccount from '../../models/CreditAccount';
+import { currencies, debitAccounts, creditAccounts } from './data.json';
 
 export const seedCurrencies = async () => {
   const connection = getConnection();
@@ -38,6 +39,29 @@ export const seedDebitAccounts = async () => {
     .into(DebitAccount)
     .values(
       debitAccounts.map(({ currencyId, ...rest }) => ({
+        ...rest,
+        currency: currencies.find(({ id }) => currencyId === id),
+      })),
+    )
+    .execute();
+};
+
+export const seedCreditAccounts = async () => {
+  const connection = getConnection();
+  const queryBuilder = connection.createQueryBuilder();
+
+  await connection.query('ALTER SEQUENCE credit_account_id_seq RESTART');
+
+  await queryBuilder
+    .delete()
+    .from(CreditAccount)
+    .execute();
+
+  await queryBuilder
+    .insert()
+    .into(CreditAccount)
+    .values(
+      creditAccounts.map(({ currencyId, ...rest }) => ({
         ...rest,
         currency: currencies.find(({ id }) => currencyId === id),
       })),

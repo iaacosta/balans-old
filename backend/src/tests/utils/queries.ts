@@ -1,5 +1,107 @@
 import { gql } from 'apollo-server-express';
 
+export const creditAccount = {
+  GET_CREDIT_ACCOUNTS: gql`
+    query {
+      getCreditAccounts {
+        id
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_CREDIT_ACCOUNT: gql`
+    query($id: ID!) {
+      getCreditAccount(id: $id) {
+        id
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+      }
+    }
+  `,
+  CREATE_CREDIT_ACCOUNT: gql`
+    mutation(
+      $name: String!
+      $bank: String!
+      $initialBalance: Int!
+      $currencyId: ID!
+      $billingDay: Int!
+      $paymentDay: Int!
+    ) {
+      createCreditAccount(
+        name: $name
+        bank: $bank
+        initialBalance: $initialBalance
+        currencyId: $currencyId
+        billingDay: $billingDay
+        paymentDay: $paymentDay
+      ) {
+        id
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+      }
+    }
+  `,
+  UPDATE_CREDIT_ACCOUNT: gql`
+    mutation(
+      $id: ID!
+      $name: String
+      $bank: String
+      $initialBalance: Int
+      $currencyId: ID
+      $billingDay: Int
+      $paymentDay: Int
+    ) {
+      updateCreditAccount(
+        id: $id
+        name: $name
+        bank: $bank
+        initialBalance: $initialBalance
+        currencyId: $currencyId
+        billingDay: $billingDay
+        paymentDay: $paymentDay
+      ) {
+        id
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+      }
+    }
+  `,
+  DELETE_CREDIT_ACCOUNT: gql`
+    mutation($id: ID!) {
+      deleteCreditAccount(id: $id)
+    }
+  `,
+};
+
 export const debitAccount = {
   GET_DEBIT_ACCOUNTS: gql`
     query {

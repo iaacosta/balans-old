@@ -20,5 +20,25 @@
       "allowsNegative": true,
       "currencyId": 2
     }
+  ],
+  "creditAccounts": [
+    {
+      "id": 1,
+      "name": "Example account 1",
+      "bank": "Example bank 1",
+      "initialBalance": 0,
+      "currencyId": 1,
+      "billingDay": 1,
+      "paymentDay": 2
+    },
+    {
+      "id": 2,
+      "name": "Example account 2",
+      "bank": "Example bank 2",
+      "initialBalance": 1,
+      "currencyId": 2,
+      "billingDay": 3,
+      "paymentDay": 4
+    }
   ]
 }
