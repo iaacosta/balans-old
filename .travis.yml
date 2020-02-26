@@ -13,6 +13,7 @@ before_script:
 script:
   - yarn lint
   - yarn test --coverage
+  - yarn audit
 branches:
   only:
     - master
