@@ -1,4 +1,5 @@
 import { getRepository, Repository } from 'typeorm';
+import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import CreditAccount from '../../models/CreditAccount';
@@ -51,7 +52,7 @@ export default {
     ) => {
       const currency = await getRepository(Currency).findOne(currencyId);
       if (!currency) throw new Error('no currency with such id');
-      const acc = new CreditAccount(
+      const account = new CreditAccount(
         name,
         bank,
         initialBalance,
@@ -60,8 +61,9 @@ export default {
         paymentDay,
       );
 
+      await validateOrReject(account);
       return creditAccountResolver(
-        await getRepository(CreditAccount).save(acc),
+        await getRepository(CreditAccount).save(account),
       );
     },
     updateCreditAccount: async (
@@ -95,6 +97,7 @@ export default {
         account.currency = currency;
       }
 
+      await validateOrReject(account);
       return creditAccountResolver(await repo.save(account));
     },
     deleteCreditAccount: async (parent, { id }) => {
