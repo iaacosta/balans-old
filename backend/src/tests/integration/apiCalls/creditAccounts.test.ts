@@ -36,16 +36,17 @@ describe('credit account API calls', () => {
       expect(data!.getCreditAccounts).toHaveLength(2);
 
       creditAccounts.forEach((acc, idx) => {
+        const currency = getCurrencyById(acc.currencyId)!;
+        delete (currency as any).createdAt;
+        delete (currency as any).updatedAt;
+
         expect(data!.getCreditAccounts[idx]).toMatchObject({
           name: acc.name,
           bank: acc.bank,
           initialBalance: acc.initialBalance,
           billingDay: acc.billingDay,
           paymentDay: acc.paymentDay,
-          currency: {
-            ...getCurrencyById(acc.currencyId)!,
-            id: acc.currencyId.toString(),
-          },
+          currency: { ...currency, id: acc.currencyId.toString() },
         });
       });
     });
