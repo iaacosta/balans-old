@@ -15,8 +15,8 @@ export default gql`
     name: String!
     bank: String!
     initialBalance: Int!
-    billingDay: String!
-    paymentDay: String!
+    billingDay: Int!
+    paymentDay: Int!
     currency: Currency!
   }
 `;

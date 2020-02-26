@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { IsNotEmpty, Min, Max } from 'class-validator';
 import Currency from './Currency';
 
 @Entity()
@@ -7,9 +8,11 @@ export default class CreditAccount {
   id!: number;
 
   @Column({ unique: true })
+  @IsNotEmpty()
   name: string;
 
   @Column()
+  @IsNotEmpty()
   bank: string;
 
   @Column()
@@ -19,9 +22,13 @@ export default class CreditAccount {
   currency: Currency;
 
   @Column()
+  @Min(1)
+  @Max(30)
   billingDay: number;
 
   @Column()
+  @Min(1)
+  @Max(30)
   paymentDay: number;
 
   constructor(
