@@ -6,8 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsIn } from 'class-validator';
-
-type Type = 'expense' | 'income';
+import { CategoryType } from '../@types';
 
 @Entity()
 export default class Category {
@@ -20,7 +19,7 @@ export default class Category {
 
   @Column()
   @IsIn(['expense', 'income'])
-  type: Type;
+  type: CategoryType;
 
   @Column()
   @IsNotEmpty()
@@ -32,7 +31,7 @@ export default class Category {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  constructor(name: string, type: Type, icon: string) {
+  constructor(name: string, type: CategoryType, icon: string) {
     this.name = name;
     this.type = type;
     this.icon = icon;
