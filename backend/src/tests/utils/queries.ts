@@ -232,6 +232,29 @@ export const currency = {
       deleteCurrency(id: $id)
     }
   `,
+  GET_CURRENCY_AND_ACCOUNTS: gql`
+    query($id: ID!) {
+      getCurrency(id: $id) {
+        id
+        name
+        debitAccounts {
+          id
+          name
+          bank
+          initialBalance
+          allowsNegative
+        }
+        creditAccounts {
+          id
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+      }
+    }
+  `,
 };
 
 export const category = {
@@ -278,6 +301,20 @@ export const category = {
   DELETE_CATEGORY: gql`
     mutation($id: ID!) {
       deleteCategory(id: $id)
+    }
+  `,
+  GET_CATEGORY_AND_SUBCATEGORIES: gql`
+    query($id: ID!) {
+      getCategory(id: $id) {
+        id
+        name
+        type
+        icon
+        subCategories {
+          id
+          name
+        }
+      }
     }
   `,
 };

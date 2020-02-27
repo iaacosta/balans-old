@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 import { currencyById } from './currency';
@@ -20,13 +20,23 @@ type Input = {
   currencyId: number;
 };
 
-export const debitAccountById = async (
-  repo: Repository<DebitAccount>,
-  id: number,
-) => {
-  const debitAccount = await repo.findOne(id, { relations: ['currency'] });
+export const debitAccountById = async (id: number) => {
+  const debitAccount = await getRepository(DebitAccount).findOne(id, {
+    relations: ['currency'],
+  });
   if (!debitAccount) throw new Error('no debit account with such id');
   return debitAccountResolver(debitAccount);
+};
+
+export const debitAccountsById = async (ids: number[]) => {
+  if (ids.length === 0) return [];
+
+  const debitAccounts = await getRepository(DebitAccount).find({
+    where: { id: In(ids) },
+    relations: ['currency'],
+  });
+
+  return debitAccounts.map((account) => debitAccountResolver(account));
 };
 
 export const debitAccountResolver = ({
@@ -34,7 +44,7 @@ export const debitAccountResolver = ({
   ...debitAccount
 }: DebitAccount) => ({
   ...debitAccount,
-  currency: () => currencyById(getRepository(Currency), currency.id),
+  currency: () => currencyById(currency.id),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
@@ -44,10 +54,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
         relations: ['currency'],
       });
 
-      return accounts.map(debitAccountResolver);
+      return accounts.map((account) => debitAccountResolver(account));
     },
-    getDebitAccount: (parent, { id }) =>
-      debitAccountById(getRepository(DebitAccount), id),
+    getDebitAccount: (parent, { id }) => debitAccountById(id),
   },
   Mutation: {
     createDebitAccount: async (

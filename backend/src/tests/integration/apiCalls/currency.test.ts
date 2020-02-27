@@ -1,12 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
-import { query, mutate, seedCurrencies, currency } from '../../utils';
+import {
+  query,
+  mutate,
+  seedCurrencies,
+  currency,
+  getDebitAccountsRelatedToCurrency,
+  getCreditAccountsRelatedToCurrency,
+  seedCreditAccounts,
+  seedDebitAccounts,
+} from '../../utils';
 import { currencies } from '../../utils/data.json';
 import Currency from '../../../models/Currency';
 
 const {
   GET_CURRENCIES,
   GET_CURRENCY,
+  GET_CURRENCY_AND_ACCOUNTS,
   CREATE_CURRENCY,
   UPDATE_CURRENCY,
   DELETE_CURRENCY,
@@ -20,7 +30,12 @@ describe('currency API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(seedCurrencies);
+  beforeEach(() =>
+    seedCurrencies()
+      .then(seedCreditAccounts)
+      .then(seedDebitAccounts),
+  );
+
   afterAll(() => connection.close());
 
   describe('getCurrencies', () => {
@@ -39,9 +54,24 @@ describe('currency API calls', () => {
         query: GET_CURRENCY,
         variables: { id: 1 },
       });
+
       expect(data!.getCurrency).toMatchObject({
         id: '1',
         name: currencies[0].name,
+      });
+    });
+
+    it('should get nested query', async () => {
+      const { data } = await query({
+        query: GET_CURRENCY_AND_ACCOUNTS,
+        variables: { id: 1 },
+      });
+
+      expect(data!.getCurrency).toMatchObject({
+        id: currencies[0].id.toString(),
+        name: currencies[0].name,
+        debitAccounts: getDebitAccountsRelatedToCurrency(currencies[0].id),
+        creditAccounts: getCreditAccountsRelatedToCurrency(currencies[0].id),
       });
     });
   });

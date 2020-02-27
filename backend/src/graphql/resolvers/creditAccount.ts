@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
@@ -21,13 +21,24 @@ type Input = {
   paymentDay: number;
 };
 
-export const creditAccountById = async (
-  repo: Repository<CreditAccount>,
-  id: number,
-) => {
-  const creditAccount = await repo.findOne(id, { relations: ['currency'] });
+export const creditAccountById = async (id: number) => {
+  const creditAccount = await getRepository(CreditAccount).findOne(id, {
+    relations: ['currency'],
+  });
+
   if (!creditAccount) throw new Error('no credit account with such id');
   return creditAccountResolver(creditAccount);
+};
+
+export const creditAccountsById = async (ids: number[]) => {
+  if (ids.length === 0) return [];
+
+  const creditAccounts = await getRepository(CreditAccount).find({
+    where: { id: In(ids) },
+    relations: ['currency'],
+  });
+
+  return creditAccounts.map((account) => creditAccountResolver(account));
 };
 
 export const creditAccountResolver = ({
@@ -35,7 +46,7 @@ export const creditAccountResolver = ({
   ...creditAccount
 }: CreditAccount) => ({
   ...creditAccount,
-  currency: () => currencyById(getRepository(Currency), currency.id),
+  currency: () => currencyById(currency.id),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
@@ -47,8 +58,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
 
       return accounts.map(creditAccountResolver);
     },
-    getCreditAccount: (parent, { id }) =>
-      creditAccountById(getRepository(CreditAccount), id),
+    getCreditAccount: (parent, { id }) => creditAccountById(id),
   },
   Mutation: {
     createCreditAccount: async (

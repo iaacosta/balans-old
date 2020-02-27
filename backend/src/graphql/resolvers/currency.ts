@@ -1,19 +1,17 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import { ResolverMap } from '../../@types';
-import { creditAccountById } from './creditAccount';
-import { debitAccountById } from './debitAccount';
-import DebitAccount from '../../models/DebitAccount';
-import CreditAccount from '../../models/CreditAccount';
+import { creditAccountsById } from './creditAccount';
+import { debitAccountsById } from './debitAccount';
 
 type Queries = 'getCurrency' | 'getCurrencies';
 type Mutations = 'createCurrency' | 'updateCurrency' | 'deleteCurrency';
 type Input = { id: number; name: string };
 
-export const currencyById = async (repo: Repository<Currency>, id: number) => {
-  const currency = await repo.findOne(id, {
+export const currencyById = async (id: number) => {
+  const currency = await getRepository(Currency).findOne(id, {
     relations: ['debitAccounts', 'creditAccounts'],
   });
   if (!currency) throw new Error('no currency with such id');
@@ -26,14 +24,8 @@ export const currencyResolver = ({
   ...currency
 }: Currency) => ({
   ...currency,
-  debitAccounts: () =>
-    debitAccounts.map(({ id }) =>
-      debitAccountById(getRepository(DebitAccount), id),
-    ),
-  creditAccounts: () =>
-    creditAccounts.map(({ id }) =>
-      creditAccountById(getRepository(CreditAccount), id),
-    ),
+  debitAccounts: () => debitAccountsById(debitAccounts.map(({ id }) => id)),
+  creditAccounts: () => creditAccountsById(creditAccounts.map(({ id }) => id)),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
@@ -44,10 +36,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
         order: { id: 1 },
       });
 
-      return currencies.map(currencyResolver);
+      return currencies.map((currency) => currencyResolver(currency));
     },
-    getCurrency: async (parent, { id }) =>
-      currencyById(getRepository(Currency), id),
+    getCurrency: async (parent, { id }) => currencyById(id),
   },
   Mutation: {
     createCurrency: async (parent, { name }) => {

@@ -15,7 +15,7 @@ const exampleCategory: any = {
   name: 'Example Category',
   type: 'income',
   icon: 'ex',
-  subCategories: [1, 2, 3],
+  subCategories: [{ id: 1 }, { id: 2 }, { id: 3 }],
 };
 
 describe('Category resolvers', () => {
@@ -45,7 +45,7 @@ describe('Category resolvers', () => {
   });
 
   afterEach(() => {
-    (subCategoriesById as any).mockClear();
+    (subCategoriesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -106,6 +106,7 @@ describe('Category resolvers', () => {
       const category = resolvers.categoryResolver(exampleCategory);
       category.subCategories();
       expect(subCategoriesById).toHaveBeenCalledTimes(1);
+      expect(subCategoriesById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
