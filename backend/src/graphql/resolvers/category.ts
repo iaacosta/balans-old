@@ -3,6 +3,7 @@ import { validateOrReject } from 'class-validator';
 
 import { ResolverMap, CategoryType } from '../../@types';
 import Category from '../../models/Category';
+import { subCategoriesById } from './subCategory';
 
 type Queries = 'getCategory' | 'getCategories';
 type Mutations = 'createCategory' | 'updateCategory' | 'deleteCategory';
@@ -14,19 +15,27 @@ interface Input {
 }
 
 export const categoryById = async (id: number) => {
-  const category = await getRepository(Category).findOne(id);
+  const category = await getRepository(Category).findOne(id, {
+    relations: ['subCategories'],
+  });
+
   if (!category) throw new Error('no category with such id');
   return categoryResolver(category);
 };
 
-export const categoryResolver = (category: Category) => ({
+export const categoryResolver = ({ subCategories, ...category }: Category) => ({
   ...category,
+  subCategories: () => subCategoriesById(subCategories.map(({ id }) => id)),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getCategories: async () => {
-      const categories = await getRepository(Category).find();
+      const categories = await getRepository(Category).find({
+        relations: ['subCategories'],
+        order: { id: 1 },
+      });
+
       return categories.map(categoryResolver);
     },
     getCategory: async (parent, { id }) => categoryById(id),

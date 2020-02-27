@@ -23,6 +23,12 @@ export default gql`
     """
     getCategories: [Category!]
     getCategory(id: ID!): Category!
+
+    """
+    Sub category
+    """
+    getSubCategories: [SubCategory!]
+    getSubCategory(id: ID!): SubCategory!
   }
 
   type Mutation {
@@ -81,5 +87,12 @@ export default gql`
     createCategory(name: String!, type: String!, icon: String!): Category!
     updateCategory(id: ID!, name: String, type: String, icon: String): Category!
     deleteCategory(id: ID!): ID!
+
+    """
+    Sub category
+    """
+    createSubCategory(name: String!, categoryId: ID!): SubCategory!
+    updateSubCategory(id: ID!, name: String, categoryId: ID): SubCategory!
+    deleteSubCategory(id: ID!): ID!
   }
 `;
