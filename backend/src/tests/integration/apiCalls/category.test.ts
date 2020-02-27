@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
-import { query, mutate, seedCategories, category } from '../../utils';
+import {
+  query,
+  mutate,
+  seedCategories,
+  category,
+  getSubCategoriesRelatedToCategory,
+  seedSubCategories,
+} from '../../utils';
 import { categories } from '../../utils/data.json';
 import Category from '../../../models/Category';
 
 const {
   GET_CATEGORIES,
   GET_CATEGORY,
+  GET_CATEGORY_AND_SUBCATEGORIES,
   CREATE_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
@@ -20,7 +28,7 @@ describe('category API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(seedCategories);
+  beforeEach(() => seedCategories().then(seedSubCategories));
   afterAll(() => connection.close());
 
   describe('getCategories', () => {
@@ -51,6 +59,19 @@ describe('category API calls', () => {
         name: categories[0].name,
         type: categories[0].type,
         icon: categories[0].icon,
+      });
+    });
+
+    it('should get nested query', async () => {
+      const { data } = await query({
+        query: GET_CATEGORY_AND_SUBCATEGORIES,
+        variables: { id: 1 },
+      });
+
+      expect(data!.getCategory).toMatchObject({
+        id: categories[0].id.toString(),
+        name: categories[0].name,
+        subCategories: getSubCategoriesRelatedToCategory(categories[0].id),
       });
     });
   });
