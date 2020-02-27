@@ -6,7 +6,7 @@ import * as resolvers from '../../../graphql/resolvers/creditAccount';
 import * as creditAccountModel from '../../../models/CreditAccount';
 import { currencyById } from '../../../graphql/resolvers/currency';
 
-const exampleCreditAccount: any = {
+const exampleAccount: any = {
   id: 0,
   name: 'Example Account 1',
   bank: 'Example Bank 1',
@@ -33,9 +33,9 @@ describe('Debit account resolvers', () => {
   const CreditAccount = ((creditAccountModel.default as any) = jest.fn());
 
   beforeEach(() => {
-    find = jest.fn(() => [exampleCreditAccount]);
-    findOne = jest.fn(() => exampleCreditAccount);
-    save = jest.fn(() => exampleCreditAccount);
+    find = jest.fn(() => [exampleAccount]);
+    findOne = jest.fn(() => exampleAccount);
+    save = jest.fn(() => exampleAccount);
     remove = jest.fn(() => '0');
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
@@ -57,11 +57,6 @@ describe('Debit account resolvers', () => {
   });
 
   describe('creditAccountById', () => {
-    const nullRepo: any = { findOne: jest.fn() };
-    const happyPathRepo: any = {
-      findOne: jest.fn(() => exampleCreditAccount),
-    };
-
     beforeEach(() => {
       creditAccountResolver = jest.spyOn(resolvers, 'creditAccountResolver');
     });
@@ -70,46 +65,80 @@ describe('Debit account resolvers', () => {
     afterAll(() => creditAccountResolver.mockRestore());
 
     it('should call creditAccountResolver once', async () => {
-      await resolvers.creditAccountById(happyPathRepo, 0);
+      findOne.mockImplementation(() => exampleAccount);
+      await resolvers.creditAccountById(0);
       expect(creditAccountResolver).toHaveBeenCalledTimes(1);
     });
 
     it('should call creditAccountResolver with correct argument', async () => {
-      await resolvers.creditAccountById(happyPathRepo, 0);
-      expect(creditAccountResolver).toHaveBeenCalledWith(exampleCreditAccount);
+      findOne.mockImplementation(() => exampleAccount);
+      await resolvers.creditAccountById(0);
+      expect(creditAccountResolver).toHaveBeenCalledWith(exampleAccount);
     });
 
-    it("should throw error if find doesn't succeed", async () =>
-      expect(resolvers.creditAccountById(nullRepo, 0)).rejects.toBeTruthy());
+    it("should throw error if find doesn't succeed", async () => {
+      findOne.mockImplementation(() => null);
+      expect(resolvers.creditAccountById(0)).rejects.toBeTruthy();
+    });
 
     it("should not call creditAccountResolver if find doesn't succeed", async () => {
+      findOne.mockImplementation(() => null);
+
       try {
-        await resolvers.creditAccountById(nullRepo, 0);
+        await resolvers.creditAccountById(0);
       } catch (err) {}
 
       expect(creditAccountResolver).not.toHaveBeenCalled();
     });
   });
 
+  describe('creditAccountsById', () => {
+    beforeEach(() => {
+      creditAccountResolver = jest.spyOn(resolvers, 'creditAccountResolver');
+    });
+
+    afterEach(() => creditAccountResolver.mockClear());
+    afterAll(() => creditAccountResolver.mockRestore());
+
+    it('should call creditAccountResolver twice', async () => {
+      find.mockImplementation(() => [exampleAccount, exampleAccount]);
+      await resolvers.creditAccountsById([1, 2]);
+      expect(creditAccountResolver).toHaveBeenCalledTimes(2);
+    });
+
+    it('should call creditAccountResolver with correct arguments', async () => {
+      const ret = [exampleAccount, exampleAccount];
+      find.mockImplementation(() => ret);
+      await resolvers.creditAccountsById([1, 2]);
+
+      expect(creditAccountResolver).toHaveBeenNthCalledWith(1, exampleAccount);
+      expect(creditAccountResolver).toHaveBeenNthCalledWith(2, exampleAccount);
+    });
+
+    it('should return an empty list if no ids given', async () =>
+      expect(await resolvers.creditAccountsById([])).toHaveLength(0));
+
+    it('should not call find nor creditAccountResolver if no ids given', async () => {
+      await resolvers.creditAccountsById([]);
+
+      expect(find).not.toHaveBeenCalled();
+      expect(creditAccountResolver).not.toHaveBeenCalled();
+    });
+  });
+
   describe('creditAccountResolver', () => {
     it('should generate static properties correctly', () => {
-      const creditAccount = resolvers.creditAccountResolver(
-        exampleCreditAccount,
-      );
-      expect(creditAccount.id).toBe(exampleCreditAccount.id);
-      expect(creditAccount.name).toBe(exampleCreditAccount.name);
-      expect(creditAccount.bank).toBe(exampleCreditAccount.bank);
-      expect(creditAccount.initialBalance).toBe(
-        exampleCreditAccount.initialBalance,
-      );
-      expect(creditAccount.billingDay).toBe(exampleCreditAccount.billingDay);
-      expect(creditAccount.paymentDay).toBe(exampleCreditAccount.paymentDay);
+      const creditAccount = resolvers.creditAccountResolver(exampleAccount);
+      expect(creditAccount.id).toBe(exampleAccount.id);
+      expect(creditAccount.name).toBe(exampleAccount.name);
+      expect(creditAccount.bank).toBe(exampleAccount.bank);
+      expect(creditAccount.initialBalance).toBe(exampleAccount.initialBalance);
+      expect(creditAccount.billingDay).toBe(exampleAccount.billingDay);
+      expect(creditAccount.paymentDay).toBe(exampleAccount.paymentDay);
     });
 
     it('should call currencyById one time if executed mapping', () => {
-      const creditAccount = resolvers.creditAccountResolver(
-        exampleCreditAccount,
-      );
+      const creditAccount = resolvers.creditAccountResolver(exampleAccount);
       creditAccount.currency();
       expect(currencyById).toHaveBeenCalledTimes(1);
     });
@@ -158,16 +187,10 @@ describe('Debit account resolvers', () => {
       afterEach(() => creditAccountById.mockClear());
       afterAll(() => creditAccountById.mockRestore());
 
-      it('should call creditAccountById with correct id and repository', async () => {
+      it('should call creditAccountById with correct id', async () => {
         await getCreditAccount(null, { id: 0 });
         expect(creditAccountById).toHaveBeenCalledTimes(1);
-        expect(creditAccountById).toHaveBeenCalledWith('Example repository', 0);
-      });
-
-      it('should call Currency model on getRepository', async () => {
-        await getCreditAccount(null, { id: 0 });
-        expect(getRepository).toHaveBeenCalledTimes(1);
-        expect(getRepository).toHaveBeenCalledWith(CreditAccount);
+        expect(creditAccountById).toHaveBeenCalledWith(0);
       });
     });
   });
@@ -297,13 +320,13 @@ describe('Debit account resolvers', () => {
       it('should call save on happy path', async () => {
         await updateCreditAccount(null, { id: 0 });
         expect(save).toHaveBeenCalledTimes(1);
-        expect(save).toHaveBeenCalledWith(exampleCreditAccount);
+        expect(save).toHaveBeenCalledWith(exampleAccount);
       });
 
       it('should call rejectOrValidate on happy path', async () => {
         await updateCreditAccount(null, { id: 0 });
         expect(validateOrReject).toHaveBeenCalledTimes(1);
-        expect(validateOrReject).toHaveBeenCalledWith(exampleCreditAccount);
+        expect(validateOrReject).toHaveBeenCalledWith(exampleAccount);
       });
 
       it('should wrap result on creditAccountResolver on happy path', async () => {
