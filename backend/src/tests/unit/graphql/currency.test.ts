@@ -4,22 +4,22 @@ import * as typeorm from 'typeorm';
 import * as classValidator from 'class-validator';
 import * as currencyResolvers from '../../../graphql/resolvers/currency';
 import * as currencyModel from '../../../models/Currency';
-import { creditAccountById } from '../../../graphql/resolvers/creditAccount';
-import { debitAccountById } from '../../../graphql/resolvers/debitAccount';
+import { creditAccountsById } from '../../../graphql/resolvers/creditAccount';
+import { debitAccountsById } from '../../../graphql/resolvers/debitAccount';
 
 const exampleCurrency: any = {
   id: 0,
   name: 'Example Currency',
-  debitAccounts: [1, 2, 3],
-  creditAccounts: [1, 2],
+  debitAccounts: [{ id: 1 }, { id: 2 }, { id: 3 }],
+  creditAccounts: [{ id: 1 }, { id: 2 }],
 };
 
 jest.mock('../../../graphql/resolvers/debitAccount', () => ({
-  debitAccountById: jest.fn(),
+  debitAccountsById: jest.fn(),
 }));
 
 jest.mock('../../../graphql/resolvers/creditAccount', () => ({
-  creditAccountById: jest.fn(),
+  creditAccountsById: jest.fn(),
 }));
 
 describe('Currency resolvers', () => {
@@ -27,16 +27,18 @@ describe('Currency resolvers', () => {
   let currencyResolver: jest.SpyInstance;
   let currencyById: jest.SpyInstance;
   let validateOrReject: jest.SpyInstance;
+  let find: jest.Mock;
+  let findOne: jest.Mock;
+  let save: jest.Mock;
+  let remove: jest.Mock;
   const Currency = ((currencyModel.default as any) = jest.fn());
 
-  const [find, findOne, save, remove] = [
-    jest.fn(() => [exampleCurrency]),
-    jest.fn(() => exampleCurrency),
-    jest.fn(() => exampleCurrency),
-    jest.fn(() => 0),
-  ];
-
   beforeEach(() => {
+    find = jest.fn(() => [exampleCurrency]);
+    findOne = jest.fn(() => exampleCurrency);
+    save = jest.fn(() => exampleCurrency);
+    remove = jest.fn(() => 0);
+
     validateOrReject = jest
       .spyOn(classValidator, 'validateOrReject')
       .mockImplementation();
@@ -47,6 +49,8 @@ describe('Currency resolvers', () => {
   });
 
   afterEach(() => {
+    (debitAccountsById as jest.Mock).mockClear();
+    (creditAccountsById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -57,9 +61,6 @@ describe('Currency resolvers', () => {
   });
 
   describe('currencyById', () => {
-    const succesfulRepoStub: any = { findOne: jest.fn(() => exampleCurrency) };
-    const failedRepoStub: any = { findOne: jest.fn() };
-
     beforeEach(() => {
       currencyResolver = jest.spyOn(currencyResolvers, 'currencyResolver');
     });
@@ -68,23 +69,28 @@ describe('Currency resolvers', () => {
     afterAll(() => currencyResolver.mockRestore());
 
     it('should call currencyResolver once', async () => {
-      await currencyResolvers.currencyById(succesfulRepoStub, 0);
+      findOne.mockImplementation(() => exampleCurrency);
+      await currencyResolvers.currencyById(0);
       expect(currencyResolver).toHaveBeenCalledTimes(1);
     });
 
     it('should call currencyResolver with correct argument', async () => {
-      await currencyResolvers.currencyById(succesfulRepoStub, 0);
+      findOne.mockImplementation(() => exampleCurrency);
+      await currencyResolvers.currencyById(0);
       expect(currencyResolver).toHaveBeenCalledWith(exampleCurrency);
     });
 
-    it("should throw error if find doesn't succeed", async () =>
-      expect(
-        currencyResolvers.currencyById(failedRepoStub, 0),
-      ).rejects.toBeTruthy());
+    it("should throw error if find doesn't succeed", async () => {
+      findOne.mockImplementation(() => null);
+
+      expect(currencyResolvers.currencyById(0)).rejects.toBeTruthy();
+    });
 
     it("should not call currencyResolver if find doesn't succeed", async () => {
+      findOne.mockImplementation(() => null);
+
       try {
-        await currencyResolvers.currencyById(failedRepoStub, 0);
+        await currencyResolvers.currencyById(0);
       } catch (err) {}
 
       expect(currencyResolver).not.toHaveBeenCalled();
@@ -98,16 +104,18 @@ describe('Currency resolvers', () => {
       expect(currency.name).toBe(exampleCurrency.name);
     });
 
-    it('should call debitAccountById three times if executed mapping', () => {
+    it('should call debitAccountById one time with correct arguments', () => {
       const currency = currencyResolvers.currencyResolver(exampleCurrency);
       currency.debitAccounts();
-      expect(debitAccountById).toHaveBeenCalledTimes(3);
+      expect(debitAccountsById).toHaveBeenCalledTimes(1);
+      expect(debitAccountsById).toHaveBeenCalledWith([1, 2, 3]);
     });
 
-    it('should call creditAccountById two times if executed mapping', () => {
+    it('should call creditAccountsById one time with correct arguments', () => {
       const currency = currencyResolvers.currencyResolver(exampleCurrency);
       currency.creditAccounts();
-      expect(creditAccountById).toHaveBeenCalledTimes(2);
+      expect(creditAccountsById).toHaveBeenCalledTimes(1);
+      expect(creditAccountsById).toHaveBeenCalledWith([1, 2]);
     });
   });
 
@@ -134,9 +142,9 @@ describe('Currency resolvers', () => {
          * I put the next two arguments (number, index, list)
          * because of been called on a map
          */
-        expect(currencyResolver).toHaveBeenNthCalledWith(1, 1, 0, [1, 2, 3]);
-        expect(currencyResolver).toHaveBeenNthCalledWith(2, 2, 1, [1, 2, 3]);
-        expect(currencyResolver).toHaveBeenNthCalledWith(3, 3, 2, [1, 2, 3]);
+        expect(currencyResolver).toHaveBeenNthCalledWith(1, 1);
+        expect(currencyResolver).toHaveBeenNthCalledWith(2, 2);
+        expect(currencyResolver).toHaveBeenNthCalledWith(3, 3);
         currencyResolver.mockRestore();
       });
     });
@@ -155,16 +163,10 @@ describe('Currency resolvers', () => {
       afterEach(() => currencyById.mockClear());
       afterAll(() => currencyById.mockRestore());
 
-      it('should call currencyById with correct id and repository', async () => {
+      it('should call currencyById with correct id', async () => {
         await getCurrency(null, { id: 0 });
         expect(currencyById).toHaveBeenCalledTimes(1);
-        expect(currencyById).toHaveBeenCalledWith('Example repository', 0);
-      });
-
-      it('should call getRepository with Currency model', async () => {
-        await getCurrency(null, { id: 0 });
-        expect(getRepository).toHaveBeenCalledTimes(1);
-        expect(getRepository).toHaveBeenCalledWith(Currency);
+        expect(currencyById).toHaveBeenCalledWith(0);
       });
     });
   });

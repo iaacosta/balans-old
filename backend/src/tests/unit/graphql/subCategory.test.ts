@@ -6,7 +6,7 @@ import * as resolvers from '../../../graphql/resolvers/subCategory';
 import * as model from '../../../models/SubCategory';
 import { categoryById } from '../../../graphql/resolvers/category';
 
-const exampleSubCategory: any = {
+const exampleSubCat: any = {
   id: 0,
   name: 'Example SubCategory',
   category: { id: 0 },
@@ -30,9 +30,9 @@ describe('SubCategory resolvers', () => {
   const SubCategory = ((model.default as any) = jest.fn());
 
   beforeEach(() => {
-    find = jest.fn(() => [exampleSubCategory]);
-    findOne = jest.fn(() => exampleSubCategory);
-    save = jest.fn(() => exampleSubCategory);
+    find = jest.fn(() => [exampleSubCat]);
+    findOne = jest.fn(() => exampleSubCat);
+    save = jest.fn(() => exampleSubCat);
     remove = jest.fn(() => 0);
 
     validateOrReject = jest
@@ -64,7 +64,7 @@ describe('SubCategory resolvers', () => {
 
     it('should call subCategoryResolver once', async () => {
       getRepository.mockImplementation(() => ({
-        findOne: () => exampleSubCategory,
+        findOne: () => exampleSubCat,
       }));
       await resolvers.subCategoryById(0);
       expect(subCategoryResolver).toHaveBeenCalledTimes(1);
@@ -72,10 +72,10 @@ describe('SubCategory resolvers', () => {
 
     it('should call subCategoryResolver with correct argument', async () => {
       getRepository.mockImplementation(() => ({
-        findOne: () => exampleSubCategory,
+        findOne: () => exampleSubCat,
       }));
       await resolvers.subCategoryById(0);
-      expect(subCategoryResolver).toHaveBeenCalledWith(exampleSubCategory);
+      expect(subCategoryResolver).toHaveBeenCalledWith(exampleSubCat);
     });
 
     it("should throw error if find doesn't succeed", async () => {
@@ -103,29 +103,18 @@ describe('SubCategory resolvers', () => {
     afterAll(() => subCategoryResolver.mockRestore());
 
     it('should call subCategoryResolver twice', async () => {
-      find.mockImplementation(() => [exampleSubCategory, exampleSubCategory]);
+      find.mockImplementation(() => [exampleSubCat, exampleSubCat]);
       await resolvers.subCategoriesById([1, 2]);
       expect(subCategoryResolver).toHaveBeenCalledTimes(2);
     });
 
     it('should call subCategoryResolver with correct arguments', async () => {
-      const ret = [exampleSubCategory, exampleSubCategory];
+      const ret = [exampleSubCat, exampleSubCat];
       find.mockImplementation(() => ret);
       await resolvers.subCategoriesById([1, 2]);
 
-      expect(subCategoryResolver).toHaveBeenNthCalledWith(
-        1,
-        exampleSubCategory,
-        0,
-        ret,
-      );
-
-      expect(subCategoryResolver).toHaveBeenNthCalledWith(
-        2,
-        exampleSubCategory,
-        1,
-        ret,
-      );
+      expect(subCategoryResolver).toHaveBeenNthCalledWith(1, exampleSubCat);
+      expect(subCategoryResolver).toHaveBeenNthCalledWith(2, exampleSubCat);
     });
 
     it('should return an empty list if no ids given', async () =>
@@ -141,13 +130,13 @@ describe('SubCategory resolvers', () => {
 
   describe('subCategoryResolver', () => {
     it('should generate static properties correctly', () => {
-      const subCategory = resolvers.subCategoryResolver(exampleSubCategory);
-      expect(subCategory.id).toBe(exampleSubCategory.id);
-      expect(subCategory.name).toBe(exampleSubCategory.name);
+      const subCategory = resolvers.subCategoryResolver(exampleSubCat);
+      expect(subCategory.id).toBe(exampleSubCat.id);
+      expect(subCategory.name).toBe(exampleSubCat.name);
     });
 
     it('should call categoryById one time correctly', () => {
-      const subCategory = resolvers.subCategoryResolver(exampleSubCategory);
+      const subCategory = resolvers.subCategoryResolver(exampleSubCat);
       subCategory.category();
       expect(categoryById).toHaveBeenCalledTimes(1);
     });
@@ -306,13 +295,13 @@ describe('SubCategory resolvers', () => {
       it('should call save on happy path', async () => {
         await updateSubCategory(null, { id: 0 });
         expect(save).toHaveBeenCalledTimes(1);
-        expect(save).toHaveBeenCalledWith(exampleSubCategory);
+        expect(save).toHaveBeenCalledWith(exampleSubCat);
       });
 
       it('should call validateOrReject on happy path', async () => {
         await updateSubCategory(null, { id: 0 });
         expect(validateOrReject).toHaveBeenCalledTimes(1);
-        expect(validateOrReject).toHaveBeenCalledWith(exampleSubCategory);
+        expect(validateOrReject).toHaveBeenCalledWith(exampleSubCat);
       });
     });
 
@@ -339,7 +328,7 @@ describe('SubCategory resolvers', () => {
       it('should call remove on happy path', async () => {
         await deleteSubCategory(null, { id: 0, name: 'Modified' });
         expect(remove).toHaveBeenCalledTimes(1);
-        expect(remove).toHaveBeenCalledWith(exampleSubCategory);
+        expect(remove).toHaveBeenCalledWith(exampleSubCat);
       });
     });
   });
