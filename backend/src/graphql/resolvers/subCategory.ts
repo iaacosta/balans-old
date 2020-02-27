@@ -34,7 +34,7 @@ export const subCategoriesById = async (ids: number[]) => {
     relations: ['category'],
   });
 
-  return subCategories.map(subCategoryResolver);
+  return subCategories.map((subCat) => subCategoryResolver(subCat));
 };
 
 export const subCategoryResolver = ({
