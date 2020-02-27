@@ -45,5 +45,11 @@
     { "id": 1, "name": "Example Category 1", "type": "income", "icon": "ex1" },
     { "id": 2, "name": "Example Category 2", "type": "expense", "icon": "ex2" },
     { "id": 3, "name": "Example Category 3", "type": "income", "icon": "ex3" }
+  ],
+  "subCategories": [
+    { "id": 1, "name": "Example Sub Category 1.1", "categoryId": 1 },
+    { "id": 2, "name": "Example Sub Category 1.2", "categoryId": 1 },
+    { "id": 3, "name": "Example Sub Category 2.1", "categoryId": 2 },
+    { "id": 4, "name": "Example Sub Category 3.1", "categoryId": 3 }
   ]
 }

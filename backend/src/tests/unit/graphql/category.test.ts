@@ -2,14 +2,20 @@
 /* eslint-disable no-empty */
 import * as typeorm from 'typeorm';
 import * as classValidator from 'class-validator';
-import * as categoryResolvers from '../../../graphql/resolvers/category';
-import * as categoryModel from '../../../models/Category';
+import * as resolvers from '../../../graphql/resolvers/category';
+import * as model from '../../../models/Category';
+import { subCategoriesById } from '../../../graphql/resolvers/subCategory';
+
+jest.mock('../../../graphql/resolvers/subCategory', () => ({
+  subCategoriesById: jest.fn(),
+}));
 
 const exampleCategory: any = {
   id: 0,
   name: 'Example Category',
-  debitAccounts: [1, 2, 3],
-  creditAccounts: [1, 2],
+  type: 'income',
+  icon: 'ex',
+  subCategories: [1, 2, 3],
 };
 
 describe('Category resolvers', () => {
@@ -21,7 +27,7 @@ describe('Category resolvers', () => {
   let save: jest.Mock;
   let remove: jest.Mock;
   let validateOrReject: jest.SpyInstance;
-  const Category = ((categoryModel.default as any) = jest.fn());
+  const Category = ((model.default as any) = jest.fn());
 
   beforeEach(() => {
     find = jest.fn(() => [exampleCategory]);
@@ -39,6 +45,7 @@ describe('Category resolvers', () => {
   });
 
   afterEach(() => {
+    (subCategoriesById as any).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -50,7 +57,7 @@ describe('Category resolvers', () => {
 
   describe('categoryById', () => {
     beforeEach(() => {
-      categoryResolver = jest.spyOn(categoryResolvers, 'categoryResolver');
+      categoryResolver = jest.spyOn(resolvers, 'categoryResolver');
     });
 
     afterEach(() => categoryResolver.mockClear());
@@ -60,7 +67,7 @@ describe('Category resolvers', () => {
       getRepository.mockImplementation(() => ({
         findOne: () => exampleCategory,
       }));
-      await categoryResolvers.categoryById(0);
+      await resolvers.categoryById(0);
       expect(categoryResolver).toHaveBeenCalledTimes(1);
     });
 
@@ -68,20 +75,20 @@ describe('Category resolvers', () => {
       getRepository.mockImplementation(() => ({
         findOne: () => exampleCategory,
       }));
-      await categoryResolvers.categoryById(0);
+      await resolvers.categoryById(0);
       expect(categoryResolver).toHaveBeenCalledWith(exampleCategory);
     });
 
     it("should throw error if find doesn't succeed", async () => {
       getRepository.mockImplementation(() => ({ findOne: () => null }));
-      expect(categoryResolvers.categoryById(0)).rejects.toBeTruthy();
+      expect(resolvers.categoryById(0)).rejects.toBeTruthy();
     });
 
     it("should not call categoryResolver if find doesn't succeed", async () => {
       getRepository.mockImplementation(() => ({ findOne: () => null }));
 
       try {
-        await categoryResolvers.categoryById(0);
+        await resolvers.categoryById(0);
       } catch (err) {}
 
       expect(categoryResolver).not.toHaveBeenCalled();
@@ -90,16 +97,21 @@ describe('Category resolvers', () => {
 
   describe('categoryResolver', () => {
     it('should generate static properties correctly', () => {
-      const category = categoryResolvers.categoryResolver(exampleCategory);
+      const category = resolvers.categoryResolver(exampleCategory);
       expect(category.id).toBe(exampleCategory.id);
       expect(category.name).toBe(exampleCategory.name);
+    });
+
+    it('should call subCategoriesById one time with ids', () => {
+      const category = resolvers.categoryResolver(exampleCategory);
+      category.subCategories();
+      expect(subCategoriesById).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Query', () => {
     describe('getCategories', () => {
-      const getCategories = categoryResolvers.default.Query
-        .getCategories as any;
+      const getCategories = resolvers.default.Query.getCategories as any;
 
       it('should call find when invoked getCategories', async () => {
         await getCategories();
@@ -108,7 +120,7 @@ describe('Category resolvers', () => {
 
       it('should map results of query into categoryResolver', async () => {
         categoryResolver = jest
-          .spyOn(categoryResolvers, 'categoryResolver')
+          .spyOn(resolvers, 'categoryResolver')
           .mockImplementation();
 
         getRepository.mockImplementation(() => ({ find: () => [1, 2, 3] }));
@@ -127,11 +139,11 @@ describe('Category resolvers', () => {
     });
 
     describe('getCategory', () => {
-      const getCategory = categoryResolvers.default.Query.getCategory as any;
+      const getCategory = resolvers.default.Query.getCategory as any;
 
       beforeEach(() => {
         categoryById = jest
-          .spyOn(categoryResolvers, 'categoryById')
+          .spyOn(resolvers, 'categoryById')
           .mockImplementation();
       });
 
@@ -148,8 +160,7 @@ describe('Category resolvers', () => {
 
   describe('Mutation', () => {
     describe('createCategory', () => {
-      const createCategory = categoryResolvers.default.Mutation
-        .createCategory as any;
+      const createCategory = resolvers.default.Mutation.createCategory as any;
 
       it('should construct new Category when invoked', async () => {
         await createCategory(null, {
@@ -190,12 +201,11 @@ describe('Category resolvers', () => {
     });
 
     describe('updateCategory', () => {
-      const updateCategory = categoryResolvers.default.Mutation
-        .updateCategory as any;
+      const updateCategory = resolvers.default.Mutation.updateCategory as any;
 
       beforeEach(() => {
         categoryResolver = jest
-          .spyOn(categoryResolvers, 'categoryResolver')
+          .spyOn(resolvers, 'categoryResolver')
           .mockImplementation();
       });
 
@@ -244,12 +254,11 @@ describe('Category resolvers', () => {
     });
 
     describe('deleteCategory', () => {
-      const deleteCategory = categoryResolvers.default.Mutation
-        .deleteCategory as any;
+      const deleteCategory = resolvers.default.Mutation.deleteCategory as any;
 
       beforeEach(() => {
         categoryResolver = jest
-          .spyOn(categoryResolvers, 'categoryResolver')
+          .spyOn(resolvers, 'categoryResolver')
           .mockImplementation();
       });
 

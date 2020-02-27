@@ -6,6 +6,15 @@ export default gql`
     name: String!
     type: String!
     icon: String!
+    subCategories: [SubCategory!]
+    createdAt: Date!
+    updatedAt: Date!
+  }
+
+  type SubCategory {
+    id: ID!
+    name: String!
+    category: Category!
     createdAt: Date!
     updatedAt: Date!
   }
