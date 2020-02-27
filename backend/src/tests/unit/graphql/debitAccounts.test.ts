@@ -12,7 +12,7 @@ const exampleAccount: any = {
   bank: 'Example Bank 1',
   initialBalance: 0,
   allowsNegative: true,
-  currency: { id: 0, name: 'Example' },
+  currency: { id: 0 },
 };
 
 jest.mock('../../../graphql/resolvers/currency', () => ({
@@ -35,7 +35,8 @@ describe('Debit account resolvers', () => {
     find = jest.fn(() => [exampleAccount]);
     findOne = jest.fn(() => exampleAccount);
     save = jest.fn(() => exampleAccount);
-    remove = jest.fn(() => '0');
+    remove = jest.fn(() => 0);
+
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
       .mockImplementation(() => ({ find, findOne, save, remove } as any));
@@ -46,8 +47,8 @@ describe('Debit account resolvers', () => {
   });
 
   afterEach(() => {
+    (currencyById as jest.Mock).mockClear();
     getRepository.mockClear();
-
     validateOrReject.mockClear();
     find.mockClear();
     findOne.mockClear();
@@ -161,11 +162,6 @@ describe('Debit account resolvers', () => {
         getRepository.mockImplementation(() => ({ find: () => [1, 2] }));
         await getDebitAccounts();
         expect(debitAccountResolver).toHaveBeenCalledTimes(2);
-
-        /**
-         * I put the next two arguments (number, index, list)
-         * because of been called on a map
-         */
         expect(debitAccountResolver).toHaveBeenNthCalledWith(1, 1);
         expect(debitAccountResolver).toHaveBeenNthCalledWith(2, 2);
         debitAccountResolver.mockRestore();

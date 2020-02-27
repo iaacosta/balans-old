@@ -11,7 +11,7 @@ const exampleAccount: any = {
   name: 'Example Account 1',
   bank: 'Example Bank 1',
   initialBalance: 0,
-  currency: { id: 0, name: 'Example' },
+  currency: { id: 0 },
   billingDay: 1,
   paymentDay: 2,
 };
@@ -36,7 +36,8 @@ describe('Debit account resolvers', () => {
     find = jest.fn(() => [exampleAccount]);
     findOne = jest.fn(() => exampleAccount);
     save = jest.fn(() => exampleAccount);
-    remove = jest.fn(() => '0');
+    remove = jest.fn(() => 0);
+
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
       .mockImplementation(() => ({ find, findOne, save, remove } as any));
@@ -47,6 +48,7 @@ describe('Debit account resolvers', () => {
   });
 
   afterEach(() => {
+    (currencyById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -163,10 +165,6 @@ describe('Debit account resolvers', () => {
         await getCreditAccounts();
         expect(creditAccountResolver).toHaveBeenCalledTimes(2);
 
-        /**
-         * I put the next two arguments (number, index, list)
-         * because of been called on a map
-         */
         expect(creditAccountResolver).toHaveBeenNthCalledWith(1, 1, 0, [1, 2]);
         expect(creditAccountResolver).toHaveBeenNthCalledWith(2, 2, 1, [1, 2]);
         creditAccountResolver.mockRestore();

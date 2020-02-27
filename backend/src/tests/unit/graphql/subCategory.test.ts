@@ -10,8 +10,6 @@ const exampleSubCat: any = {
   id: 0,
   name: 'Example SubCategory',
   category: { id: 0 },
-  debitAccounts: [1, 2, 3],
-  creditAccounts: [1, 2],
 };
 
 jest.mock('../../../graphql/resolvers/category', () => ({
@@ -45,6 +43,7 @@ describe('SubCategory resolvers', () => {
   });
 
   afterEach(() => {
+    (categoryById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
