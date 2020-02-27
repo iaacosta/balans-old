@@ -8,8 +8,11 @@ import {
   debitAccounts,
   creditAccounts,
   categories,
+  subCategories,
 } from './data.json';
 import Category from '../../models/Category';
+import SubCategory from '../../models/SubCategory';
+import { getCurrencyById, getCategoryById } from './common';
 
 export const seedCurrencies = async () => {
   const connection = getConnection();
@@ -46,7 +49,7 @@ export const seedDebitAccounts = async () => {
     .values(
       debitAccounts.map(({ currencyId, ...rest }) => ({
         ...rest,
-        currency: currencies.find(({ id }) => currencyId === id),
+        currency: getCurrencyById(currencyId),
       })),
     )
     .execute();
@@ -69,7 +72,7 @@ export const seedCreditAccounts = async () => {
     .values(
       creditAccounts.map(({ currencyId, ...rest }) => ({
         ...rest,
-        currency: currencies.find(({ id }) => currencyId === id),
+        currency: getCurrencyById(currencyId),
       })),
     )
     .execute();
@@ -90,5 +93,28 @@ export const seedCategories = async () => {
     .insert()
     .into(Category)
     .values(categories as Category[])
+    .execute();
+};
+
+export const seedSubCategories = async () => {
+  const connection = getConnection();
+  const queryBuilder = connection.createQueryBuilder();
+
+  await connection.query('ALTER SEQUENCE sub_category_id_seq RESTART');
+
+  await queryBuilder
+    .delete()
+    .from(SubCategory)
+    .execute();
+
+  await queryBuilder
+    .insert()
+    .into(SubCategory)
+    .values(
+      subCategories.map(({ categoryId, ...rest }) => ({
+        ...rest,
+        category: getCategoryById(categoryId) as Category,
+      })),
+    )
     .execute();
 };
