@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
@@ -11,8 +11,8 @@ type Queries = 'getCurrency' | 'getCurrencies';
 type Mutations = 'createCurrency' | 'updateCurrency' | 'deleteCurrency';
 type Input = { id: number; name: string };
 
-export const currencyById = async (repo: Repository<Currency>, id: number) => {
-  const currency = await repo.findOne(id, {
+export const currencyById = async (id: number) => {
+  const currency = await getRepository(Currency).findOne(id, {
     relations: ['debitAccounts', 'creditAccounts'],
   });
   if (!currency) throw new Error('no currency with such id');
@@ -40,10 +40,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
         order: { id: 1 },
       });
 
-      return currencies.map(currencyResolver);
+      return currencies.map((currency) => currencyResolver(currency));
     },
-    getCurrency: async (parent, { id }) =>
-      currencyById(getRepository(Currency), id),
+    getCurrency: async (parent, { id }) => currencyById(id),
   },
   Mutation: {
     createCurrency: async (parent, { name }) => {

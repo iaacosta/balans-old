@@ -34,7 +34,7 @@ export const debitAccountResolver = ({
   ...debitAccount
 }: DebitAccount) => ({
   ...debitAccount,
-  currency: () => currencyById(getRepository(Currency), currency.id),
+  currency: () => currencyById(currency.id),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
