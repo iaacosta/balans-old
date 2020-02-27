@@ -281,3 +281,85 @@ export const category = {
     }
   `,
 };
+
+export const subCategory = {
+  GET_SUBCATEGORIES: gql`
+    query {
+      getSubCategories {
+        id
+        name
+        category {
+          id
+          name
+          type
+          icon
+        }
+      }
+    }
+  `,
+  GET_SUBCATEGORY: gql`
+    query($id: ID!) {
+      getSubCategory(id: $id) {
+        id
+        name
+        category {
+          id
+          name
+          type
+          icon
+        }
+      }
+    }
+  `,
+  CREATE_SUBCATEGORY: gql`
+    mutation($name: String!, $categoryId: ID!) {
+      createSubCategory(name: $name, categoryId: $categoryId) {
+        id
+        name
+        category {
+          id
+          name
+          type
+          icon
+        }
+      }
+    }
+  `,
+  UPDATE_SUBCATEGORY: gql`
+    mutation($id: ID!, $name: String, $categoryId: ID) {
+      updateSubCategory(id: $id, name: $name, categoryId: $categoryId) {
+        id
+        name
+        category {
+          id
+          name
+          type
+          icon
+        }
+      }
+    }
+  `,
+  DELETE_SUBCATEGORY: gql`
+    mutation($id: ID!) {
+      deleteSubCategory(id: $id)
+    }
+  `,
+  GET_SUBCATEGORY_NESTED: gql`
+    query($id: ID!) {
+      getSubCategory(id: $id) {
+        id
+        name
+        category {
+          id
+          name
+          type
+          icon
+          subCategories {
+            id
+            name
+          }
+        }
+      }
+    }
+  `,
+};
