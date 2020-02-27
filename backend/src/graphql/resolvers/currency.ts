@@ -3,10 +3,9 @@ import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import { ResolverMap } from '../../@types';
-import { creditAccountById } from './creditAccount';
+import { creditAccountsById } from './creditAccount';
 import { debitAccountById } from './debitAccount';
 import DebitAccount from '../../models/DebitAccount';
-import CreditAccount from '../../models/CreditAccount';
 
 type Queries = 'getCurrency' | 'getCurrencies';
 type Mutations = 'createCurrency' | 'updateCurrency' | 'deleteCurrency';
@@ -30,10 +29,7 @@ export const currencyResolver = ({
     debitAccounts.map(({ id }) =>
       debitAccountById(getRepository(DebitAccount), id),
     ),
-  creditAccounts: () =>
-    creditAccounts.map(({ id }) =>
-      creditAccountById(getRepository(CreditAccount), id),
-    ),
+  creditAccounts: () => creditAccountsById(creditAccounts.map(({ id }) => id)),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
