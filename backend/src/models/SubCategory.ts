@@ -25,6 +25,9 @@ export default class SubCategory {
   )
   category: Category;
 
+  @Column({ nullable: true })
+  categoryId!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 
