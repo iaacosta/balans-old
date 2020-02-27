@@ -45,7 +45,7 @@ describe('Category resolvers', () => {
   });
 
   afterEach(() => {
-    (subCategoriesById as any).mockClear();
+    (subCategoriesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();

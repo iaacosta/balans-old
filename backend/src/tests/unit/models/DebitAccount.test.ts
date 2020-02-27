@@ -2,9 +2,10 @@
 import { validateOrReject } from 'class-validator';
 
 import DebitAccount from '../../../models/DebitAccount';
-import * as CurrencyModel from '../../../models/Currency';
+import _Currency from '../../../models/Currency';
 
-const Currency = ((CurrencyModel.default as any) = jest.fn());
+jest.mock('../../../models/Currency.ts', () => jest.fn());
+const Currency = _Currency as jest.Mock;
 
 describe('DebitAccount model test', () => {
   const currency = new Currency();
