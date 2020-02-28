@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-  currencies,
-  debitAccounts,
-  creditAccounts,
-  categories,
-  subCategories,
-} from './data.json';
+import { currencies, accounts, categories, subCategories } from './data.json';
 
 export const getCurrencyById = (_id: number) =>
   currencies.find(({ id }) => id === _id);
@@ -17,34 +11,24 @@ export const getCategoryById = (_id: number) => {
   return category;
 };
 
-export const getDebitAccountsRelatedToCurrency = (_currencyId: number) => {
-  const accounts = debitAccounts.filter(
-    ({ currencyId }) => currencyId === _currencyId,
-  );
+export const getAccountsRelatedToCurrency = (_currencyId: number) => {
+  const accs = accounts.filter(({ currencyId }) => currencyId === _currencyId);
 
-  return accounts.map(({ id, name, bank, allowsNegative, initialBalance }) => ({
-    id: id.toString(),
-    name,
-    bank,
-    initialBalance,
-    allowsNegative,
-  }));
-};
+  return accs.map(
+    ({ id, type, name, bank, initialBalance, paymentDay, billingDay }) => {
+      const acc: any = {
+        id: id.toString(),
+        type,
+        name,
+        bank,
+        initialBalance,
+      };
 
-export const getCreditAccountsRelatedToCurrency = (_currencyId: number) => {
-  const accounts = creditAccounts.filter(
-    ({ currencyId }) => currencyId === _currencyId,
-  );
+      if (paymentDay) acc.paymentDay = paymentDay;
+      if (billingDay) acc.billingDay = billingDay;
 
-  return accounts.map(
-    ({ id, name, bank, initialBalance, billingDay, paymentDay }) => ({
-      id: id.toString(),
-      name,
-      bank,
-      initialBalance,
-      billingDay,
-      paymentDay,
-    }),
+      return acc as Account;
+    },
   );
 };
 

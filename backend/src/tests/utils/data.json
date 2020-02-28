@@ -3,39 +3,33 @@
     { "id": 1, "name": "CR1" },
     { "id": 2, "name": "CR2" }
   ],
-  "debitAccounts": [
+  "accounts": [
     {
       "id": 1,
+      "type": "cash",
       "name": "Example account 1",
       "bank": "Example bank 1",
-      "initialBalance": 0,
-      "allowsNegative": false,
-      "currencyId": 1
-    },
-    {
-      "id": 2,
-      "name": "Example account 2",
-      "bank": "Example bank 2",
       "initialBalance": 1,
-      "allowsNegative": true,
-      "currencyId": 2
-    }
-  ],
-  "creditAccounts": [
-    {
-      "id": 1,
-      "name": "Example account 1",
-      "bank": "Example bank 1",
-      "initialBalance": 0,
       "currencyId": 1,
-      "billingDay": 1,
-      "paymentDay": 2
+      "billingDay": 0,
+      "paymentDay": 0
     },
     {
       "id": 2,
+      "type": "checking",
       "name": "Example account 2",
       "bank": "Example bank 2",
-      "initialBalance": 1,
+      "initialBalance": 2,
+      "currencyId": 2,
+      "billingDay": 0,
+      "paymentDay": 0
+    },
+    {
+      "id": 3,
+      "type": "credit",
+      "name": "Example account 3",
+      "bank": "Example bank 3",
+      "initialBalance": 3,
       "currencyId": 2,
       "billingDay": 3,
       "paymentDay": 4

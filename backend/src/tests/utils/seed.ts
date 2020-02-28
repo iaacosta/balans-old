@@ -1,12 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import { getConnection } from 'typeorm';
 import Currency from '../../models/Currency';
-import DebitAccount from '../../models/DebitAccount';
-import CreditAccount from '../../models/CreditAccount';
+import Account from '../../models/Account';
 import {
   currencies,
-  debitAccounts,
-  creditAccounts,
+  accounts,
   categories,
   subCategories,
   places,
@@ -34,45 +32,22 @@ export const seedCurrencies = async () => {
     .execute();
 };
 
-export const seedDebitAccounts = async () => {
+export const seedAccounts = async () => {
   const connection = getConnection();
   const queryBuilder = connection.createQueryBuilder();
 
-  await connection.query('ALTER SEQUENCE debit_account_id_seq RESTART');
+  await connection.query('ALTER SEQUENCE account_id_seq RESTART;');
 
   await queryBuilder
     .delete()
-    .from(DebitAccount)
+    .from(Account)
     .execute();
 
   await queryBuilder
     .insert()
-    .into(DebitAccount)
+    .into(Account)
     .values(
-      debitAccounts.map(({ currencyId, ...rest }) => ({
-        ...rest,
-        currency: getCurrencyById(currencyId),
-      })),
-    )
-    .execute();
-};
-
-export const seedCreditAccounts = async () => {
-  const connection = getConnection();
-  const queryBuilder = connection.createQueryBuilder();
-
-  await connection.query('ALTER SEQUENCE credit_account_id_seq RESTART');
-
-  await queryBuilder
-    .delete()
-    .from(CreditAccount)
-    .execute();
-
-  await queryBuilder
-    .insert()
-    .into(CreditAccount)
-    .values(
-      creditAccounts.map(({ currencyId, ...rest }) => ({
+      accounts.map(({ currencyId, ...rest }: any) => ({
         ...rest,
         currency: getCurrencyById(currencyId),
       })),
