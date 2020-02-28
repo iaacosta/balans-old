@@ -3,8 +3,7 @@ import { validateOrReject } from 'class-validator';
 
 import Currency from '../../models/Currency';
 import { ResolverMap } from '../../@types';
-import { creditAccountsById } from './creditAccount';
-import { debitAccountsById } from './debitAccount';
+import { accountsById } from './account';
 
 type Queries = 'getCurrency' | 'getCurrencies';
 type Mutations = 'createCurrency' | 'updateCurrency' | 'deleteCurrency';
@@ -12,27 +11,22 @@ type Input = { id: number; name: string };
 
 export const currencyById = async (id: number) => {
   const currency = await getRepository(Currency).findOne(id, {
-    relations: ['debitAccounts', 'creditAccounts'],
+    relations: ['accounts'],
   });
   if (!currency) throw new Error('no currency with such id');
   return currencyResolver(currency);
 };
 
-export const currencyResolver = ({
-  debitAccounts,
-  creditAccounts,
-  ...currency
-}: Currency) => ({
+export const currencyResolver = ({ accounts, ...currency }: Currency) => ({
   ...currency,
-  debitAccounts: () => debitAccountsById(debitAccounts.map(({ id }) => id)),
-  creditAccounts: () => creditAccountsById(creditAccounts.map(({ id }) => id)),
+  accounts: () => accountsById(accounts.map(({ id }) => id)),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getCurrencies: async () => {
       const currencies = await getRepository(Currency).find({
-        relations: ['debitAccounts', 'creditAccounts'],
+        relations: ['accounts'],
         order: { id: 1 },
       });
 

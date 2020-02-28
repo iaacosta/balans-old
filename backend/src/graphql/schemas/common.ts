@@ -13,10 +13,8 @@ export default gql`
     """
     Accounts
     """
-    getDebitAccounts: [DebitAccount!]
-    getDebitAccount(id: ID!): DebitAccount!
-    getCreditAccounts: [CreditAccount!]
-    getCreditAccount(id: ID!): CreditAccount!
+    getAccounts: [Account!]
+    getAccount(id: ID!): Account!
 
     """
     Category
@@ -48,44 +46,27 @@ export default gql`
     """
     Accounts
     """
-    createDebitAccount(
+    createAccount(
+      type: String!
       name: String!
       bank: String!
       initialBalance: Int!
-      allowsNegative: Boolean!
-      currencyId: ID!
-    ): DebitAccount!
-
-    updateDebitAccount(
-      id: ID!
-      name: String
-      bank: String
-      initialBalance: Int
-      currencyId: ID
-    ): DebitAccount!
-
-    deleteDebitAccount(id: ID!): ID!
-
-    createCreditAccount(
-      name: String!
-      bank: String!
-      initialBalance: Int!
-      currencyId: ID!
-      billingDay: Int!
-      paymentDay: Int!
-    ): CreditAccount!
-
-    updateCreditAccount(
-      id: ID!
-      name: String
-      bank: String
-      initialBalance: Int
-      currencyId: ID
-      billingDay: Int
       paymentDay: Int
-    ): CreditAccount!
+      billingDay: Int
+      currencyId: ID!
+    ): Account!
 
-    deleteCreditAccount(id: ID!): ID!
+    updateAccount(
+      id: ID!
+      name: String
+      bank: String
+      initialBalance: Int
+      paymentDay: Int
+      billingDay: Int
+      currencyId: ID
+    ): Account!
+
+    deleteAccount(id: ID!): ID!
 
     """
     Category

@@ -1,25 +1,15 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
-  type DebitAccount {
+  type Account {
     id: ID!
+    type: String!
     name: String!
     bank: String!
     initialBalance: Int!
-    allowsNegative: Boolean!
     currency: Currency!
-    createdAt: Date!
-    updatedAt: Date!
-  }
-
-  type CreditAccount {
-    id: ID!
-    name: String!
-    bank: String!
-    initialBalance: Int!
-    billingDay: Int!
-    paymentDay: Int!
-    currency: Currency!
+    billingDay: Int
+    paymentDay: Int
     createdAt: Date!
     updatedAt: Date!
   }

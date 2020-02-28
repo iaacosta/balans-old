@@ -1,73 +1,68 @@
 import { getRepository, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
-import Currency from '../../models/Currency';
-import CreditAccount from '../../models/CreditAccount';
 import { currencyById } from './currency';
-import { ResolverMap } from '../../@types';
+import Account from '../../models/Account';
+import { ResolverMap, AccountType } from '../../@types';
+import Currency from '../../models/Currency';
 
-type Queries = 'getCreditAccount' | 'getCreditAccounts';
-type Mutations =
-  | 'createCreditAccount'
-  | 'updateCreditAccount'
-  | 'deleteCreditAccount';
+type Queries = 'getAccount' | 'getAccounts';
+type Mutations = 'createAccount' | 'updateAccount' | 'deleteAccount';
 type Input = {
   id: number;
+  type: AccountType;
   name: string;
   bank: string;
   initialBalance: number;
   currencyId: number;
-  billingDay: number;
-  paymentDay: number;
+  billingDay?: number;
+  paymentDay?: number;
 };
 
-export const creditAccountById = async (id: number) => {
-  const creditAccount = await getRepository(CreditAccount).findOne(id, {
+export const accountById = async (id: number) => {
+  const account = await getRepository(Account).findOne(id, {
     relations: ['currency'],
   });
-
-  if (!creditAccount) throw new Error('no credit account with such id');
-  return creditAccountResolver(creditAccount);
+  if (!account) throw new Error('no debit account with such id');
+  return accountResolver(account);
 };
 
-export const creditAccountsById = async (ids: number[]) => {
+export const accountsById = async (ids: number[]) => {
   if (ids.length === 0) return [];
 
-  const creditAccounts = await getRepository(CreditAccount).find({
+  const accounts = await getRepository(Account).find({
     where: { id: In(ids) },
     relations: ['currency'],
   });
 
-  return creditAccounts.map((account) => creditAccountResolver(account));
+  return accounts.map((account) => accountResolver(account));
 };
 
-export const creditAccountResolver = ({
-  currency,
-  ...creditAccount
-}: CreditAccount) => ({
-  ...creditAccount,
+export const accountResolver = ({ currency, ...account }: Account) => ({
+  ...account,
   currency: () => currencyById(currency.id),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
-    getCreditAccounts: async () => {
-      const accounts = await getRepository(CreditAccount).find({
+    getAccounts: async () => {
+      const accounts = await getRepository(Account).find({
         relations: ['currency'],
       });
 
-      return accounts.map(creditAccountResolver);
+      return accounts.map((account) => accountResolver(account));
     },
-    getCreditAccount: (parent, { id }) => creditAccountById(id),
+    getAccount: (parent, { id }) => accountById(id),
   },
   Mutation: {
-    createCreditAccount: async (
+    createAccount: async (
       parent,
-      { name, bank, currencyId, initialBalance, billingDay, paymentDay },
+      { type, name, bank, initialBalance, currencyId, billingDay, paymentDay },
     ) => {
       const currency = await getRepository(Currency).findOne(currencyId);
       if (!currency) throw new Error('no currency with such id');
-      const account = new CreditAccount(
+      const account = new Account(
+        type,
         name,
         bank,
         initialBalance,
@@ -77,31 +72,40 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
       );
 
       await validateOrReject(account);
-      return creditAccountResolver(
-        await getRepository(CreditAccount).save(account),
-      );
+      return accountResolver(await getRepository(Account).save(account));
     },
-    updateCreditAccount: async (
+    updateAccount: async (
       parent,
-      { id, name, bank, initialBalance, billingDay, paymentDay, currencyId },
+      { id, name, bank, initialBalance, currencyId, billingDay, paymentDay },
     ) => {
-      const repo = getRepository(CreditAccount);
+      const repo = getRepository(Account);
       const account = await repo.findOne(id, { relations: ['currency'] });
       if (!account) throw new Error('no debit account with such id');
 
       /* Base attributes */
       if (name && account.name !== name) account.name = name;
       if (bank && account.bank !== bank) account.bank = bank;
+
       if (
         initialBalance !== undefined &&
         account.initialBalance !== initialBalance
       ) {
         account.initialBalance = initialBalance;
       }
-      if (billingDay && account.billingDay !== billingDay) {
+
+      if (
+        account.type === 'credit' &&
+        billingDay &&
+        billingDay !== account.billingDay
+      ) {
         account.billingDay = billingDay;
       }
-      if (paymentDay && account.paymentDay !== paymentDay) {
+
+      if (
+        account.type === 'credit' &&
+        paymentDay &&
+        paymentDay !== account.paymentDay
+      ) {
         account.paymentDay = paymentDay;
       }
 
@@ -113,10 +117,10 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
       }
 
       await validateOrReject(account);
-      return creditAccountResolver(await repo.save(account));
+      return accountResolver(await repo.save(account));
     },
-    deleteCreditAccount: async (parent, { id }) => {
-      const repo = getRepository(CreditAccount);
+    deleteAccount: async (parent, { id }) => {
+      const repo = getRepository(Account);
       const account = await repo.findOne(id);
       if (!account) throw new Error('no account with such id');
       await repo.remove(account);
