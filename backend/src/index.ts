@@ -12,7 +12,7 @@ const app = express();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async () => ({ s3: new S3Helper() }),
+  context: () => ({ s3: new S3Helper() }),
 });
 server.applyMiddleware({ app });
 
