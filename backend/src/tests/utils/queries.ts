@@ -400,3 +400,56 @@ export const subCategory = {
     }
   `,
 };
+
+export const place = {
+  GET_PLACES: gql`
+    query {
+      getPlaces {
+        id
+        name
+        photoUri
+        latitude
+        longitude
+      }
+    }
+  `,
+  GET_PLACE: gql`
+    query($id: ID!) {
+      getPlace(id: $id) {
+        id
+        name
+        photoUri
+        latitude
+        longitude
+      }
+    }
+  `,
+  UPDATE_PLACE: gql`
+    mutation(
+      $id: ID!
+      $name: String
+      $photo: Upload
+      $latitude: Float
+      $longitude: Float
+    ) {
+      updatePlace(
+        id: $id
+        name: $name
+        photo: $photo
+        latitude: $latitude
+        longitude: $longitude
+      ) {
+        id
+        name
+        photoUri
+        latitude
+        longitude
+      }
+    }
+  `,
+  DELETE_PLACE: gql`
+    mutation($id: ID!) {
+      deletePlace(id: $id)
+    }
+  `,
+};
