@@ -4,9 +4,6 @@ import { FileUpload } from 'graphql-upload';
 import { PassThrough } from 'stream';
 import { v4 as uuid } from 'uuid';
 
-const { S3_URL } = process.env;
-if (!S3_URL) console.error('missing S3_URL in environment variables');
-
 export default class S3Helper {
   private client: S3;
 
@@ -47,7 +44,7 @@ export default class S3Helper {
 
       this.client.upload(params, (err: any) => {
         if (err) reject(err);
-        resolve(`${S3_URL}/${_fileName}`);
+        resolve(`${process.env.S3_URL}/${_fileName}`);
       });
 
       stream.pipe(pass);
@@ -55,7 +52,7 @@ export default class S3Helper {
   }
 
   public async removeFile(uri: string): Promise<boolean> {
-    const fileName = uri.split(`${S3_URL}/`)[1];
+    const fileName = uri.split(`${process.env.S3_URL}/`)[1];
     return new Promise((resolve, reject) =>
       this.client.deleteObject(
         { Bucket: 'finanzie-photos', Key: fileName },
