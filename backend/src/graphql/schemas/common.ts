@@ -33,6 +33,12 @@ export default gql`
     """
     getPlaces: [Place!]
     getPlace(id: ID!): Place!
+
+    """
+    Incomes
+    """
+    getIncomes: [Income!]
+    getIncome(id: ID!): Income!
   }
 
   type Mutation {
@@ -101,5 +107,27 @@ export default gql`
     ): Place!
 
     deletePlace(id: ID!): ID!
+
+    """
+    Incomes
+    """
+    createIncome(
+      amount: Float!
+      description: String
+      date: Date!
+      accountId: ID!
+      subCategoryId: ID!
+    ): Income!
+
+    updateIncome(
+      id: ID!
+      amount: Float
+      description: String
+      date: Date
+      accountId: ID
+      subCategoryId: ID
+    ): Income!
+
+    deleteIncome(id: ID!): ID!
   }
 `;

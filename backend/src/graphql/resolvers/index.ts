@@ -3,6 +3,7 @@ import accountResolvers from './account';
 import categoryResolvers from './category';
 import subCategoryResolvers from './subCategory';
 import placeResolvers from './place';
+import incomeResolvers from './income';
 import scalars from './scalars';
 
 export default {
@@ -12,6 +13,7 @@ export default {
     ...categoryResolvers.Query,
     ...subCategoryResolvers.Query,
     ...placeResolvers.Query,
+    ...incomeResolvers.Query,
   },
   Mutation: {
     ...currencyResolvers.Mutation,
@@ -19,6 +21,7 @@ export default {
     ...categoryResolvers.Mutation,
     ...subCategoryResolvers.Mutation,
     ...placeResolvers.Mutation,
+    ...incomeResolvers.Mutation,
   },
   ...scalars,
 };

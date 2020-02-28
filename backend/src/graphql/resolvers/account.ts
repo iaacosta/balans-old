@@ -1,10 +1,11 @@
 import { getRepository, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
-import { currencyById } from './currency';
 import Account from '../../models/Account';
-import { ResolverMap, AccountType } from '../../@types';
 import Currency from '../../models/Currency';
+import { currencyById } from './currency';
+import { incomesById } from './income';
+import { ResolverMap, AccountType } from '../../@types';
 
 type Queries = 'getAccount' | 'getAccounts';
 type Mutations = 'createAccount' | 'updateAccount' | 'deleteAccount';
@@ -19,10 +20,10 @@ type Input = {
   paymentDay?: number;
 };
 
+const relations = ['currency', 'incomes'];
+
 export const accountById = async (id: number) => {
-  const account = await getRepository(Account).findOne(id, {
-    relations: ['currency'],
-  });
+  const account = await getRepository(Account).findOne(id, { relations });
   if (!account) throw new Error('no debit account with such id');
   return accountResolver(account);
 };
@@ -32,24 +33,26 @@ export const accountsById = async (ids: number[]) => {
 
   const accounts = await getRepository(Account).find({
     where: { id: In(ids) },
-    relations: ['currency'],
+    relations,
   });
 
   return accounts.map((account) => accountResolver(account));
 };
 
-export const accountResolver = ({ currency, ...account }: Account) => ({
+export const accountResolver = ({
+  currency,
+  incomes,
+  ...account
+}: Account) => ({
   ...account,
+  incomes: () => incomesById(incomes.map(({ id }) => id)),
   currency: () => currencyById(currency.id),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getAccounts: async () => {
-      const accounts = await getRepository(Account).find({
-        relations: ['currency'],
-      });
-
+      const accounts = await getRepository(Account).find({ relations });
       return accounts.map((account) => accountResolver(account));
     },
     getAccount: (parent, { id }) => accountById(id),
@@ -79,7 +82,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
       { id, name, bank, initialBalance, currencyId, billingDay, paymentDay },
     ) => {
       const repo = getRepository(Account);
-      const account = await repo.findOne(id, { relations: ['currency'] });
+      const account = await repo.findOne(id, { relations });
       if (!account) throw new Error('no debit account with such id');
 
       /* Base attributes */

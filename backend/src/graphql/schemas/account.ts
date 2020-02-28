@@ -10,6 +10,7 @@ export default gql`
     currency: Currency!
     billingDay: Int
     paymentDay: Int
+    incomes: [Income!]
     createdAt: Date!
     updatedAt: Date!
   }
