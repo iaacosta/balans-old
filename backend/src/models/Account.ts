@@ -5,11 +5,13 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ValidateIf, Min, IsNotEmpty, IsIn, Max } from 'class-validator';
 
 import Currency from './Currency';
 import { AccountType } from '../@types';
+import Income from './Income';
 
 @Entity()
 export default class Account {
@@ -47,6 +49,12 @@ export default class Account {
   @Min(1)
   @Max(30)
   paymentDay: number;
+
+  @OneToMany(
+    () => Income,
+    (income) => income.account,
+  )
+  incomes!: Income[];
 
   @CreateDateColumn()
   createdAt!: Date;

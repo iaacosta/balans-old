@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
 import Category from './Category';
+import Income from './Income';
 
 @Entity()
 export default class SubCategory {
@@ -24,6 +26,12 @@ export default class SubCategory {
     { onDelete: 'CASCADE' },
   )
   category: Category;
+
+  @OneToMany(
+    () => Income,
+    (income) => income.account,
+  )
+  incomes!: Income[];
 
   @Column({ nullable: true })
   categoryId!: number;
