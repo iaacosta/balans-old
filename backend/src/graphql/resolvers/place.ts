@@ -16,9 +16,7 @@ interface Input {
 }
 
 export const placeById = async (id: number) => {
-  const place = await getRepository(Place).findOne(id, {
-    relations: ['debitAccounts', 'creditAccounts'],
-  });
+  const place = await getRepository(Place).findOne(id);
   if (!place) throw new Error('no place with such id');
   return placeResolver(place);
 };
@@ -31,7 +29,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getPlaces: async () => {
       const places = await getRepository(Place).find();
-      return places.map((place) => placeResolver(place));
+      return places.map(placeResolver);
     },
     getPlace: async (parent, { id }) => placeById(id),
   },
@@ -61,8 +59,10 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
       if (!place) throw new Error('no place with such id');
 
       if (name && place.name !== name) place.name = name;
-      if (latitude && place.latitude !== latitude) place.latitude = latitude;
-      if (longitude && place.longitude !== longitude) {
+      if (latitude !== undefined && place.latitude !== latitude) {
+        place.latitude = latitude;
+      }
+      if (longitude !== undefined && place.longitude !== longitude) {
         place.longitude = longitude;
       }
 
