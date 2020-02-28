@@ -29,6 +29,12 @@ export default gql`
     """
     getSubCategories: [SubCategory!]
     getSubCategory(id: ID!): SubCategory!
+
+    """
+    Places
+    """
+    getPlaces: [Place!]
+    getPlace(id: ID!): Place!
   }
 
   type Mutation {
@@ -94,5 +100,25 @@ export default gql`
     createSubCategory(name: String!, categoryId: ID!): SubCategory!
     updateSubCategory(id: ID!, name: String, categoryId: ID): SubCategory!
     deleteSubCategory(id: ID!): ID!
+
+    """
+    Place
+    """
+    createPlace(
+      name: String!
+      photo: Upload!
+      latitude: Float!
+      longitude: Float!
+    ): Place!
+
+    updatePlace(
+      id: ID!
+      name: String
+      photo: Upload
+      latitude: Float
+      longitude: Float
+    ): Place!
+
+    deletePlace(id: ID!): ID!
   }
 `;

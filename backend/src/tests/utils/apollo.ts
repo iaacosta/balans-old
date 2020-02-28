@@ -4,5 +4,10 @@ import { ApolloServer } from 'apollo-server-express';
 import typeDefs from '../../graphql/schemas';
 import resolvers from '../../graphql/resolvers';
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: () => ({ s3: { removeFile: () => true } }),
+});
+
 export const { query, mutate } = createTestClient(server);

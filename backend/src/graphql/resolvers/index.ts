@@ -3,6 +3,7 @@ import creditAccountResolvers from './creditAccount';
 import debitAccountResolvers from './debitAccount';
 import categoryResolvers from './category';
 import subCategoryResolvers from './subCategory';
+import placeResolvers from './place';
 import scalars from './scalars';
 
 export default {
@@ -12,6 +13,7 @@ export default {
     ...debitAccountResolvers.Query,
     ...categoryResolvers.Query,
     ...subCategoryResolvers.Query,
+    ...placeResolvers.Query,
   },
   Mutation: {
     ...currencyResolvers.Mutation,
@@ -19,6 +21,7 @@ export default {
     ...debitAccountResolvers.Mutation,
     ...categoryResolvers.Mutation,
     ...subCategoryResolvers.Mutation,
+    ...placeResolvers.Mutation,
   },
   ...scalars,
 };

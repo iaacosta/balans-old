@@ -51,5 +51,28 @@
     { "id": 2, "name": "Example Sub Category 1.2", "categoryId": 1 },
     { "id": 3, "name": "Example Sub Category 2.1", "categoryId": 2 },
     { "id": 4, "name": "Example Sub Category 3.1", "categoryId": 3 }
+  ],
+  "places": [
+    {
+      "id": 1,
+      "name": "Example Place 1",
+      "photoUri": "http://example.com/fileName1",
+      "latitude": 1,
+      "longitude": 1
+    },
+    {
+      "id": 2,
+      "name": "Example Place 2",
+      "photoUri": "http://example.com/fileName2",
+      "latitude": 2,
+      "longitude": 2
+    },
+    {
+      "id": 3,
+      "name": "Example Place 3",
+      "photoUri": "http://example.com/fileName3",
+      "latitude": 3,
+      "longitude": 3
+    }
   ]
 }

@@ -9,10 +9,12 @@ import {
   creditAccounts,
   categories,
   subCategories,
+  places,
 } from './data.json';
 import Category from '../../models/Category';
 import SubCategory from '../../models/SubCategory';
 import { getCurrencyById, getCategoryById } from './common';
+import Place from '../../models/Place';
 
 export const seedCurrencies = async () => {
   const connection = getConnection();
@@ -116,5 +118,23 @@ export const seedSubCategories = async () => {
         category: getCategoryById(categoryId) as Category,
       })),
     )
+    .execute();
+};
+
+export const seedPlaces = async () => {
+  const connection = getConnection();
+  const queryBuilder = connection.createQueryBuilder();
+
+  await connection.query('ALTER SEQUENCE place_id_seq RESTART');
+
+  await queryBuilder
+    .delete()
+    .from(Place)
+    .execute();
+
+  await queryBuilder
+    .insert()
+    .into(Place)
+    .values(places)
     .execute();
 };
