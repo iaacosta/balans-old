@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
   Column,
 } from 'typeorm';
-import { IsNotEmpty, IsUrl, IsLatitude, IsLongitude } from 'class-validator';
+import { IsNotEmpty, IsLatitude, IsLongitude } from 'class-validator';
 
 @Entity()
 export default class Place {
@@ -17,7 +17,6 @@ export default class Place {
   name: string;
 
   @Column()
-  @IsUrl()
   photoUri: string;
 
   @Column({ type: 'float' })
@@ -34,14 +33,9 @@ export default class Place {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  constructor(
-    name: string,
-    photoUri: string,
-    latitude: number,
-    longitude: number,
-  ) {
+  constructor(name: string, latitude: number, longitude: number) {
     this.name = name;
-    this.photoUri = photoUri;
+    this.photoUri = '';
     this.latitude = latitude;
     this.longitude = longitude;
   }
