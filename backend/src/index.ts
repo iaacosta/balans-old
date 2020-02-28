@@ -4,11 +4,16 @@ import { createConnection } from 'typeorm';
 
 import typeDefs from './graphql/schemas';
 import resolvers from './graphql/resolvers';
+import S3Helper from './utils/S3Helper';
 
 const { PORT } = process.env;
 const app = express();
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async () => ({ s3: new S3Helper() }),
+});
 server.applyMiddleware({ app });
 
 createConnection().then(() => {
