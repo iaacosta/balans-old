@@ -5,6 +5,7 @@ import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/account';
 import * as model from '../../../models/Account';
 import { currencyById } from '../../../graphql/resolvers/currency';
+import { incomesById } from '../../../graphql/resolvers/income';
 
 const exampleAccount: any = {
   id: 0,
@@ -13,12 +14,17 @@ const exampleAccount: any = {
   bank: 'Example Bank 1',
   initialBalance: 0,
   currency: { id: 0 },
+  incomes: [{ id: 1 }, { id: 2 }, { id: 3 }],
   billingDay: 15,
   paymentDay: 1,
 };
 
 jest.mock('../../../graphql/resolvers/currency', () => ({
   currencyById: jest.fn(),
+}));
+
+jest.mock('../../../graphql/resolvers/income', () => ({
+  incomesById: jest.fn(),
 }));
 
 describe('Debit account resolvers', () => {
@@ -50,6 +56,7 @@ describe('Debit account resolvers', () => {
 
   afterEach(() => {
     (currencyById as jest.Mock).mockClear();
+    (incomesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -146,6 +153,13 @@ describe('Debit account resolvers', () => {
       const account = resolvers.accountResolver(exampleAccount);
       account.currency();
       expect(currencyById).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call incomesById one time with correct arguments', () => {
+      const account = resolvers.accountResolver(exampleAccount);
+      account.incomes();
+      expect(incomesById).toHaveBeenCalledTimes(1);
+      expect(incomesById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
@@ -251,7 +265,9 @@ describe('Debit account resolvers', () => {
       it('should call findOne method of getRepository', async () => {
         await updateAccount(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(0, { relations: ['currency'] });
+        expect(findOne).toHaveBeenCalledWith(0, {
+          relations: ['currency', 'incomes'],
+        });
       });
 
       it("should reject if find doesn't succeed", async () => {
