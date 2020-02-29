@@ -81,8 +81,12 @@ export default class Account {
       'you must provide billing and payment days if type is credit',
     );
 
-    if (type === 'credit' && billingDay === undefined) throw err;
-    if (type === 'credit' && paymentDay === undefined) throw err;
+    if (
+      type === 'credit' &&
+      (paymentDay === undefined || billingDay === undefined)
+    ) {
+      throw err;
+    }
 
     this.billingDay = billingDay || 0;
     this.paymentDay = paymentDay || 0;
