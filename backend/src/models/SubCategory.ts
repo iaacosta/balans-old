@@ -33,9 +33,6 @@ export default class SubCategory {
   )
   incomes!: Income[];
 
-  @Column({ nullable: true })
-  categoryId!: number;
-
   @CreateDateColumn()
   createdAt!: Date;
 
