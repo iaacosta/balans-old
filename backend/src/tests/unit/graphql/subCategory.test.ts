@@ -6,12 +6,14 @@ import * as resolvers from '../../../graphql/resolvers/subCategory';
 import * as model from '../../../models/SubCategory';
 import { categoryById } from '../../../graphql/resolvers/category';
 import { incomesById } from '../../../graphql/resolvers/income';
+import { expensesById } from '../../../graphql/resolvers/expense';
 
 const exampleSubCat: any = {
   id: 0,
   name: 'Example SubCategory',
   category: { id: 0 },
   incomes: [{ id: 1 }, { id: 2 }, { id: 3 }],
+  expenses: [{ id: 1 }, { id: 2 }, { id: 3 }],
 };
 
 jest.mock('../../../graphql/resolvers/category', () => ({
@@ -20,6 +22,10 @@ jest.mock('../../../graphql/resolvers/category', () => ({
 
 jest.mock('../../../graphql/resolvers/income', () => ({
   incomesById: jest.fn(),
+}));
+
+jest.mock('../../../graphql/resolvers/expense', () => ({
+  expensesById: jest.fn(),
 }));
 
 describe('SubCategory resolvers', () => {
@@ -51,6 +57,7 @@ describe('SubCategory resolvers', () => {
   afterEach(() => {
     (categoryById as jest.Mock).mockClear();
     (incomesById as jest.Mock).mockClear();
+    (expensesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -152,6 +159,13 @@ describe('SubCategory resolvers', () => {
       subCategory.incomes();
       expect(incomesById).toHaveBeenCalledTimes(1);
       expect(incomesById).toHaveBeenCalledWith([1, 2, 3]);
+    });
+
+    it('should call expensesById one time with correct arguments', () => {
+      const subCategory = resolvers.subCategoryResolver(exampleSubCat);
+      subCategory.expenses();
+      expect(expensesById).toHaveBeenCalledTimes(1);
+      expect(expensesById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
@@ -267,7 +281,7 @@ describe('SubCategory resolvers', () => {
         await updateSubCategory(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
         expect(findOne).toHaveBeenCalledWith(0, {
-          relations: ['category', 'incomes'],
+          relations: ['category', 'incomes', 'expenses'],
         });
       });
 
