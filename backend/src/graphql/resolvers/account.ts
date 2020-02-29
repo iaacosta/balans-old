@@ -6,6 +6,7 @@ import Currency from '../../models/Currency';
 import { currencyById } from './currency';
 import { incomesById } from './income';
 import { ResolverMap, AccountType } from '../../@types';
+import { expensesById } from './expense';
 
 type Queries = 'getAccount' | 'getAccounts';
 type Mutations = 'createAccount' | 'updateAccount' | 'deleteAccount';
@@ -20,7 +21,7 @@ type Input = {
   paymentDay?: number;
 };
 
-const relations = ['currency', 'incomes'];
+const relations = ['currency', 'incomes', 'expenses'];
 
 export const accountById = async (id: number) => {
   const account = await getRepository(Account).findOne(id, { relations });
@@ -42,10 +43,12 @@ export const accountsById = async (ids: number[]) => {
 export const accountResolver = ({
   currency,
   incomes,
+  expenses,
   ...account
 }: Account) => ({
   ...account,
   incomes: () => incomesById(incomes.map(({ id }) => id)),
+  expenses: () => expensesById(expenses.map(({ id }) => id)),
   currency: () => currencyById(currency.id),
 });
 

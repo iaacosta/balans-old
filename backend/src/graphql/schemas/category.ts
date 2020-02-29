@@ -16,6 +16,7 @@ export default gql`
     name: String!
     category: Category!
     incomes: [Income!]
+    expenses: [Expense!]
     createdAt: Date!
     updatedAt: Date!
   }

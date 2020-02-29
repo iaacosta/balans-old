@@ -11,4 +11,17 @@ export default gql`
     createdAt: Date!
     updatedAt: Date!
   }
+
+  type Expense {
+    id: ID!
+    amount: Float!
+    description: String!
+    date: Date!
+    installments: Int!
+    account: Account!
+    subCategory: SubCategory!
+    place: Place!
+    createdAt: Date!
+    updatedAt: Date!
+  }
 `;
