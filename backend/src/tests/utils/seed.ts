@@ -9,6 +9,7 @@ import {
   subCategories,
   places,
   incomes,
+  expenses,
 } from './data.json';
 import Category from '../../models/Category';
 import SubCategory from '../../models/SubCategory';
@@ -17,9 +18,11 @@ import {
   getCategoryById,
   getSubCategoryById,
   getAccountById,
+  getPlaceById,
 } from './common';
 import Place from '../../models/Place';
 import Income from '../../models/Income';
+import Expense from '../../models/Expense';
 
 export const seedCurrencies = async () => {
   const connection = getConnection();
@@ -140,6 +143,31 @@ export const seedIncomes = async () => {
         ...rest,
         subCategory: getSubCategoryById(subCategoryId),
         account: getAccountById(accountId),
+      })),
+    )
+    .execute();
+};
+
+export const seedExpenses = async () => {
+  const connection = getConnection();
+  const queryBuilder = connection.createQueryBuilder();
+
+  await connection.query('ALTER SEQUENCE expense_id_seq RESTART');
+
+  await queryBuilder
+    .delete()
+    .from(Expense)
+    .execute();
+
+  await queryBuilder
+    .insert()
+    .into(Expense)
+    .values(
+      expenses.map(({ subCategoryId, accountId, placeId, ...rest }: any) => ({
+        ...rest,
+        subCategory: getSubCategoryById(subCategoryId),
+        account: getAccountById(accountId),
+        place: getPlaceById(placeId),
       })),
     )
     .execute();

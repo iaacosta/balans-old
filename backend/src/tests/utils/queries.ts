@@ -15,6 +15,19 @@ export const account = {
           id
           name
         }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
+        }
       }
     }
   `,
@@ -38,6 +51,13 @@ export const account = {
           date
           description
         }
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
+        }
       }
     }
   `,
@@ -60,6 +80,13 @@ export const account = {
           amount
           date
           description
+        }
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
         }
       }
     }
@@ -258,6 +285,19 @@ export const subCategory = {
           type
           icon
         }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
+        }
       }
     }
   `,
@@ -277,6 +317,13 @@ export const subCategory = {
           amount
           date
           description
+        }
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
         }
       }
     }
@@ -343,6 +390,13 @@ export const place = {
         photoUri
         latitude
         longitude
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
+        }
       }
     }
   `,
@@ -354,6 +408,13 @@ export const place = {
         photoUri
         latitude
         longitude
+        expenses {
+          id
+          amount
+          date
+          description
+          installments
+        }
       }
     }
   `,
@@ -483,6 +544,132 @@ export const income = {
   DELETE_INCOME: gql`
     mutation($id: ID!) {
       deleteIncome(id: $id)
+    }
+  `,
+};
+
+export const expense = {
+  GET_EXPENSES: gql`
+    query {
+      getExpenses {
+        id
+        amount
+        date
+        description
+        installments
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+        place {
+          id
+          name
+          photoUri
+          latitude
+          longitude
+        }
+      }
+    }
+  `,
+  GET_EXPENSE: gql`
+    query($id: ID!) {
+      getExpense(id: $id) {
+        id
+        amount
+        date
+        description
+        installments
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+        place {
+          id
+          name
+          photoUri
+          latitude
+          longitude
+        }
+      }
+    }
+  `,
+  CREATE_EXPENSE: gql`
+    mutation(
+      $amount: Float!
+      $date: Date!
+      $description: String
+      $installments: Int
+      $accountId: ID!
+      $subCategoryId: ID!
+      $placeId: ID!
+    ) {
+      createExpense(
+        amount: $amount
+        date: $date
+        description: $description
+        installments: $installments
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+        placeId: $placeId
+      ) {
+        id
+        amount
+        date
+        description
+        installments
+      }
+    }
+  `,
+  UPDATE_EXPENSE: gql`
+    mutation(
+      $id: ID!
+      $amount: Float
+      $date: Date
+      $description: String
+      $installments: Int
+      $accountId: ID
+      $subCategoryId: ID
+      $placeId: ID
+    ) {
+      updateExpense(
+        id: $id
+        amount: $amount
+        date: $date
+        description: $description
+        installments: $installments
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+        placeId: $placeId
+      ) {
+        id
+        amount
+        date
+        description
+        installments
+      }
+    }
+  `,
+  DELETE_EXPENSE: gql`
+    mutation($id: ID!) {
+      deleteExpense(id: $id)
     }
   `,
 };

@@ -85,5 +85,27 @@
       "subCategoryId": 2,
       "accountId": 2
     }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "amount": 1000,
+      "description": "Example expense 1",
+      "installments": 1,
+      "date": "2020-01-01T01:01:01",
+      "subCategoryId": 1,
+      "accountId": 1,
+      "placeId": 1
+    },
+    {
+      "id": 2,
+      "amount": 2000,
+      "description": "Example expense 2",
+      "installments": 1,
+      "date": "2020-02-02T02:02:02",
+      "subCategoryId": 1,
+      "accountId": 3,
+      "placeId": 2
+    }
   ]
 }

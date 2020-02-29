@@ -130,7 +130,7 @@ describe('Expense model test', () => {
 
     it('should not pass validation if installments < 1', () => {
       const currency = new Expense(
-        -10,
+        1000,
         {} as any,
         new Account(),
         new SubCategory(),
