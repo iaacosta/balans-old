@@ -28,7 +28,9 @@ export const placeResolver = ({ ...place }: Place) => ({
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getPlaces: async () => {
-      const places = await getRepository(Place).find();
+      const places = await getRepository(Place).find({
+        order: { id: 1 },
+      });
       return places.map(placeResolver);
     },
     getPlace: async (parent, { id }) => placeById(id),

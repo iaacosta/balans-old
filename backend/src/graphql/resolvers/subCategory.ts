@@ -55,6 +55,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     getSubCategories: async () => {
       const subCategories = await getRepository(SubCategory).find({
         relations,
+        order: { id: 1 },
       });
 
       return subCategories.map(subCategoryResolver);

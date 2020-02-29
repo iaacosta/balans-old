@@ -52,7 +52,11 @@ export const accountResolver = ({
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getAccounts: async () => {
-      const accounts = await getRepository(Account).find({ relations });
+      const accounts = await getRepository(Account).find({
+        relations,
+        order: { id: 1 },
+      });
+
       return accounts.map((account) => accountResolver(account));
     },
     getAccount: (parent, { id }) => accountById(id),

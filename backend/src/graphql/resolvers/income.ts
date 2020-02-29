@@ -56,6 +56,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     getIncomes: async () => {
       const incomes = await getRepository(Income).find({
         relations: ['subCategory', 'account'],
+        order: { id: 1 },
       });
 
       return incomes.map(incomeResolver);
