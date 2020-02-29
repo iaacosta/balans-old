@@ -9,7 +9,7 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import dayjs from 'dayjs';
-import { ValidateIf, Min, IsObject } from 'class-validator';
+import { Min, IsObject } from 'class-validator';
 
 import Account from './Account';
 import SubCategory from './SubCategory';
@@ -20,7 +20,6 @@ export default class Income {
   id!: number;
 
   @Column({ type: 'float' })
-  @ValidateIf((income) => ['cash', 'vista'].includes(income.account.type))
   @Min(0)
   amount: number;
 
