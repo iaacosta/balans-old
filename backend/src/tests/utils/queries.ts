@@ -32,6 +32,35 @@ export const account = {
           id
           name
         }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
+      }
+    }
+  `,
+  GET_ACCOUNT_AND_MOVEMENTS: gql`
+    query($id: ID!) {
+      getAccount(id: $id) {
+        id
+        type
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
       }
     }
   `,
@@ -173,6 +202,10 @@ export const category = {
         name
         type
         icon
+        subCategories {
+          id
+          name
+        }
       }
     }
   `,
@@ -211,20 +244,6 @@ export const category = {
       deleteCategory(id: $id)
     }
   `,
-  GET_CATEGORY_AND_SUBCATEGORIES: gql`
-    query($id: ID!) {
-      getCategory(id: $id) {
-        id
-        name
-        type
-        icon
-        subCategories {
-          id
-          name
-        }
-      }
-    }
-  `,
 };
 
 export const subCategory = {
@@ -252,6 +271,12 @@ export const subCategory = {
           name
           type
           icon
+        }
+        incomes {
+          id
+          amount
+          date
+          description
         }
       }
     }
@@ -358,6 +383,106 @@ export const place = {
   DELETE_PLACE: gql`
     mutation($id: ID!) {
       deletePlace(id: $id)
+    }
+  `,
+};
+
+export const income = {
+  GET_INCOMES: gql`
+    query {
+      getIncomes {
+        id
+        amount
+        date
+        description
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_INCOME: gql`
+    query($id: ID!) {
+      getIncome(id: $id) {
+        id
+        amount
+        date
+        description
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+      }
+    }
+  `,
+  CREATE_INCOME: gql`
+    mutation(
+      $amount: Float!
+      $date: Date!
+      $description: String
+      $accountId: ID!
+      $subCategoryId: ID!
+    ) {
+      createIncome(
+        amount: $amount
+        date: $date
+        description: $description
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+      ) {
+        id
+        amount
+        date
+        description
+      }
+    }
+  `,
+  UPDATE_INCOME: gql`
+    mutation(
+      $id: ID!
+      $amount: Float
+      $date: Date
+      $description: String
+      $accountId: ID
+      $subCategoryId: ID
+    ) {
+      updateIncome(
+        id: $id
+        amount: $amount
+        date: $date
+        description: $description
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+      ) {
+        id
+        amount
+        date
+        description
+      }
+    }
+  `,
+  DELETE_INCOME: gql`
+    mutation($id: ID!) {
+      deleteIncome(id: $id)
     }
   `,
 };

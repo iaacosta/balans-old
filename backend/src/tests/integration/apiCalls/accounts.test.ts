@@ -7,6 +7,10 @@ import {
   seedAccounts,
   account,
   getCurrencyById,
+  getIncomesRelated,
+  seedSubCategories,
+  seedIncomes,
+  seedCategories,
 } from '../../utils';
 import { accounts } from '../../utils/data.json';
 import Account from '../../../models/Account';
@@ -27,7 +31,14 @@ describe('debit account API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(() => seedCurrencies().then(seedAccounts));
+  beforeEach(() =>
+    seedCurrencies()
+      .then(seedAccounts)
+      .then(seedCategories)
+      .then(seedSubCategories)
+      .then(seedIncomes),
+  );
+
   afterAll(() => connection.close());
 
   describe('getAccounts', () => {
@@ -37,8 +48,6 @@ describe('debit account API calls', () => {
 
       accounts.forEach((acc, idx) => {
         const currency = getCurrencyById(acc.currencyId)!;
-        delete (currency as any).createdAt;
-        delete (currency as any).updatedAt;
 
         expect(data!.getAccounts[idx]).toMatchObject({
           type: acc.type,
@@ -54,11 +63,14 @@ describe('debit account API calls', () => {
   });
 
   describe('getAccount', () => {
-    it('should get correct debit accounts', async () => {
+    it('should get correct debit account', async () => {
       const { data } = await query({
         query: GET_ACCOUNT,
         variables: { id: 1 },
       });
+
+      const shouldCurrency = getCurrencyById(accounts[0].currencyId);
+      const shouldIncomes = getIncomesRelated(accounts[0].id, 'account')!;
 
       expect(data!.getAccount).toMatchObject({
         id: '1',
@@ -68,6 +80,8 @@ describe('debit account API calls', () => {
         initialBalance: accounts[0].initialBalance,
         paymentDay: accounts[0].paymentDay,
         billingDay: accounts[0].billingDay,
+        currency: { ...shouldCurrency, id: accounts[0].currencyId.toString() },
+        incomes: shouldIncomes,
       });
     });
   });

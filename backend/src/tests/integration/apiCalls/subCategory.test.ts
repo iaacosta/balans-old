@@ -8,6 +8,10 @@ import {
   getCategoryById,
   seedCategories,
   getSubCategoriesRelatedToCategory,
+  getIncomesRelated,
+  seedIncomes,
+  seedAccounts,
+  seedCurrencies,
 } from '../../utils';
 import { subCategories } from '../../utils/data.json';
 import SubCategory from '../../../models/SubCategory';
@@ -29,13 +33,19 @@ describe('sub category API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(() => seedCategories().then(seedSubCategories));
+  beforeEach(() =>
+    seedCategories()
+      .then(seedSubCategories)
+      .then(seedCurrencies)
+      .then(seedAccounts)
+      .then(seedIncomes),
+  );
   afterAll(() => connection.close());
 
   describe('getSubCategories', () => {
     it('should get correct sub categories', async () => {
       const { data } = await query({ query: GET_SUBCATEGORIES });
-      expect(data!.getSubCategories).toHaveLength(4);
+      expect(data!.getSubCategories).toHaveLength(3);
 
       subCategories.forEach((subCat, idx) => {
         const shouldCategory = getCategoryById(subCat.categoryId)!;
@@ -57,11 +67,16 @@ describe('sub category API calls', () => {
       });
 
       const shouldCategory = getCategoryById(subCategories[0].id)!;
+      const shouldIncomes = getIncomesRelated(
+        subCategories[0].id,
+        'subCategory',
+      )!;
 
       expect(data!.getSubCategory).toMatchObject({
         id: subCategories[0].id.toString(),
         name: subCategories[0].name,
         category: { ...shouldCategory, id: shouldCategory.id.toString() },
+        incomes: shouldIncomes,
       });
     });
 

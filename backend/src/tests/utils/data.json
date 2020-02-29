@@ -42,9 +42,8 @@
   ],
   "subCategories": [
     { "id": 1, "name": "Example Sub Category 1.1", "categoryId": 1 },
-    { "id": 2, "name": "Example Sub Category 1.2", "categoryId": 1 },
-    { "id": 3, "name": "Example Sub Category 2.1", "categoryId": 2 },
-    { "id": 4, "name": "Example Sub Category 3.1", "categoryId": 3 }
+    { "id": 2, "name": "Example Sub Category 2.1", "categoryId": 2 },
+    { "id": 3, "name": "Example Sub Category 3.1", "categoryId": 3 }
   ],
   "places": [
     {
@@ -67,6 +66,24 @@
       "photoUri": "http://example.com/fileName3",
       "latitude": 3,
       "longitude": 3
+    }
+  ],
+  "incomes": [
+    {
+      "id": 1,
+      "amount": 1000,
+      "description": "Example income 1",
+      "date": "2020-01-01T01:01:01",
+      "subCategoryId": 1,
+      "accountId": 1
+    },
+    {
+      "id": 2,
+      "amount": 2000,
+      "description": "Example income 2",
+      "date": "2020-02-02T02:02:02",
+      "subCategoryId": 2,
+      "accountId": 2
     }
   ]
 }
