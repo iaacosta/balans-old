@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "typeorm-cli": "ts-node node_modules/.bin/typeorm",
-    "db:generate-migration": "yarn typeorm-cli migration:generate -d src/migrations",
+    "db:migrate-generate": "yarn typeorm-cli migration:generate -d src/migrations",
     "db:migrate-dev": "yarn typeorm-cli migration:run",
     "db:migrate-test": "env DB_NAME=finanzie_test yarn typeorm-cli migration:run",
     "db:migrate-revert-dev": "yarn typeorm-cli migration:revert",

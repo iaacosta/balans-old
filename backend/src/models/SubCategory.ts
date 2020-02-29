@@ -10,6 +10,7 @@ import {
 import { IsNotEmpty } from 'class-validator';
 import Category from './Category';
 import Income from './Income';
+import Expense from './Expense';
 
 @Entity()
 export default class SubCategory {
@@ -32,6 +33,12 @@ export default class SubCategory {
     (income) => income.account,
   )
   incomes!: Income[];
+
+  @OneToMany(
+    () => Expense,
+    (expense) => expense.account,
+  )
+  expenses!: Expense[];
 
   @CreateDateColumn()
   createdAt!: Date;

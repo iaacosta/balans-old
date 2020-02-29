@@ -4,8 +4,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty, IsLatitude, IsLongitude } from 'class-validator';
+import Expense from './Expense';
 
 @Entity()
 export default class Place {
@@ -26,6 +28,12 @@ export default class Place {
   @Column({ type: 'float' })
   @IsLongitude()
   longitude: number;
+
+  @OneToMany(
+    () => Expense,
+    (expense) => expense.account,
+  )
+  expenses!: Expense[];
 
   @CreateDateColumn()
   createdAt!: Date;
