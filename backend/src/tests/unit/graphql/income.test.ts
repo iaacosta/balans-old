@@ -261,9 +261,26 @@ describe('Income resolvers', () => {
         expect(validateOrReject).toHaveBeenCalledWith(new Income());
       });
 
-      it('should reject if no income found', async () => {
-        findOne.mockImplementation(() => null);
-        expect(createIncome(null, { id: 0 })).rejects.toBeTruthy();
+      it('should reject if no sub category found', async () => {
+        findOne.mockImplementation((id) => {
+          if (id === 1) return false;
+          return true;
+        });
+
+        expect(
+          createIncome(null, { id: 0, subCategoryId: 1, accountId: 2 }),
+        ).rejects.toBeTruthy();
+      });
+
+      it('should reject if no account found', async () => {
+        findOne.mockImplementation((id) => {
+          if (id === 1) return false;
+          return true;
+        });
+
+        expect(
+          createIncome(null, { id: 0, subCategoryId: 2, accountId: 1 }),
+        ).rejects.toBeTruthy();
       });
     });
 
