@@ -13,10 +13,8 @@ export default gql`
     """
     Accounts
     """
-    getDebitAccounts: [DebitAccount!]
-    getDebitAccount(id: ID!): DebitAccount!
-    getCreditAccounts: [CreditAccount!]
-    getCreditAccount(id: ID!): CreditAccount!
+    getAccounts: [Account!]
+    getAccount(id: ID!): Account!
 
     """
     Category
@@ -35,6 +33,12 @@ export default gql`
     """
     getPlaces: [Place!]
     getPlace(id: ID!): Place!
+
+    """
+    Incomes
+    """
+    getIncomes: [Income!]
+    getIncome(id: ID!): Income!
   }
 
   type Mutation {
@@ -48,44 +52,27 @@ export default gql`
     """
     Accounts
     """
-    createDebitAccount(
+    createAccount(
+      type: String!
       name: String!
       bank: String!
       initialBalance: Int!
-      allowsNegative: Boolean!
-      currencyId: ID!
-    ): DebitAccount!
-
-    updateDebitAccount(
-      id: ID!
-      name: String
-      bank: String
-      initialBalance: Int
-      currencyId: ID
-    ): DebitAccount!
-
-    deleteDebitAccount(id: ID!): ID!
-
-    createCreditAccount(
-      name: String!
-      bank: String!
-      initialBalance: Int!
-      currencyId: ID!
-      billingDay: Int!
-      paymentDay: Int!
-    ): CreditAccount!
-
-    updateCreditAccount(
-      id: ID!
-      name: String
-      bank: String
-      initialBalance: Int
-      currencyId: ID
-      billingDay: Int
       paymentDay: Int
-    ): CreditAccount!
+      billingDay: Int
+      currencyId: ID!
+    ): Account!
 
-    deleteCreditAccount(id: ID!): ID!
+    updateAccount(
+      id: ID!
+      name: String
+      bank: String
+      initialBalance: Int
+      paymentDay: Int
+      billingDay: Int
+      currencyId: ID
+    ): Account!
+
+    deleteAccount(id: ID!): ID!
 
     """
     Category
@@ -120,5 +107,27 @@ export default gql`
     ): Place!
 
     deletePlace(id: ID!): ID!
+
+    """
+    Incomes
+    """
+    createIncome(
+      amount: Float!
+      description: String
+      date: Date!
+      accountId: ID!
+      subCategoryId: ID!
+    ): Income!
+
+    updateIncome(
+      id: ID!
+      amount: Float
+      description: String
+      date: Date
+      accountId: ID
+      subCategoryId: ID
+    ): Income!
+
+    deleteIncome(id: ID!): ID!
   }
 `;

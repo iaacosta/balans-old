@@ -5,15 +5,21 @@ import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/subCategory';
 import * as model from '../../../models/SubCategory';
 import { categoryById } from '../../../graphql/resolvers/category';
+import { incomesById } from '../../../graphql/resolvers/income';
 
 const exampleSubCat: any = {
   id: 0,
   name: 'Example SubCategory',
   category: { id: 0 },
+  incomes: [{ id: 1 }, { id: 2 }, { id: 3 }],
 };
 
 jest.mock('../../../graphql/resolvers/category', () => ({
   categoryById: jest.fn(),
+}));
+
+jest.mock('../../../graphql/resolvers/income', () => ({
+  incomesById: jest.fn(),
 }));
 
 describe('SubCategory resolvers', () => {
@@ -44,6 +50,7 @@ describe('SubCategory resolvers', () => {
 
   afterEach(() => {
     (categoryById as jest.Mock).mockClear();
+    (incomesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -138,6 +145,13 @@ describe('SubCategory resolvers', () => {
       const subCategory = resolvers.subCategoryResolver(exampleSubCat);
       subCategory.category();
       expect(categoryById).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call incomesById one time with correct arguments', () => {
+      const subCategory = resolvers.subCategoryResolver(exampleSubCat);
+      subCategory.incomes();
+      expect(incomesById).toHaveBeenCalledTimes(1);
+      expect(incomesById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
@@ -252,7 +266,9 @@ describe('SubCategory resolvers', () => {
       it('should call findOne method of getRepository', async () => {
         await updateSubCategory(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(0, { relations: ['category'] });
+        expect(findOne).toHaveBeenCalledWith(0, {
+          relations: ['category', 'incomes'],
+        });
       });
 
       it("should reject if find doesn't succeed", async () => {

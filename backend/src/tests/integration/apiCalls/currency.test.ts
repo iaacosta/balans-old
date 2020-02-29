@@ -5,10 +5,8 @@ import {
   mutate,
   seedCurrencies,
   currency,
-  getDebitAccountsRelatedToCurrency,
-  getCreditAccountsRelatedToCurrency,
-  seedCreditAccounts,
-  seedDebitAccounts,
+  getAccountsRelatedToCurrency,
+  seedAccounts,
 } from '../../utils';
 import { currencies } from '../../utils/data.json';
 import Currency from '../../../models/Currency';
@@ -30,11 +28,7 @@ describe('currency API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(() =>
-    seedCurrencies()
-      .then(seedCreditAccounts)
-      .then(seedDebitAccounts),
-  );
+  beforeEach(() => seedCurrencies().then(seedAccounts));
 
   afterAll(() => connection.close());
 
@@ -70,8 +64,7 @@ describe('currency API calls', () => {
       expect(data!.getCurrency).toMatchObject({
         id: currencies[0].id.toString(),
         name: currencies[0].name,
-        debitAccounts: getDebitAccountsRelatedToCurrency(currencies[0].id),
-        creditAccounts: getCreditAccountsRelatedToCurrency(currencies[0].id),
+        accounts: getAccountsRelatedToCurrency(currencies[0].id),
       });
     });
   });

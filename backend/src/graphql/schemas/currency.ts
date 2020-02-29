@@ -4,8 +4,7 @@ export default gql`
   type Currency {
     id: ID!
     name: String!
-    debitAccounts: [DebitAccount!]
-    creditAccounts: [CreditAccount!]
+    accounts: [Account!]
     createdAt: Date!
     updatedAt: Date!
   }

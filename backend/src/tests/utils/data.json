@@ -3,39 +3,33 @@
     { "id": 1, "name": "CR1" },
     { "id": 2, "name": "CR2" }
   ],
-  "debitAccounts": [
+  "accounts": [
     {
       "id": 1,
+      "type": "cash",
       "name": "Example account 1",
       "bank": "Example bank 1",
-      "initialBalance": 0,
-      "allowsNegative": false,
-      "currencyId": 1
-    },
-    {
-      "id": 2,
-      "name": "Example account 2",
-      "bank": "Example bank 2",
       "initialBalance": 1,
-      "allowsNegative": true,
-      "currencyId": 2
-    }
-  ],
-  "creditAccounts": [
-    {
-      "id": 1,
-      "name": "Example account 1",
-      "bank": "Example bank 1",
-      "initialBalance": 0,
       "currencyId": 1,
-      "billingDay": 1,
-      "paymentDay": 2
+      "billingDay": 0,
+      "paymentDay": 0
     },
     {
       "id": 2,
+      "type": "checking",
       "name": "Example account 2",
       "bank": "Example bank 2",
-      "initialBalance": 1,
+      "initialBalance": 2,
+      "currencyId": 2,
+      "billingDay": 0,
+      "paymentDay": 0
+    },
+    {
+      "id": 3,
+      "type": "credit",
+      "name": "Example account 3",
+      "bank": "Example bank 3",
+      "initialBalance": 3,
       "currencyId": 2,
       "billingDay": 3,
       "paymentDay": 4
@@ -48,9 +42,8 @@
   ],
   "subCategories": [
     { "id": 1, "name": "Example Sub Category 1.1", "categoryId": 1 },
-    { "id": 2, "name": "Example Sub Category 1.2", "categoryId": 1 },
-    { "id": 3, "name": "Example Sub Category 2.1", "categoryId": 2 },
-    { "id": 4, "name": "Example Sub Category 3.1", "categoryId": 3 }
+    { "id": 2, "name": "Example Sub Category 2.1", "categoryId": 2 },
+    { "id": 3, "name": "Example Sub Category 3.1", "categoryId": 3 }
   ],
   "places": [
     {
@@ -73,6 +66,24 @@
       "photoUri": "http://example.com/fileName3",
       "latitude": 3,
       "longitude": 3
+    }
+  ],
+  "incomes": [
+    {
+      "id": 1,
+      "amount": 1000,
+      "description": "Example income 1",
+      "date": "2020-01-01T01:01:01",
+      "subCategoryId": 1,
+      "accountId": 1
+    },
+    {
+      "id": 2,
+      "amount": 2000,
+      "description": "Example income 2",
+      "date": "2020-02-02T02:02:02",
+      "subCategoryId": 2,
+      "accountId": 2
     }
   ]
 }

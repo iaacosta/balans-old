@@ -5,6 +5,7 @@ import { ResolverMap } from '../../@types';
 import SubCategory from '../../models/SubCategory';
 import Category from '../../models/Category';
 import { categoryById } from './category';
+import { incomesById } from './income';
 
 type Queries = 'getSubCategory' | 'getSubCategories';
 type Mutations =
@@ -17,9 +18,11 @@ interface Input {
   categoryId: number;
 }
 
+const relations = ['category', 'incomes'];
+
 export const subCategoryById = async (id: number) => {
   const subCategory = await getRepository(SubCategory).findOne(id, {
-    relations: ['category'],
+    relations,
   });
 
   if (!subCategory) throw new Error('no sub category with such id');
@@ -31,7 +34,7 @@ export const subCategoriesById = async (ids: number[]) => {
 
   const subCategories = await getRepository(SubCategory).find({
     where: { id: In(ids) },
-    relations: ['category'],
+    relations,
   });
 
   return subCategories.map((subCat) => subCategoryResolver(subCat));
@@ -39,9 +42,11 @@ export const subCategoriesById = async (ids: number[]) => {
 
 export const subCategoryResolver = ({
   category,
+  incomes,
   ...subCategory
 }: SubCategory) => ({
   ...subCategory,
+  incomes: () => incomesById(incomes.map(({ id }) => id)),
   category: () => categoryById(category.id),
 });
 
@@ -49,7 +54,8 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getSubCategories: async () => {
       const subCategories = await getRepository(SubCategory).find({
-        relations: ['category'],
+        relations,
+        order: { id: 1 },
       });
 
       return subCategories.map(subCategoryResolver);
@@ -70,7 +76,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     },
     updateSubCategory: async (parent, { id, name, categoryId }) => {
       const repo = getRepository(SubCategory);
-      const subCategory = await repo.findOne(id, { relations: ['category'] });
+      const subCategory = await repo.findOne(id, { relations });
       if (!subCategory) throw new Error('no sub category with such id');
 
       if (name && subCategory.name !== name) subCategory.name = name;

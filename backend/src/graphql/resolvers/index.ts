@@ -1,27 +1,27 @@
 import currencyResolvers from './currency';
-import creditAccountResolvers from './creditAccount';
-import debitAccountResolvers from './debitAccount';
+import accountResolvers from './account';
 import categoryResolvers from './category';
 import subCategoryResolvers from './subCategory';
 import placeResolvers from './place';
+import incomeResolvers from './income';
 import scalars from './scalars';
 
 export default {
   Query: {
     ...currencyResolvers.Query,
-    ...creditAccountResolvers.Query,
-    ...debitAccountResolvers.Query,
+    ...accountResolvers.Query,
     ...categoryResolvers.Query,
     ...subCategoryResolvers.Query,
     ...placeResolvers.Query,
+    ...incomeResolvers.Query,
   },
   Mutation: {
     ...currencyResolvers.Mutation,
-    ...creditAccountResolvers.Mutation,
-    ...debitAccountResolvers.Mutation,
+    ...accountResolvers.Mutation,
     ...categoryResolvers.Mutation,
     ...subCategoryResolvers.Mutation,
     ...placeResolvers.Mutation,
+    ...incomeResolvers.Mutation,
   },
   ...scalars,
 };

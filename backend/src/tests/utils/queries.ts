@@ -1,10 +1,11 @@
 import { gql } from 'apollo-server-express';
 
-export const creditAccount = {
-  GET_CREDIT_ACCOUNTS: gql`
+export const account = {
+  GET_ACCOUNTS: gql`
     query {
-      getCreditAccounts {
+      getAccounts {
         id
+        type
         name
         bank
         initialBalance
@@ -17,10 +18,11 @@ export const creditAccount = {
       }
     }
   `,
-  GET_CREDIT_ACCOUNT: gql`
+  GET_ACCOUNT: gql`
     query($id: ID!) {
-      getCreditAccount(id: $id) {
+      getAccount(id: $id) {
         id
+        type
         name
         bank
         initialBalance
@@ -30,19 +32,50 @@ export const creditAccount = {
           id
           name
         }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
       }
     }
   `,
-  CREATE_CREDIT_ACCOUNT: gql`
+  GET_ACCOUNT_AND_MOVEMENTS: gql`
+    query($id: ID!) {
+      getAccount(id: $id) {
+        id
+        type
+        name
+        bank
+        initialBalance
+        billingDay
+        paymentDay
+        currency {
+          id
+          name
+        }
+        incomes {
+          id
+          amount
+          date
+          description
+        }
+      }
+    }
+  `,
+  CREATE_ACCOUNT: gql`
     mutation(
+      $type: String!
       $name: String!
       $bank: String!
       $initialBalance: Int!
       $currencyId: ID!
-      $billingDay: Int!
-      $paymentDay: Int!
+      $billingDay: Int
+      $paymentDay: Int
     ) {
-      createCreditAccount(
+      createAccount(
+        type: $type
         name: $name
         bank: $bank
         initialBalance: $initialBalance
@@ -51,6 +84,7 @@ export const creditAccount = {
         paymentDay: $paymentDay
       ) {
         id
+        type
         name
         bank
         initialBalance
@@ -63,7 +97,7 @@ export const creditAccount = {
       }
     }
   `,
-  UPDATE_CREDIT_ACCOUNT: gql`
+  UPDATE_ACCOUNT: gql`
     mutation(
       $id: ID!
       $name: String
@@ -73,7 +107,7 @@ export const creditAccount = {
       $billingDay: Int
       $paymentDay: Int
     ) {
-      updateCreditAccount(
+      updateAccount(
         id: $id
         name: $name
         bank: $bank
@@ -83,6 +117,7 @@ export const creditAccount = {
         paymentDay: $paymentDay
       ) {
         id
+        type
         name
         bank
         initialBalance
@@ -95,101 +130,9 @@ export const creditAccount = {
       }
     }
   `,
-  DELETE_CREDIT_ACCOUNT: gql`
+  DELETE_ACCOUNT: gql`
     mutation($id: ID!) {
-      deleteCreditAccount(id: $id)
-    }
-  `,
-};
-
-export const debitAccount = {
-  GET_DEBIT_ACCOUNTS: gql`
-    query {
-      getDebitAccounts {
-        id
-        name
-        bank
-        initialBalance
-        allowsNegative
-        currency {
-          id
-          name
-        }
-      }
-    }
-  `,
-  GET_DEBIT_ACCOUNT: gql`
-    query($id: ID!) {
-      getDebitAccount(id: $id) {
-        id
-        name
-        bank
-        initialBalance
-        allowsNegative
-        currency {
-          id
-          name
-        }
-      }
-    }
-  `,
-  CREATE_DEBIT_ACCOUNT: gql`
-    mutation(
-      $name: String!
-      $bank: String!
-      $initialBalance: Int!
-      $allowsNegative: Boolean!
-      $currencyId: ID!
-    ) {
-      createDebitAccount(
-        name: $name
-        bank: $bank
-        initialBalance: $initialBalance
-        allowsNegative: $allowsNegative
-        currencyId: $currencyId
-      ) {
-        id
-        name
-        bank
-        initialBalance
-        allowsNegative
-        currency {
-          id
-          name
-        }
-      }
-    }
-  `,
-  UPDATE_DEBIT_ACCOUNT: gql`
-    mutation(
-      $id: ID!
-      $name: String
-      $bank: String
-      $initialBalance: Int
-      $currencyId: ID
-    ) {
-      updateDebitAccount(
-        id: $id
-        name: $name
-        bank: $bank
-        initialBalance: $initialBalance
-        currencyId: $currencyId
-      ) {
-        id
-        name
-        bank
-        initialBalance
-        allowsNegative
-        currency {
-          id
-          name
-        }
-      }
-    }
-  `,
-  DELETE_DEBIT_ACCOUNT: gql`
-    mutation($id: ID!) {
-      deleteDebitAccount(id: $id)
+      deleteAccount(id: $id)
     }
   `,
 };
@@ -237,15 +180,9 @@ export const currency = {
       getCurrency(id: $id) {
         id
         name
-        debitAccounts {
+        accounts {
           id
-          name
-          bank
-          initialBalance
-          allowsNegative
-        }
-        creditAccounts {
-          id
+          type
           name
           bank
           initialBalance
@@ -265,6 +202,10 @@ export const category = {
         name
         type
         icon
+        subCategories {
+          id
+          name
+        }
       }
     }
   `,
@@ -303,20 +244,6 @@ export const category = {
       deleteCategory(id: $id)
     }
   `,
-  GET_CATEGORY_AND_SUBCATEGORIES: gql`
-    query($id: ID!) {
-      getCategory(id: $id) {
-        id
-        name
-        type
-        icon
-        subCategories {
-          id
-          name
-        }
-      }
-    }
-  `,
 };
 
 export const subCategory = {
@@ -344,6 +271,12 @@ export const subCategory = {
           name
           type
           icon
+        }
+        incomes {
+          id
+          amount
+          date
+          description
         }
       }
     }
@@ -450,6 +383,106 @@ export const place = {
   DELETE_PLACE: gql`
     mutation($id: ID!) {
       deletePlace(id: $id)
+    }
+  `,
+};
+
+export const income = {
+  GET_INCOMES: gql`
+    query {
+      getIncomes {
+        id
+        amount
+        date
+        description
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_INCOME: gql`
+    query($id: ID!) {
+      getIncome(id: $id) {
+        id
+        amount
+        date
+        description
+        account {
+          id
+          type
+          name
+          bank
+          initialBalance
+          billingDay
+          paymentDay
+        }
+        subCategory {
+          id
+          name
+        }
+      }
+    }
+  `,
+  CREATE_INCOME: gql`
+    mutation(
+      $amount: Float!
+      $date: Date!
+      $description: String
+      $accountId: ID!
+      $subCategoryId: ID!
+    ) {
+      createIncome(
+        amount: $amount
+        date: $date
+        description: $description
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+      ) {
+        id
+        amount
+        date
+        description
+      }
+    }
+  `,
+  UPDATE_INCOME: gql`
+    mutation(
+      $id: ID!
+      $amount: Float
+      $date: Date
+      $description: String
+      $accountId: ID
+      $subCategoryId: ID
+    ) {
+      updateIncome(
+        id: $id
+        amount: $amount
+        date: $date
+        description: $description
+        accountId: $accountId
+        subCategoryId: $subCategoryId
+      ) {
+        id
+        amount
+        date
+        description
+      }
+    }
+  `,
+  DELETE_INCOME: gql`
+    mutation($id: ID!) {
+      deleteIncome(id: $id)
     }
   `,
 };

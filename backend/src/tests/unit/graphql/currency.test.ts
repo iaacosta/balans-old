@@ -4,22 +4,16 @@ import * as typeorm from 'typeorm';
 import * as classValidator from 'class-validator';
 import * as currencyResolvers from '../../../graphql/resolvers/currency';
 import * as currencyModel from '../../../models/Currency';
-import { creditAccountsById } from '../../../graphql/resolvers/creditAccount';
-import { debitAccountsById } from '../../../graphql/resolvers/debitAccount';
+import { accountsById } from '../../../graphql/resolvers/account';
 
 const exampleCurrency: any = {
   id: 0,
   name: 'Example Currency',
-  debitAccounts: [{ id: 1 }, { id: 2 }, { id: 3 }],
-  creditAccounts: [{ id: 1 }, { id: 2 }],
+  accounts: [{ id: 1 }, { id: 2 }, { id: 3 }],
 };
 
-jest.mock('../../../graphql/resolvers/debitAccount', () => ({
-  debitAccountsById: jest.fn(),
-}));
-
-jest.mock('../../../graphql/resolvers/creditAccount', () => ({
-  creditAccountsById: jest.fn(),
+jest.mock('../../../graphql/resolvers/account', () => ({
+  accountsById: jest.fn(),
 }));
 
 describe('Currency resolvers', () => {
@@ -49,8 +43,7 @@ describe('Currency resolvers', () => {
   });
 
   afterEach(() => {
-    (debitAccountsById as jest.Mock).mockClear();
-    (creditAccountsById as jest.Mock).mockClear();
+    (accountsById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     find.mockClear();
@@ -104,18 +97,11 @@ describe('Currency resolvers', () => {
       expect(currency.name).toBe(exampleCurrency.name);
     });
 
-    it('should call debitAccountById one time with correct arguments', () => {
+    it('should call accountsById one time with correct arguments', () => {
       const currency = currencyResolvers.currencyResolver(exampleCurrency);
-      currency.debitAccounts();
-      expect(debitAccountsById).toHaveBeenCalledTimes(1);
-      expect(debitAccountsById).toHaveBeenCalledWith([1, 2, 3]);
-    });
-
-    it('should call creditAccountsById one time with correct arguments', () => {
-      const currency = currencyResolvers.currencyResolver(exampleCurrency);
-      currency.creditAccounts();
-      expect(creditAccountsById).toHaveBeenCalledTimes(1);
-      expect(creditAccountsById).toHaveBeenCalledWith([1, 2]);
+      currency.accounts();
+      expect(accountsById).toHaveBeenCalledTimes(1);
+      expect(accountsById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
