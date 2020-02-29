@@ -147,7 +147,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
         expense.account = account;
       }
 
-      if (placeId && expense.account.id !== placeId) {
+      if (placeId && expense.place.id !== placeId) {
         const place = await getRepository(Place).findOne(placeId);
         if (!place) throw new Error('no place with such id');
         expense.place = place;
