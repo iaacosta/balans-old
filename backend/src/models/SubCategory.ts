@@ -30,13 +30,13 @@ export default class SubCategory {
 
   @OneToMany(
     () => Income,
-    (income) => income.account,
+    (income) => income.subCategory,
   )
   incomes!: Income[];
 
   @OneToMany(
     () => Expense,
-    (expense) => expense.account,
+    (expense) => expense.subCategory,
   )
   expenses!: Expense[];
 

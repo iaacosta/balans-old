@@ -31,7 +31,7 @@ export default class Place {
 
   @OneToMany(
     () => Expense,
-    (expense) => expense.account,
+    (expense) => expense.place,
   )
   expenses!: Expense[];
 
