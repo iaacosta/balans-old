@@ -7,6 +7,7 @@ export default gql`
     photoUri: String!
     latitude: Float!
     longitude: Float!
+    expenses: [Expense!]
     createdAt: Date!
     updatedAt: Date!
   }

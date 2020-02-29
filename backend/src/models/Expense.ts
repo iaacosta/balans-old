@@ -9,13 +9,29 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import dayjs from 'dayjs';
-import { Min, IsObject } from 'class-validator';
+import { Min, IsObject, registerDecorator } from 'class-validator';
 
 import Account from './Account';
 import SubCategory from './SubCategory';
+import Place from './Place';
+
+const IsInstallments = () => (object: object, propertyName: string) =>
+  registerDecorator({
+    target: object.constructor,
+    propertyName,
+    validator: {
+      validate: (installments: number, { object: expense }: any) => {
+        if (installments < 1) return false;
+        if (expense.account.type !== 'credit' && installments > 1) return false;
+        return true;
+      },
+      defaultMessage: () =>
+        'installments should always be greater than 1 and exactly 1 if non-credit account given',
+    },
+  });
 
 @Entity()
-export default class Income {
+export default class Expense {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -30,19 +46,30 @@ export default class Income {
   @IsObject()
   date: dayjs.Dayjs;
 
+  @Column()
+  @IsInstallments()
+  installments: number;
+
   @ManyToOne(
     () => Account,
-    (acc) => acc.incomes,
+    (acc) => acc.expenses,
     { onDelete: 'CASCADE' },
   )
   account: Account;
 
   @ManyToOne(
     () => SubCategory,
-    (subCat) => subCat.incomes,
+    (subCat) => subCat.expenses,
     { onDelete: 'SET NULL' },
   )
   subCategory: SubCategory;
+
+  @ManyToOne(
+    () => Place,
+    (place) => place.expenses,
+    { onDelete: 'SET NULL' },
+  )
+  place: Place;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -55,13 +82,17 @@ export default class Income {
     date: dayjs.Dayjs,
     account: Account,
     subCategory: SubCategory,
+    place: Place,
     description?: string,
+    installments?: number,
   ) {
     this.amount = amount;
-    this.description = description || '';
     this.date = date;
     this.account = account;
     this.subCategory = subCategory;
+    this.place = place;
+    this.description = description || '';
+    this.installments = installments !== undefined ? installments : 1;
   }
 
   @BeforeInsert()

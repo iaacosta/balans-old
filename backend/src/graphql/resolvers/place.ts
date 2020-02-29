@@ -4,6 +4,7 @@ import { FileUpload } from 'graphql-upload';
 
 import Place from '../../models/Place';
 import { ResolverMap } from '../../@types';
+import { expensesById } from './expense';
 
 type Queries = 'getPlace' | 'getPlaces';
 type Mutations = 'createPlace' | 'updatePlace' | 'deletePlace';
@@ -15,20 +16,24 @@ interface Input {
   longitude: number;
 }
 
+const relations = ['expenses'];
+
 export const placeById = async (id: number) => {
-  const place = await getRepository(Place).findOne(id);
+  const place = await getRepository(Place).findOne(id, { relations });
   if (!place) throw new Error('no place with such id');
   return placeResolver(place);
 };
 
-export const placeResolver = ({ ...place }: Place) => ({
+export const placeResolver = ({ expenses, ...place }: Place) => ({
   ...place,
+  expenses: () => expensesById(expenses.map(({ id }) => id)),
 });
 
 const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getPlaces: async () => {
       const places = await getRepository(Place).find({
+        relations,
         order: { id: 1 },
       });
       return places.map(placeResolver);
@@ -57,7 +62,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
       { s3 },
     ) => {
       const repo = getRepository(Place);
-      const place = await repo.findOne(id);
+      const place = await repo.findOne(id, { relations });
       if (!place) throw new Error('no place with such id');
 
       if (name && place.name !== name) place.name = name;

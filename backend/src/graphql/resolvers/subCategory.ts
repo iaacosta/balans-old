@@ -6,6 +6,7 @@ import SubCategory from '../../models/SubCategory';
 import Category from '../../models/Category';
 import { categoryById } from './category';
 import { incomesById } from './income';
+import { expensesById } from './expense';
 
 type Queries = 'getSubCategory' | 'getSubCategories';
 type Mutations =
@@ -18,7 +19,7 @@ interface Input {
   categoryId: number;
 }
 
-const relations = ['category', 'incomes'];
+const relations = ['category', 'incomes', 'expenses'];
 
 export const subCategoryById = async (id: number) => {
   const subCategory = await getRepository(SubCategory).findOne(id, {
@@ -43,10 +44,12 @@ export const subCategoriesById = async (ids: number[]) => {
 export const subCategoryResolver = ({
   category,
   incomes,
+  expenses,
   ...subCategory
 }: SubCategory) => ({
   ...subCategory,
   incomes: () => incomesById(incomes.map(({ id }) => id)),
+  expenses: () => expensesById(expenses.map(({ id }) => id)),
   category: () => categoryById(category.id),
 });
 

@@ -12,6 +12,9 @@ import {
   seedIncomes,
   seedAccounts,
   seedCurrencies,
+  getExpensesRelated,
+  seedPlaces,
+  seedExpenses,
 } from '../../utils';
 import { subCategories } from '../../utils/data.json';
 import SubCategory from '../../../models/SubCategory';
@@ -38,7 +41,9 @@ describe('sub category API calls', () => {
       .then(seedSubCategories)
       .then(seedCurrencies)
       .then(seedAccounts)
-      .then(seedIncomes),
+      .then(seedPlaces)
+      .then(seedIncomes)
+      .then(seedExpenses),
   );
   afterAll(() => connection.close());
 
@@ -48,12 +53,16 @@ describe('sub category API calls', () => {
       expect(data!.getSubCategories).toHaveLength(3);
 
       subCategories.forEach((subCat, idx) => {
-        const shouldCategory = getCategoryById(subCat.categoryId)!;
+        const category = getCategoryById(subCat.categoryId)!;
+        const incomes = getIncomesRelated(subCat.id, 'subCategory')!;
+        const expenses = getExpensesRelated(subCat.id, 'subCategory')!;
 
         expect(data!.getSubCategories[idx]).toMatchObject({
           id: subCat.id.toString(),
           name: subCat.name,
-          category: { ...shouldCategory, id: shouldCategory.id.toString() },
+          category: { ...category, id: category.id.toString() },
+          incomes,
+          expenses,
         });
       });
     });
@@ -67,16 +76,15 @@ describe('sub category API calls', () => {
       });
 
       const shouldCategory = getCategoryById(subCategories[0].id)!;
-      const shouldIncomes = getIncomesRelated(
-        subCategories[0].id,
-        'subCategory',
-      )!;
+      const incomes = getIncomesRelated(subCategories[0].id, 'subCategory')!;
+      const expenses = getExpensesRelated(subCategories[0].id, 'subCategory')!;
 
       expect(data!.getSubCategory).toMatchObject({
         id: subCategories[0].id.toString(),
         name: subCategories[0].name,
         category: { ...shouldCategory, id: shouldCategory.id.toString() },
-        incomes: shouldIncomes,
+        incomes,
+        expenses,
       });
     });
 

@@ -48,7 +48,7 @@ describe('Income model test', () => {
     it('should pass validation if date is an object', async () => {
       const currency = new Income(
         1000,
-        { date: '101010' } as any,
+        {} as any,
         new Account(),
         new SubCategory(),
       );
@@ -67,25 +67,26 @@ describe('Income model test', () => {
       expect(validateOrReject(currency)).rejects.toBeTruthy();
     });
 
-    it('should not pass validation if date is not an object', () => {
+    it('should pass validation if amount > 0', async () => {
       const currency = new Income(
         1000,
-        'date' as any,
+        {} as any,
+        new Account(),
+        new SubCategory(),
+      );
+
+      expect(await validateOrReject(currency)).toBeUndefined();
+    });
+
+    it('should not pass validation if amount < 0', () => {
+      const currency = new Income(
+        -10,
+        {} as any,
         new Account(),
         new SubCategory(),
       );
 
       expect(validateOrReject(currency)).rejects.toBeTruthy();
     });
-    //
-    // it('should not pass validation if name is shorter than 3 chars', () => {
-    //   const currency = new Income('Ex');
-    //   expect(validateOrReject(currency)).rejects.toBeTruthy();
-    // });
-    //
-    // it('should pass validation if name has 3 chars', async () => {
-    //   const currency = new Income('CLP');
-    //   expect(await validateOrReject(currency)).toBeUndefined();
-    // });
   });
 });

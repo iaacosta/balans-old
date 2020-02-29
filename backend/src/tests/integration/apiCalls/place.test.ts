@@ -1,6 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
-import { query, mutate, seedPlaces, place } from '../../utils';
+import {
+  query,
+  mutate,
+  seedPlaces,
+  place,
+  getExpensesRelated,
+  seedSubCategories,
+  seedCategories,
+  seedCurrencies,
+  seedAccounts,
+  seedIncomes,
+  seedExpenses,
+} from '../../utils';
 import { places } from '../../utils/data.json';
 import Place from '../../../models/Place';
 
@@ -14,7 +26,15 @@ describe('place API calls', () => {
     connection = await createConnection();
   });
 
-  beforeEach(() => seedPlaces());
+  beforeEach(() =>
+    seedPlaces()
+      .then(seedCategories)
+      .then(seedSubCategories)
+      .then(seedCurrencies)
+      .then(seedAccounts)
+      .then(seedIncomes)
+      .then(seedExpenses),
+  );
   afterAll(() => connection.close());
 
   describe('getPlaces', () => {
@@ -23,12 +43,15 @@ describe('place API calls', () => {
 
       expect(data!.getPlaces).toHaveLength(3);
 
-      places.forEach((cat, idx) => {
+      places.forEach((_place, idx) => {
+        const expenses = getExpensesRelated(_place.id, 'place')!;
+
         expect(data!.getPlaces[idx]).toMatchObject({
-          name: cat.name,
-          photoUri: cat.photoUri,
-          latitude: cat.latitude,
-          longitude: cat.longitude,
+          name: _place.name,
+          photoUri: _place.photoUri,
+          latitude: _place.latitude,
+          longitude: _place.longitude,
+          expenses,
         });
       });
     });
@@ -41,12 +64,15 @@ describe('place API calls', () => {
         variables: { id: 1 },
       });
 
+      const expenses = getExpensesRelated(places[0].id, 'place')!;
+
       expect(data!.getPlace).toMatchObject({
         id: '1',
         name: places[0].name,
         photoUri: places[0].photoUri,
         latitude: places[0].latitude,
         longitude: places[0].longitude,
+        expenses,
       });
     });
   });

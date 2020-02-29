@@ -12,6 +12,7 @@ import { ValidateIf, Min, IsNotEmpty, IsIn, Max } from 'class-validator';
 import Currency from './Currency';
 import { AccountType } from '../@types';
 import Income from './Income';
+import Expense from './Expense';
 
 @Entity()
 export default class Account {
@@ -55,6 +56,12 @@ export default class Account {
     (income) => income.account,
   )
   incomes!: Income[];
+
+  @OneToMany(
+    () => Expense,
+    (expense) => expense.account,
+  )
+  expenses!: Expense[];
 
   @CreateDateColumn()
   createdAt!: Date;

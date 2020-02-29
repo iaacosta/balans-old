@@ -11,6 +11,9 @@ import {
   seedSubCategories,
   seedIncomes,
   seedCategories,
+  getExpensesRelated,
+  seedPlaces,
+  seedExpenses,
 } from '../../utils';
 import { accounts } from '../../utils/data.json';
 import Account from '../../../models/Account';
@@ -36,7 +39,9 @@ describe('debit account API calls', () => {
       .then(seedAccounts)
       .then(seedCategories)
       .then(seedSubCategories)
-      .then(seedIncomes),
+      .then(seedPlaces)
+      .then(seedIncomes)
+      .then(seedExpenses),
   );
 
   afterAll(() => connection.close());
@@ -48,6 +53,8 @@ describe('debit account API calls', () => {
 
       accounts.forEach((acc, idx) => {
         const currency = getCurrencyById(acc.currencyId)!;
+        const incomes = getIncomesRelated(acc.id, 'account')!;
+        const expenses = getExpensesRelated(acc.id, 'account')!;
 
         expect(data!.getAccounts[idx]).toMatchObject({
           type: acc.type,
@@ -57,6 +64,8 @@ describe('debit account API calls', () => {
           paymentDay: acc.paymentDay,
           billingDay: acc.billingDay,
           currency: { ...currency, id: acc.currencyId.toString() },
+          incomes,
+          expenses,
         });
       });
     });
@@ -69,8 +78,9 @@ describe('debit account API calls', () => {
         variables: { id: 1 },
       });
 
-      const shouldCurrency = getCurrencyById(accounts[0].currencyId);
-      const shouldIncomes = getIncomesRelated(accounts[0].id, 'account')!;
+      const currency = getCurrencyById(accounts[0].currencyId);
+      const incomes = getIncomesRelated(accounts[0].id, 'account')!;
+      const expenses = getExpensesRelated(accounts[0].id, 'account')!;
 
       expect(data!.getAccount).toMatchObject({
         id: '1',
@@ -80,8 +90,9 @@ describe('debit account API calls', () => {
         initialBalance: accounts[0].initialBalance,
         paymentDay: accounts[0].paymentDay,
         billingDay: accounts[0].billingDay,
-        currency: { ...shouldCurrency, id: accounts[0].currencyId.toString() },
-        incomes: shouldIncomes,
+        currency: { ...currency, id: accounts[0].currencyId.toString() },
+        incomes,
+        expenses,
       });
     });
   });

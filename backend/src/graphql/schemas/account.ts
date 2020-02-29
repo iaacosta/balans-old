@@ -11,6 +11,7 @@ export default gql`
     billingDay: Int
     paymentDay: Int
     incomes: [Income!]
+    expenses: [Expense!]
     createdAt: Date!
     updatedAt: Date!
   }

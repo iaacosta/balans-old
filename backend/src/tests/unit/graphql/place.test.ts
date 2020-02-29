@@ -4,6 +4,7 @@ import * as typeorm from 'typeorm';
 import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/place';
 import * as model from '../../../models/Place';
+import { expensesById } from '../../../graphql/resolvers/expense';
 
 const examplePlace: any = {
   id: 0,
@@ -11,7 +12,12 @@ const examplePlace: any = {
   photoUri: 'http://example.com/fileName',
   latitude: 0,
   longitude: 0,
+  expenses: [{ id: 1 }, { id: 2 }, { id: 3 }],
 };
+
+jest.mock('../../../graphql/resolvers/expense', () => ({
+  expensesById: jest.fn(),
+}));
 
 describe('Place resolvers', () => {
   let getRepository: jest.SpyInstance;
@@ -55,6 +61,7 @@ describe('Place resolvers', () => {
   });
 
   afterEach(() => {
+    (expensesById as jest.Mock).mockClear();
     getRepository.mockClear();
     validateOrReject.mockClear();
     placeResolver.mockClear();
@@ -110,6 +117,13 @@ describe('Place resolvers', () => {
       const place = resolvers.placeResolver(examplePlace);
       expect(place.id).toBe(examplePlace.id);
       expect(place.name).toBe(examplePlace.name);
+    });
+
+    it('should call expensesById one time with correct arguments', () => {
+      const account = resolvers.placeResolver(examplePlace);
+      account.expenses();
+      expect(expensesById).toHaveBeenCalledTimes(1);
+      expect(expensesById).toHaveBeenCalledWith([1, 2, 3]);
     });
   });
 
@@ -264,7 +278,7 @@ describe('Place resolvers', () => {
         );
 
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(0);
+        expect(findOne).toHaveBeenCalledWith(0, { relations: ['expenses'] });
       });
 
       it("should reject if findOne doesn't succeed", async () => {

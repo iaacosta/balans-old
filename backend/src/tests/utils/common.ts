@@ -5,6 +5,8 @@ import {
   categories,
   subCategories,
   incomes,
+  places,
+  expenses,
 } from './data.json';
 
 export const getCurrencyById = (_id: number) => {
@@ -26,6 +28,13 @@ export const getSubCategoryById = (_id: number) => {
   delete (subCat as any).createdAt;
   delete (subCat as any).updatedAt;
   return subCat;
+};
+
+export const getPlaceById = (_id: number) => {
+  const place = places.find(({ id }) => id === _id)!;
+  delete (place as any).createdAt;
+  delete (place as any).updatedAt;
+  return place;
 };
 
 export const getAccountById = (_id: number) => {
@@ -79,5 +88,28 @@ export const getIncomesRelated = (
     id: id.toString(),
     date: new Date(date).valueOf(),
     description,
+  }));
+};
+
+export const getExpensesRelated = (
+  _id: number,
+  model: 'subCategory' | 'account' | 'place',
+) => {
+  const exps = expenses.filter((expense) => {
+    let chosenId = 0;
+
+    if (model === 'subCategory') chosenId = expense.subCategoryId;
+    else if (model === 'account') chosenId = expense.accountId;
+    else if (model === 'place') chosenId = expense.placeId;
+
+    return _id === chosenId;
+  });
+
+  return exps.map(({ id, amount, description, date, installments }) => ({
+    id: id.toString(),
+    amount,
+    date: new Date(date).valueOf(),
+    description,
+    installments,
   }));
 };
