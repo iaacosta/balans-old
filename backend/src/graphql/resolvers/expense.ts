@@ -86,7 +86,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const subCat = await getRepository(SubCategory).findOne(subCategoryId);
       if (!subCat) throw new Error('no sub category with such id');
-      const account = await getRepository(Account).findOne(accountId);
+      const account = await getRepository(Account).findOne(accountId, {
+        relations: ['incomes', 'expenses'],
+      });
       if (!account) throw new Error('no account with such id');
       const place = await getRepository(Place).findOne(placeId);
       if (!place) throw new Error('no place with such id');
@@ -120,7 +122,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const repo = getRepository(Expense);
       const expense = await repo.findOne(id, {
-        relations,
+        relations: [...relations, 'account.incomes', 'account.expenses'],
       });
       if (!expense) throw new Error('no expense with such id');
 

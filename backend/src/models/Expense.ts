@@ -9,26 +9,12 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import dayjs from 'dayjs';
-import { Min, IsObject, registerDecorator } from 'class-validator';
+import { Min, IsObject } from 'class-validator';
 
 import Account from './Account';
 import SubCategory from './SubCategory';
 import Place from './Place';
-
-const IsInstallments = () => (object: object, propertyName: string) =>
-  registerDecorator({
-    target: object.constructor,
-    propertyName,
-    validator: {
-      validate: (installments: number, { object: expense }: any) => {
-        if (installments < 1) return false;
-        if (expense.account.type !== 'credit' && installments > 1) return false;
-        return true;
-      },
-      defaultMessage: () =>
-        'installments should always be greater than 1 and exactly 1 if non-credit account given',
-    },
-  });
+import { IsInstallments, IsValidMovement } from './validators';
 
 @Entity()
 export default class Expense {
@@ -36,6 +22,7 @@ export default class Expense {
   id!: number;
 
   @Column({ type: 'float' })
+  @IsValidMovement('negative')
   @Min(0)
   amount: number;
 
