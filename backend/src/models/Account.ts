@@ -131,7 +131,7 @@ export default class Account {
     const installmentsAmounts = installmentsExpenses.map(
       ({ amount, date, installments }) => {
         const installmentValue = Math.round(amount / installments);
-        const periodsApart = this.billingPeriodsApart(dayjs(date));
+        const periodsApart = this.billingPeriodsApart(dayjs(date))!;
         return installmentValue * (installments - (periodsApart + 1));
       },
     );
@@ -215,15 +215,18 @@ export default class Account {
   }
 
   relativeBillingDate(date: Dayjs) {
+    if (this.type !== 'credit') return null;
     let billingDate = date.startOf('day').set('date', this.billingDay);
     if (date > billingDate) billingDate = billingDate.add(1, 'month');
     return billingDate;
   }
 
   billingPeriodsApart(date: Dayjs) {
+    if (this.type !== 'credit') return null;
     const billingDate = this.currentBillingDate || this.nextBillingDate;
-    if (!billingDate) return -1;
     const relativeBillingDate = this.relativeBillingDate(date);
-    return billingDate.diff(relativeBillingDate, 'month');
+    return billingDate!
+      .startOf('day')
+      .diff(relativeBillingDate!.startOf('day'), 'month');
   }
 }
