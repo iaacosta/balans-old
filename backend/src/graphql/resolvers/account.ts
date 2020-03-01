@@ -25,7 +25,7 @@ const relations = ['currency', 'incomes', 'expenses'];
 
 export const accountById = async (id: number) => {
   const account = await getRepository(Account).findOne(id, { relations });
-  if (!account) throw new Error('no debit account with such id');
+  if (!account) throw new Error('no account with such id');
   return accountResolver(account);
 };
 
@@ -71,6 +71,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const currency = await getRepository(Currency).findOne(currencyId);
       if (!currency) throw new Error('no currency with such id');
+
       const account = new Account(
         type,
         name,
@@ -90,7 +91,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const repo = getRepository(Account);
       const account = await repo.findOne(id, { relations });
-      if (!account) throw new Error('no debit account with such id');
+      if (!account) throw new Error('no account with such id');
 
       /* Base attributes */
       if (name && account.name !== name) account.name = name;
