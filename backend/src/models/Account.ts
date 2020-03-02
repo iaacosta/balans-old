@@ -15,6 +15,7 @@ import Currency from './Currency';
 import { AccountType } from '../@types';
 import Income from './Income';
 import Expense from './Expense';
+import { IsValidInitialBalance } from '../utils';
 
 @Entity()
 export default class Account {
@@ -34,8 +35,7 @@ export default class Account {
   bank: string;
 
   @Column()
-  @ValidateIf((acc) => ['cash', 'vista'].includes(acc.type))
-  @Min(0)
+  @IsValidInitialBalance()
   initialBalance: number;
 
   @ManyToOne(() => Currency, { onDelete: 'SET NULL' })
@@ -228,5 +228,24 @@ export default class Account {
     return billingDate!
       .startOf('day')
       .diff(relativeBillingDate!.startOf('day'), 'month');
+  }
+
+  canPay(amount: number) {
+    if (
+      (this.type === 'cash' || this.type === 'vista') &&
+      this.balance - amount < 0
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  canReceive(amount: number) {
+    if (this.type === 'credit' && this.balance + amount > 0) {
+      return false;
+    }
+
+    return true;
   }
 }

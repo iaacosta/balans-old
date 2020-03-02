@@ -13,7 +13,6 @@ import { Min, IsObject } from 'class-validator';
 
 import Account from './Account';
 import SubCategory from './SubCategory';
-import { IsValidMovement } from './validators';
 
 @Entity()
 export default class Income {
@@ -21,7 +20,6 @@ export default class Income {
   id!: number;
 
   @Column({ type: 'float' })
-  @IsValidMovement('positive')
   @Min(0)
   amount: number;
 

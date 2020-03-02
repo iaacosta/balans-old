@@ -15,7 +15,7 @@ export const IsInstallments = () => (object: object, propertyName: string) =>
     },
   });
 
-export const IsValidMovement = (type: 'positive' | 'negative') => (
+export const IsValidInitialBalance = () => (
   object: object,
   propertyName: string,
 ) =>
@@ -23,27 +23,18 @@ export const IsValidMovement = (type: 'positive' | 'negative') => (
     target: object.constructor,
     propertyName,
     validator: {
-      validate: (amount: number, { object: movement }: any) => {
-        const { account } = movement;
-
-        if (type === 'negative') {
-          if (
-            ['cash', 'vista'].includes(account.type) &&
-            account.balance - amount < 0
-          ) {
-            return false;
-          }
+      validate: (initialBalance: number, { object: account }: any) => {
+        if (['cash', 'vista'].includes(account.type)) {
+          return initialBalance >= 0;
         }
 
-        if (type === 'positive') {
-          if (account.type === 'credit' && account.balance + amount > 0) {
-            return false;
-          }
+        if (account.type === 'credit') {
+          return initialBalance <= 0;
         }
 
         return true;
       },
       defaultMessage: () =>
-        'invalid amount, either it surpass 0 on credit account or goes below 0 on cash/vista account',
+        'invalid initial balance. it should be > 0 for cash/vista accounts and < 0 for credit accounts',
     },
   });

@@ -14,7 +14,7 @@ import { Min, IsObject } from 'class-validator';
 import Account from './Account';
 import SubCategory from './SubCategory';
 import Place from './Place';
-import { IsInstallments, IsValidMovement } from './validators';
+import { IsInstallments } from '../utils';
 
 @Entity()
 export default class Expense {
@@ -22,7 +22,6 @@ export default class Expense {
   id!: number;
 
   @Column({ type: 'float' })
-  @IsValidMovement('negative')
   @Min(0)
   amount: number;
 
