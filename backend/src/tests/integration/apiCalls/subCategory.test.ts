@@ -2,18 +2,13 @@ import { createConnection, Connection, getConnection } from 'typeorm';
 import {
   query,
   mutate,
-  seedSubCategories,
   subCategory,
   getCategoryById,
-  seedCategories,
   getSubCategoriesRelatedToCategory,
   getIncomesRelated,
-  seedIncomes,
-  seedAccounts,
-  seedCurrencies,
   getExpensesRelated,
-  seedPlaces,
-  seedExpenses,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { subCategories } from '../../utils/data.json';
 import SubCategory from '../../../models/SubCategory';
@@ -30,21 +25,19 @@ console.log = jest.fn();
 
 describe('sub category API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCategories()
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedPlaces)
-      .then(seedIncomes)
-      .then(seedExpenses),
-  );
-  afterAll(() => connection.close());
+  beforeEach(() => seedTestDatabase(pgClient));
+
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getSubCategories', () => {
     it('should get correct sub categories', async () => {

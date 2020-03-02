@@ -1,13 +1,7 @@
 import { createConnection, Connection } from 'typeorm';
 import dayjs from 'dayjs';
 
-import {
-  seedCategories,
-  seedSubCategories,
-  seedCurrencies,
-  seedAccounts,
-  seedIncomes,
-} from '../../utils';
+import { seedTestDatabase, createPgClient } from '../../utils';
 import { incomes } from '../../utils/data.json';
 import Income from '../../../models/Income';
 import Account from '../../../models/Account';
@@ -17,20 +11,19 @@ console.log = jest.fn();
 
 describe('Income ORM tests', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCategories()
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedIncomes),
-  );
+  beforeEach(() => seedTestDatabase(pgClient));
 
-  afterAll(() => connection.close());
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   it('should parse date correctly on load', async () => {
     const income = await connection

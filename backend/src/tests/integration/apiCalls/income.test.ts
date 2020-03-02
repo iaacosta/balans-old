@@ -4,13 +4,10 @@ import {
   query,
   mutate,
   income,
-  seedCategories,
-  seedIncomes,
-  seedAccounts,
-  seedCurrencies,
-  seedSubCategories,
   getAccountById,
   getSubCategoryById,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { incomes } from '../../utils/data.json';
 import Income from '../../../models/Income';
@@ -26,20 +23,19 @@ console.log = jest.fn();
 
 describe('income API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCategories()
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedIncomes),
-  );
+  beforeEach(() => seedTestDatabase(pgClient));
 
-  afterAll(() => connection.close());
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getIncomes', () => {
     it('should get correct incomes', async () => {

@@ -2,15 +2,10 @@ import { createConnection, Connection, getConnection } from 'typeorm';
 import {
   query,
   mutate,
-  seedPlaces,
   place,
   getExpensesRelated,
-  seedSubCategories,
-  seedCategories,
-  seedCurrencies,
-  seedAccounts,
-  seedIncomes,
-  seedExpenses,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { places } from '../../utils/data.json';
 import Place from '../../../models/Place';
@@ -20,21 +15,18 @@ console.log = jest.fn();
 
 describe('place API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedPlaces()
-      .then(seedCategories)
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedIncomes)
-      .then(seedExpenses),
-  );
-  afterAll(() => connection.close());
+  beforeEach(() => seedTestDatabase(pgClient));
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getPlaces', () => {
     it('should get correct places', async () => {

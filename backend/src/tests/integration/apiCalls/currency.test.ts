@@ -2,10 +2,10 @@ import { createConnection, Connection, getConnection } from 'typeorm';
 import {
   query,
   mutate,
-  seedCurrencies,
   currency,
   getAccountsRelatedToCurrency,
-  seedAccounts,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { currencies } from '../../utils/data.json';
 import Currency from '../../../models/Currency';
@@ -22,14 +22,19 @@ console.log = jest.fn();
 
 describe('currency API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() => seedCurrencies().then(seedAccounts));
+  beforeEach(() => seedTestDatabase(pgClient));
 
-  afterAll(() => connection.close());
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getCurrencies', () => {
     it('should get correct currencies', async () => {

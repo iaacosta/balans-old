@@ -2,17 +2,12 @@ import { createConnection, Connection, getConnection } from 'typeorm';
 import {
   query,
   mutate,
-  seedCurrencies,
-  seedAccounts,
   account,
   getCurrencyById,
   getIncomesRelated,
-  seedSubCategories,
-  seedIncomes,
-  seedCategories,
   getExpensesRelated,
-  seedPlaces,
-  seedExpenses,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { accounts } from '../../utils/data.json';
 import Account from '../../../models/Account';
@@ -28,22 +23,18 @@ console.log = jest.fn();
 
 describe('debit account API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCurrencies()
-      .then(seedAccounts)
-      .then(seedCategories)
-      .then(seedSubCategories)
-      .then(seedPlaces)
-      .then(seedIncomes)
-      .then(seedExpenses),
-  );
-
-  afterAll(() => connection.close());
+  beforeEach(() => seedTestDatabase(pgClient));
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getAccounts', () => {
     it('should get correct debit accounts', async () => {
