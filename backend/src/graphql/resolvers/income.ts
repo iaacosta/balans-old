@@ -21,7 +21,7 @@ interface Input {
 }
 
 const relations = ['account', 'subCategory'];
-const accountRelations = ['incomes', 'expenses'];
+const accountRelations = ['expenses', 'incomes'];
 
 export const incomeById = async (id: number) => {
   const income = await getRepository(Income).findOne(id, { relations });

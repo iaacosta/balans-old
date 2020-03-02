@@ -1,10 +1,11 @@
 /* eslint-disable no-multi-assign */
 import { validateOrReject } from 'class-validator';
 import mockDate from 'mockdate';
+import dayjs from 'dayjs';
 
 import Account from '../../../models/Account';
 import _Currency from '../../../models/Currency';
-import dayjs from 'dayjs';
+import { AccountType } from '../../../@types';
 
 jest.mock('../../../models/Currency.ts', () => jest.fn());
 const Currency = _Currency as jest.Mock;
@@ -52,12 +53,40 @@ describe('Account model test', () => {
   });
 
   describe('validation', () => {
-    it('should not pass validation if type cash and initialBalance < 0', async () =>
+    it('should pass validation if cash and initialBalance > 0', async () =>
+      expect(
+        await validateOrReject(
+          new Account('cash', 'Account', 'Bank', 10, currency),
+        ),
+      ).toBeUndefined());
+
+    it('should pass validation if vista and initialBalance > 0', async () =>
+      expect(
+        await validateOrReject(
+          new Account('vista', 'Account', 'Bank', 10, currency),
+        ),
+      ).toBeUndefined());
+
+    it('should pass validation if cash and initialBalance = 0', async () =>
+      expect(
+        await validateOrReject(
+          new Account('cash', 'Account', 'Bank', 0, currency),
+        ),
+      ).toBeUndefined());
+
+    it('should pass validation if vista and initialBalance = 0', async () =>
+      expect(
+        await validateOrReject(
+          new Account('vista', 'Account', 'Bank', 0, currency),
+        ),
+      ).toBeUndefined());
+
+    it('should not pass validation if cash and initialBalance < 0', async () =>
       expect(
         validateOrReject(new Account('cash', 'Account', 'Bank', -10, currency)),
       ).rejects.toBeTruthy());
 
-    it('should not pass validation if type vista and initialBalance < 0', async () =>
+    it('should not pass validation if vista and initialBalance < 0', async () =>
       expect(
         validateOrReject(
           new Account('vista', 'Account', 'Bank', -10, currency),
@@ -77,6 +106,20 @@ describe('Account model test', () => {
           new Account('credit', 'Account', 'Bank', -10, currency, 1, 20),
         ),
       ).toBeUndefined());
+
+    it('should pass validation if credit and initialBalance = 0', async () =>
+      expect(
+        await validateOrReject(
+          new Account('credit', 'Account', 'Bank', 0, currency, 1, 20),
+        ),
+      ).toBeUndefined());
+
+    it('should not pass validation if credit and initialBalance > 0', async () =>
+      expect(
+        validateOrReject(
+          new Account('credit', 'Account', 'Bank', 1000, currency, 10, 15),
+        ),
+      ).rejects.toBeTruthy());
 
     it('should pass validation if not credit and no given payment or billing days', async () =>
       expect(
@@ -124,14 +167,15 @@ describe('Account model test', () => {
       ).rejects.toBeTruthy());
   });
 
-  describe('balance methods', () => {
+  describe('methods', () => {
     const accountFactory = (
       initialBalance: number,
       billingDay: number,
       paymentDay: number,
+      type: AccountType = 'credit',
     ) =>
       new Account(
-        'credit',
+        type,
         'Account',
         'Bank',
         initialBalance,
@@ -342,6 +386,46 @@ describe('Account model test', () => {
 
         expect(account.billingPeriodsApart(date)).not.toBeNull();
         expect(account.billingPeriodsApart(date)).toBe(0);
+      });
+    });
+
+    describe('canPay', () => {
+      it('should be able to pay if cash/vista and balance >= amount', () => {
+        const account = accountFactory(0, 0, 0, 'cash');
+        account.balance = 1000;
+        expect(account.canPay(1000)).toBe(true);
+      });
+
+      it('should not be able to pay if cash/vista and balance < amount', () => {
+        const account = accountFactory(0, 0, 0, 'cash');
+        account.balance = 500;
+        expect(account.canPay(1000)).toBe(false);
+      });
+
+      it('should be able to pay if not cash/vista and any amount', () => {
+        const account = accountFactory(0, 0, 0, 'checking');
+        account.balance = 0;
+        expect(account.canPay(1000000)).toBe(true);
+      });
+    });
+
+    describe('canReceive', () => {
+      it('should be able to receive if credit and |balance| >= amount', () => {
+        const account = accountFactory(0, 0, 0, 'credit');
+        account.balance = -1000;
+        expect(account.canReceive(1000)).toBe(true);
+      });
+
+      it('should not be able to receive if credit and |balance| < amount', () => {
+        const account = accountFactory(0, 0, 0, 'credit');
+        account.balance = -500;
+        expect(account.canReceive(1000)).toBe(false);
+      });
+
+      it('should be able to receive if not credit and any amount', () => {
+        const account = accountFactory(0, 0, 0, 'checking');
+        account.balance = 0;
+        expect(account.canReceive(1000000)).toBe(true);
       });
     });
 

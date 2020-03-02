@@ -187,14 +187,14 @@ describe('income API calls', () => {
     it('should delete a income', async () => {
       await mutate({
         mutation: DELETE_INCOME,
-        variables: { id: 1 },
+        variables: { id: 2 },
       });
 
       const result = await getConnection()
         .getRepository(Income)
         .createQueryBuilder('income')
         .select()
-        .where('income.id = :id', { id: 1 })
+        .where('income.id = :id', { id: 2 })
         .getOne();
 
       expect(result).toBeUndefined();

@@ -342,7 +342,13 @@ describe('Expense resolvers', () => {
         await updateExpense(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
         expect(findOne).toHaveBeenCalledWith(0, {
-          relations: ['account', 'subCategory', 'place'],
+          relations: [
+            'account',
+            'subCategory',
+            'place',
+            'account.expenses',
+            'account.incomes',
+          ],
         });
       });
 
@@ -477,7 +483,15 @@ describe('Expense resolvers', () => {
       it('should call findOne method of getRepository', async () => {
         await deleteExpense(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(0);
+        expect(findOne).toHaveBeenCalledWith(0, {
+          relations: [
+            'account',
+            'subCategory',
+            'place',
+            'account.expenses',
+            'account.incomes',
+          ],
+        });
       });
 
       it("should reject if find doesn't succeed", async () => {

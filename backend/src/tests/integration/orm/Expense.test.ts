@@ -36,7 +36,7 @@ describe('Expense ORM tests', () => {
   });
 
   it('should serialize date correctly on save', async () => {
-    const account = await connection.getRepository(Account).findOne();
+    const account = await connection.getRepository(Account).findOne(2);
     const subCategory = await connection.getRepository(SubCategory).findOne();
     const place = await connection.getRepository(Place).findOne();
 
