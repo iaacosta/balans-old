@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { S3 } from 'aws-sdk';
 import { FileUpload } from 'graphql-upload';
 import { PassThrough } from 'stream';

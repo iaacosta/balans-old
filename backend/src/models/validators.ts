@@ -33,7 +33,9 @@ export const IsValidMovement = (type: 'positive' | 'negative') => (
           ) {
             return false;
           }
-        } else {
+        }
+
+        if (type === 'positive') {
           if (account.type === 'credit' && account.balance + amount > 0) {
             return false;
           }

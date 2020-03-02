@@ -18,6 +18,7 @@
     "@typescript-eslint/no-explicit-any": 0,
     "no-underscore-dangle": 0,
     "function-paren-newline": 0,
-    "operator-linebreak": 0
+    "operator-linebreak": 0,
+    "@typescript-eslint/no-non-null-assertion": 0
   }
 }
