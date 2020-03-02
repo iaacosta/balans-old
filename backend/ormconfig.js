@@ -6,7 +6,9 @@ module.exports = {
   database: process.env.DB_NAME,
   port: 5432,
   synchronize: false,
-  logging: ['query', 'error'],
+  logging: false,
+  // logging: ['query', 'error'],
   entities: ['./src/models/**/*.ts'],
   migrations: ['./src/migrations/**/*.ts'],
+  subscribers: ['./src/subscribers/**/*.ts'],
 };
