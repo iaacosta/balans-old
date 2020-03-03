@@ -7,7 +7,7 @@ cache:
     - $HOME/.npm
 before_script:
   - cd ./backend
-  - yarn install
+  - yarn install --prod false
   - psql -c 'CREATE DATABASE finanzie_test;' -U postgres
   - yarn db:migrate-test
 script:
@@ -17,3 +17,9 @@ script:
 branches:
   only:
     - master
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash -c 'ssh-keyscan -H $SERVER_IP >> $HOME/.ssh/known_hosts && sh ./release.sh'
+  on:
+    branch: master
