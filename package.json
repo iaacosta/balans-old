@@ -1,0 +1,15 @@
+{
+  "name": "finanzie",
+  "version": "0.1.0",
+  "description": "utility app for putting your finances in order",
+  "repository": "git@github.com:cho19/finanzie.git",
+  "author": "Nacho <iaacosta@uc.cl>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "standard-version": "^7.1.0"
+  },
+  "scripts": {
+    "release": "standard-version"
+  }
+}
