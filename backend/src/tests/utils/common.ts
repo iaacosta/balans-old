@@ -59,7 +59,7 @@ export const getAccountsRelatedToCurrency = (_currencyId: number) => {
       if (paymentDay) acc.paymentDay = paymentDay;
       if (billingDay) acc.billingDay = billingDay;
 
-      return acc as Account;
+      return acc as any;
     },
   );
 };
