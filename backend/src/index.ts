@@ -6,14 +6,16 @@ import typeDefs from './graphql/schemas';
 import resolvers from './graphql/resolvers';
 import S3Helper from './utils/S3Helper';
 
-const { PORT } = process.env;
+const { PORT, NODE_ENV } = process.env;
 const app = express();
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: NODE_ENV === 'production',
   context: () => ({ s3: new S3Helper() }),
 });
+
 server.applyMiddleware({ app });
 
 createConnection().then(() => {
