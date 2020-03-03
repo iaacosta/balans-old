@@ -20,13 +20,12 @@ interface Input {
   subCategoryId: number;
 }
 
+const relations = ['account', 'subCategory'];
+const accountRelations = ['expenses', 'incomes'];
+
 export const incomeById = async (id: number) => {
-  const income = await getRepository(Income).findOne(id, {
-    relations: ['account', 'subCategory'],
-  });
-
+  const income = await getRepository(Income).findOne(id, { relations });
   if (!income) throw new Error('no income with such id');
-
   return incomeResolver(income);
 };
 
@@ -35,7 +34,7 @@ export const incomesById = async (ids: number[]) => {
 
   const incomes = await getRepository(Income).find({
     where: { id: In(ids) },
-    relations: ['account', 'subCategory'],
+    relations,
   });
 
   return incomes.map((subCat) => incomeResolver(subCat));
@@ -55,7 +54,7 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
   Query: {
     getIncomes: async () => {
       const incomes = await getRepository(Income).find({
-        relations: ['subCategory', 'account'],
+        relations,
         order: { id: 1 },
       });
 
@@ -70,7 +69,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const subCat = await getRepository(SubCategory).findOne(subCategoryId);
       if (!subCat) throw new Error('no sub category with such id');
-      const account = await getRepository(Account).findOne(accountId);
+      const account = await getRepository(Account).findOne(accountId, {
+        relations: accountRelations,
+      });
       if (!account) throw new Error('no account with such id');
 
       const income = new Income(amount, date, account, subCat, description);
@@ -84,7 +85,10 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const repo = getRepository(Income);
       const income = await repo.findOne(id, {
-        relations: ['account', 'subCategory'],
+        relations: [
+          ...relations,
+          ...accountRelations.map((val) => `account.${val}`),
+        ],
       });
       if (!income) throw new Error('no income with such id');
 
@@ -113,7 +117,12 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     },
     deleteIncome: async (parent, { id }) => {
       const repo = getRepository(Income);
-      const income = await repo.findOne(id);
+      const income = await repo.findOne(id, {
+        relations: [
+          ...relations,
+          ...accountRelations.map((val) => `account.${val}`),
+        ],
+      });
       if (!income) throw new Error('no income with such id');
       await repo.remove(income);
       return id;

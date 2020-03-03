@@ -9,4 +9,5 @@ module.exports = {
   logging: ['query', 'error'],
   entities: ['./src/models/**/*.ts'],
   migrations: ['./src/migrations/**/*.ts'],
+  subscribers: ['./src/subscribers/**/*.ts'],
 };

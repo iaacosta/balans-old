@@ -8,6 +8,8 @@ export default gql`
     bank: String!
     initialBalance: Int!
     currency: Currency!
+    balance: Float!
+    notBilled: Float!
     billingDay: Int
     paymentDay: Int
     incomes: [Income!]

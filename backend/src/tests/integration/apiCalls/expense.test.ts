@@ -1,19 +1,14 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
 import dayjs from 'dayjs';
 import {
   query,
   mutate,
   expense,
-  seedCategories,
-  seedExpenses,
-  seedAccounts,
-  seedCurrencies,
-  seedSubCategories,
   getAccountById,
   getSubCategoryById,
-  seedPlaces,
   getPlaceById,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { expenses } from '../../utils/data.json';
 import Expense from '../../../models/Expense';
@@ -29,21 +24,19 @@ console.log = jest.fn();
 
 describe('expense API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCategories()
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedPlaces)
-      .then(seedExpenses),
-  );
+  beforeEach(() => seedTestDatabase(pgClient));
 
-  afterAll(() => connection.close());
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getExpenses', () => {
     it('should get correct expenses', async () => {

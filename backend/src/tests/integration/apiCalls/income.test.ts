@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
 import dayjs from 'dayjs';
 import {
   query,
   mutate,
   income,
-  seedCategories,
-  seedIncomes,
-  seedAccounts,
-  seedCurrencies,
-  seedSubCategories,
   getAccountById,
   getSubCategoryById,
+  seedTestDatabase,
+  createPgClient,
 } from '../../utils';
 import { incomes } from '../../utils/data.json';
 import Income from '../../../models/Income';
@@ -27,20 +23,19 @@ console.log = jest.fn();
 
 describe('income API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() =>
-    seedCategories()
-      .then(seedSubCategories)
-      .then(seedCurrencies)
-      .then(seedAccounts)
-      .then(seedIncomes),
-  );
+  beforeEach(() => seedTestDatabase(pgClient));
 
-  afterAll(() => connection.close());
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getIncomes', () => {
     it('should get correct incomes', async () => {
@@ -192,14 +187,14 @@ describe('income API calls', () => {
     it('should delete a income', async () => {
       await mutate({
         mutation: DELETE_INCOME,
-        variables: { id: 1 },
+        variables: { id: 2 },
       });
 
       const result = await getConnection()
         .getRepository(Income)
         .createQueryBuilder('income')
         .select()
-        .where('income.id = :id', { id: 1 })
+        .where('income.id = :id', { id: 2 })
         .getOne();
 
       expect(result).toBeUndefined();

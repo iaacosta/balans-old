@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createConnection, Connection, getConnection } from 'typeorm';
 import {
   query,
   mutate,
-  seedCategories,
   category,
-  seedSubCategories,
   getSubCategoriesRelatedToCategory,
+  createPgClient,
+  seedTestDatabase,
 } from '../../utils';
 import { categories } from '../../utils/data.json';
 import Category from '../../../models/Category';
@@ -22,13 +21,18 @@ console.log = jest.fn();
 
 describe('category API calls', () => {
   let connection: Connection;
+  const pgClient = createPgClient();
 
   beforeAll(async () => {
     connection = await createConnection();
+    await pgClient.connect();
   });
 
-  beforeEach(() => seedCategories().then(seedSubCategories));
-  afterAll(() => connection.close());
+  beforeEach(() => seedTestDatabase(pgClient));
+  afterAll(() => {
+    connection.close();
+    pgClient.end();
+  });
 
   describe('getCategories', () => {
     it('should get correct categories', async () => {

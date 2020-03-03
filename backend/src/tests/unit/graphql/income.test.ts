@@ -170,7 +170,7 @@ describe('Income resolvers', () => {
         await getIncomes();
         expect(find).toHaveBeenCalledTimes(1);
         expect(find).toBeCalledWith({
-          relations: ['subCategory', 'account'],
+          relations: ['account', 'subCategory'],
           order: { id: 1 },
         });
       });
@@ -297,7 +297,12 @@ describe('Income resolvers', () => {
         await updateIncome(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
         expect(findOne).toHaveBeenCalledWith(0, {
-          relations: ['account', 'subCategory'],
+          relations: [
+            'account',
+            'subCategory',
+            'account.expenses',
+            'account.incomes',
+          ],
         });
       });
 
@@ -404,7 +409,14 @@ describe('Income resolvers', () => {
       it('should call findOne method of getRepository', async () => {
         await deleteIncome(null, { id: 0 });
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(0);
+        expect(findOne).toHaveBeenCalledWith(0, {
+          relations: [
+            'account',
+            'subCategory',
+            'account.expenses',
+            'account.incomes',
+          ],
+        });
       });
 
       it("should reject if find doesn't succeed", async () => {

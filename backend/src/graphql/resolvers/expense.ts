@@ -25,6 +25,7 @@ interface Input {
 }
 
 const relations = ['account', 'subCategory', 'place'];
+const accountRelations = ['expenses', 'incomes'];
 
 export const expenseById = async (id: number) => {
   const expense = await getRepository(Expense).findOne(id, {
@@ -86,7 +87,9 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const subCat = await getRepository(SubCategory).findOne(subCategoryId);
       if (!subCat) throw new Error('no sub category with such id');
-      const account = await getRepository(Account).findOne(accountId);
+      const account = await getRepository(Account).findOne(accountId, {
+        relations: accountRelations,
+      });
       if (!account) throw new Error('no account with such id');
       const place = await getRepository(Place).findOne(placeId);
       if (!place) throw new Error('no place with such id');
@@ -120,7 +123,10 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     ) => {
       const repo = getRepository(Expense);
       const expense = await repo.findOne(id, {
-        relations,
+        relations: [
+          ...relations,
+          ...accountRelations.map((val) => `account.${val}`),
+        ],
       });
       if (!expense) throw new Error('no expense with such id');
 
@@ -158,7 +164,12 @@ const resolvers: ResolverMap<Input, Queries, Mutations> = {
     },
     deleteExpense: async (parent, { id }) => {
       const repo = getRepository(Expense);
-      const expense = await repo.findOne(id);
+      const expense = await repo.findOne(id, {
+        relations: [
+          ...relations,
+          ...accountRelations.map((val) => `account.${val}`),
+        ],
+      });
       if (!expense) throw new Error('no expense with such id');
       await repo.remove(expense);
       return id;
