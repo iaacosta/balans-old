@@ -1,3 +1,5 @@
+const { NODE_ENV } = process.env;
+
 module.exports = {
   type: 'postgres',
   host: 'localhost',
@@ -7,7 +9,11 @@ module.exports = {
   port: 5432,
   synchronize: false,
   logging: ['query', 'error'],
-  entities: ['./src/models/**/*.ts'],
-  migrations: ['./src/migrations/**/*.ts'],
-  subscribers: ['./src/subscribers/**/*.ts'],
+  entities: [`./src/models/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`],
+  migrations: [
+    `./src/migrations/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`,
+  ],
+  subscribers: [
+    `./src/subscribers/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`,
+  ],
 };

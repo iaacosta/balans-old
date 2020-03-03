@@ -18,7 +18,7 @@
     "db:migrate": "yarn db:migrate-dev && yarn db:migrate-test",
     "dev": "nodemon -e ts --watch src --exec \"ts-node ./src/index.ts\"",
     "build": "tsc -p .",
-    "start": "node ./dist/index.js",
+    "start": "env NODE_ENV=production node ./dist/index.js",
     "lint": "eslint src/**/*.ts --ext ts",
     "coverage-badge": "coverage-badger -r coverage/clover.xml -d .",
     "test": "env DB_NAME=finanzie_test jest --runInBand",
