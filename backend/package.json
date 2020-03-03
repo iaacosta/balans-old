@@ -12,6 +12,7 @@
     "db:migrate-generate": "yarn typeorm-cli migration:generate -d src/migrations",
     "db:migrate-dev": "yarn typeorm-cli migration:run",
     "db:migrate-test": "env DB_NAME=finanzie_test yarn typeorm-cli migration:run",
+    "db:migrate-production": "env NODE_ENV=production yarn typeorm-cli migration:run",
     "db:migrate-revert-dev": "yarn typeorm-cli migration:revert",
     "db:migrate-revert-test": "env DB_NAME=finanzie_test yarn typeorm-cli migration:revert",
     "db:migrate-revert": "yarn db:migrate-revert-dev && yarn db:migrate-revert-test",

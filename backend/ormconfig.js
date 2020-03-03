@@ -9,11 +9,16 @@ module.exports = {
   port: 5432,
   synchronize: false,
   logging: ['query', 'error'],
-  entities: [`./src/models/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`],
-  migrations: [
-    `./src/migrations/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`,
-  ],
-  subscribers: [
-    `./src/subscribers/**/*.${NODE_ENV === 'production' ? 'js' : 'ts'}`,
-  ],
+  entities:
+    NODE_ENV === 'production'
+      ? ['./dist/models/**/*.js']
+      : ['./src/models/**/*.ts'],
+  migrations:
+    NODE_ENV === 'production'
+      ? ['./dist/migrations/**/*.js']
+      : ['./src/migrations/**/*.ts'],
+  subscribers:
+    NODE_ENV === 'production'
+      ? ['./dist/subscribers/**/*.js']
+      : ['./src/subscribers/**/*.ts'],
 };
