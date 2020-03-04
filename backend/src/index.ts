@@ -1,7 +1,9 @@
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { createConnection } from 'typeorm';
+import passport from 'passport';
 
+import './utils/passport';
 import typeDefs from './graphql/schemas';
 import resolvers from './graphql/resolvers';
 import S3Helper from './utils/S3Helper';
@@ -15,6 +17,13 @@ const server = new ApolloServer({
   introspection: NODE_ENV === 'production',
   context: () => ({ s3: new S3Helper() }),
 });
+
+app.post('/graphql', (req, res, next) =>
+  passport.authenticate('password', { session: false }, (err) => {
+    if (err) return res.send({ data: null, errors: [err] });
+    return next();
+  })(req, res, next),
+);
 
 server.applyMiddleware({ app });
 
