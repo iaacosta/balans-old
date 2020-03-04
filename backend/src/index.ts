@@ -20,7 +20,7 @@ const server = new ApolloServer({
 
 app.post('/graphql', (req, res, next) =>
   passport.authenticate('password', { session: false }, (err) => {
-    if (err) return res.send({ data: null, errors: [err] });
+    if (err) return res.status(401).send({ data: null, errors: [err] });
     return next();
   })(req, res, next),
 );
