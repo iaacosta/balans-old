@@ -27,7 +27,12 @@ app.post('/graphql', (req, res, next) =>
 
 server.applyMiddleware({ app });
 
-createConnection().then(() => {
-  console.log('TypeORM connected to Postgres database');
-  app.listen(PORT, () => console.log(`Express app running on port ${PORT}`));
-});
+/* istanbul ignore next */
+if (process.env.NODE_ENV !== 'test') {
+  createConnection().then(() => {
+    console.log('TypeORM connected to Postgres database');
+    app.listen(PORT, () => console.log(`Express app running on port ${PORT}`));
+  });
+}
+
+export default app;
