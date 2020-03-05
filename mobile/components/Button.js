@@ -1,28 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 
 import colors from '../styles/colors';
-
-const getColor = type => {
-  switch (type) {
-    case 'primary':
-      return 'green';
-    case 'warning':
-      return 'yellow';
-    case 'danger':
-      return 'red';
-    default:
-      return 'grey';
-  }
-};
+import ThemeContext from '../context/Theme';
 
 const Button = ({ type, children, onPress }) => {
-  const baseColor = getColor(type);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <TouchableHighlight onPress={onPress} underlayColor="white">
-      <View style={{ ...styles.button, backgroundColor: colors[baseColor] }}>
+      <View style={{ ...styles.button, backgroundColor: colors[theme][type] }}>
         <Text style={styles.text}>{children}</Text>
       </View>
     </TouchableHighlight>
@@ -39,10 +27,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   text: {
-    color: colors.white,
     fontSize: 18,
     fontFamily: 'Roboto',
     fontWeight: 'normal',
+    color: colors.white,
   },
 });
 

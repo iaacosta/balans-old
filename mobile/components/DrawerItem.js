@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Text, StyleSheet, View } from 'react-native';
+
 import colors from '../styles/colors';
 
 const DrawerItem = ({ children, onPress }) => (
@@ -13,15 +14,14 @@ const DrawerItem = ({ children, onPress }) => (
 
 const styles = StyleSheet.create({
   button: {
-    padding: 10,
     display: 'flex',
     justifyContent: 'center',
     margin: 10,
   },
   text: {
     fontSize: 16,
-    fontFamily: 'sans-serif-light',
     color: colors.white,
+    fontFamily: 'sans-serif-light',
   },
 });
 
