@@ -12,6 +12,9 @@ const DrawerContent = ({ navigation, state }) => {
 
   return (
     <View style={{ ...styles.drawer, backgroundColor: colors[theme].primary }}>
+      <View style={styles.header}>
+        <Ionicon name="logo-hackernews" size={50} color={colors.white} />
+      </View>
       <View style={styles.items}>
         {state.routeNames.map(name => (
           <DrawerItem key={name} onPress={() => navigation.navigate(name)}>
@@ -35,6 +38,12 @@ const DrawerContent = ({ navigation, state }) => {
 const styles = StyleSheet.create({
   items: {
     flex: 1,
+  },
+  header: {
+    paddingBottom: 20,
+    marginBottom: 20,
+    borderBottomColor: colors.white,
+    borderBottomWidth: 1,
   },
   footer: {
     display: 'flex',

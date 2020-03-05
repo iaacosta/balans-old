@@ -20,7 +20,7 @@ const App = () => {
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <Drawer.Navigator
           initialRouteName="Home"
-          edgeWidth={800}
+          edgeWidth={300}
           sceneContainerStyle={{ backgroundColor: colors[theme].background }}
           drawerContent={({ ...props }) => <DrawerContent {...props} />}
         >
