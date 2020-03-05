@@ -1,15 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import ThemedText from '../../components/typography/ThemedText';
 
-import ThemedText from '../components/typography/ThemedText';
-
-const Home = () => (
-  <View style={styles.main}>
-    <ThemedText>Home</ThemedText>
+const Movements = () => (
+  <View style={styles.app}>
+    <View style={styles.main}>
+      <ThemedText>Movements</ThemedText>
+    </View>
   </View>
 );
 
 const styles = StyleSheet.create({
+  app: { flex: 1 },
   main: {
     flex: 1,
     display: 'flex',
@@ -19,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Movements;
