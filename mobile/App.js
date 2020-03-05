@@ -19,14 +19,14 @@ const App = () => (
     >
       <Drawer.Screen name="Home">
         {({ ...props }) => (
-          <Screen>
+          <Screen {...props}>
             <Home {...props} />
           </Screen>
         )}
       </Drawer.Screen>
       <Drawer.Screen name="Movements">
         {({ ...props }) => (
-          <Screen>
+          <Screen {...props}>
             <Movements {...props} />
           </Screen>
         )}
