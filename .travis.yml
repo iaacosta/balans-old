@@ -17,6 +17,7 @@ script:
 branches:
   only:
     - master
+    - dev
 deploy:
   provider: script
   skip_cleanup: true
