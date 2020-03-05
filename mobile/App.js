@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import ThemeContext from './context/Theme';
@@ -16,31 +15,29 @@ const App = () => {
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   return (
-    <NavigationContainer>
-      <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <Drawer.Navigator
-          initialRouteName="Home"
-          edgeWidth={300}
-          sceneContainerStyle={{ backgroundColor: colors[theme].background }}
-          drawerContent={({ ...props }) => <DrawerContent {...props} />}
-        >
-          <Drawer.Screen name="Home">
-            {({ ...props }) => (
-              <Screen {...props}>
-                <Home {...props} />
-              </Screen>
-            )}
-          </Drawer.Screen>
-          <Drawer.Screen name="Movements">
-            {({ ...props }) => (
-              <Screen {...props}>
-                <Movements {...props} />
-              </Screen>
-            )}
-          </Drawer.Screen>
-        </Drawer.Navigator>
-      </ThemeContext.Provider>
-    </NavigationContainer>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <Drawer.Navigator
+        initialRouteName="Home"
+        edgeWidth={300}
+        sceneContainerStyle={{ backgroundColor: colors[theme].background }}
+        drawerContent={({ ...props }) => <DrawerContent {...props} />}
+      >
+        <Drawer.Screen name="Home">
+          {({ ...props }) => (
+            <Screen {...props}>
+              <Home {...props} />
+            </Screen>
+          )}
+        </Drawer.Screen>
+        <Drawer.Screen name="Movements">
+          {({ ...props }) => (
+            <Screen {...props}>
+              <Movements {...props} />
+            </Screen>
+          )}
+        </Drawer.Screen>
+      </Drawer.Navigator>
+    </ThemeContext.Provider>
   );
 };
 
