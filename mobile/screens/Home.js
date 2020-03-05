@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Text from '../components/Text';
+
+import ThemedText from '../components/typography/ThemedText';
 
 const Home = () => (
   <View style={styles.main}>
-    <Text>Home</Text>
+    <ThemedText>Home</ThemedText>
   </View>
 );
 
