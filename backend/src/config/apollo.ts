@@ -5,6 +5,7 @@ import { resolve } from 'path';
 import { authenticateUser } from '../services/passport';
 import S3Helper from '../utils/S3Helper';
 import { Then } from '../@types';
+import { formatError } from './errors';
 
 type Context = {
   s3: S3Helper;
@@ -21,6 +22,7 @@ const mountApollo = async () => {
 
   return new ApolloServer({
     schema,
+    formatError,
     context: async ({ req }): Promise<Context> => {
       const user = await authenticateUser(req);
       return { s3: new S3Helper(), user };
