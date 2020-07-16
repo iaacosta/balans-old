@@ -1,30 +1,25 @@
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { createConnection } from 'typeorm';
-import passport from 'passport';
 
-import './utils/passport';
+import { authenticateUser } from './services/passport';
 import typeDefs from './graphql/schemas';
 import resolvers from './graphql/resolvers';
 import S3Helper from './utils/S3Helper';
 
 const { PORT, NODE_ENV } = process.env;
 const app = express();
+app.get('/', (req, res) => res.redirect('/graphql'));
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: NODE_ENV === 'production',
-  context: () => ({ s3: new S3Helper() }),
+  context: async ({ req }) => {
+    const user = await authenticateUser(req);
+    return { s3: new S3Helper(), user };
+  },
 });
-
-app.get('/', (req, res) => res.redirect('/graphql'));
-app.post('/graphql', (req, res, next) =>
-  passport.authenticate('password', { session: false }, (err) => {
-    if (err) return res.status(401).send({ data: null, errors: [err] });
-    return next();
-  })(req, res, next),
-);
 
 server.applyMiddleware({ app });
 
