@@ -74,18 +74,13 @@ export default class User extends ModelWithValidation {
     this.password = await hash(this.password, salt);
   }
 
-  async verifyPassword(password: string): Promise<true> {
+  async verifyPassword(password: string) {
     const error = new AuthenticationError('incorrect username or password');
-    let correct: boolean;
-
     try {
-      correct = await compare(password, this.password);
+      if (!(await compare(password, this.password))) throw error;
     } catch (err) {
       throw error;
     }
-
-    if (!correct) throw error;
-    return correct;
   }
 
   constructor(

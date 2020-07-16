@@ -1,9 +1,20 @@
 import passport from 'passport';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
+import { getRepository } from 'typeorm';
+import jwt from 'jsonwebtoken';
+
+import User from '../models/User';
 
 passport.use(
-  new BearerStrategy((token, done) => {
-    done(null, { name: 'example user' });
+  new BearerStrategy(async (token, done) => {
+    try {
+      const { id } = jwt.verify(token, process.env.SECRET!) as { id: number };
+      const user = await getRepository(User).findOne(id);
+      if (!user) done(null, null);
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
   }),
 );
 
