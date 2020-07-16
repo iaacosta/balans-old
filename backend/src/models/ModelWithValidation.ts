@@ -1,9 +1,10 @@
-import { BeforeInsert } from 'typeorm';
+import { BeforeInsert, BeforeUpdate } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import ValidationErrors from '../graphql/errors/ValidationErrors';
 
-export default class ValidModel {
+export default class ModelWithValidation {
   @BeforeInsert()
+  @BeforeUpdate()
   async validate() {
     try {
       await validateOrReject(this);

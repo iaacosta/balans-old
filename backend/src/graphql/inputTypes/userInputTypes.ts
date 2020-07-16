@@ -1,4 +1,4 @@
-import { InputType, Field } from 'type-graphql';
+import { InputType, Field, ID } from 'type-graphql';
 
 @InputType()
 export class CreateUserInput {
@@ -16,4 +16,25 @@ export class CreateUserInput {
 
   @Field()
   password: string;
+}
+
+@InputType()
+export class UpdateUserInput {
+  @Field(() => ID)
+  id: number;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  password?: string;
+
+  @Field()
+  currentPassword: string;
 }

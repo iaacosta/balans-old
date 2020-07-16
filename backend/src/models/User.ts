@@ -6,10 +6,12 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { hash, genSalt } from 'bcrypt';
+import { hash, genSalt, compare } from 'bcrypt';
 import { MinLength, IsEmail, IsAlphanumeric, IsIn } from 'class-validator';
+import { AuthenticationError } from 'apollo-server-express';
 
 import ModelWithValidation from './ModelWithValidation';
 import {
@@ -66,9 +68,24 @@ export default class User extends ModelWithValidation {
   deletedAt?: Date;
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     const salt = await genSalt(10);
     this.password = await hash(this.password, salt);
+  }
+
+  async verifyPassword(password: string): Promise<true> {
+    const error = new AuthenticationError('incorrect username or password');
+    let correct: boolean;
+
+    try {
+      correct = await compare(password, this.password);
+    } catch (err) {
+      throw error;
+    }
+
+    if (!correct) throw error;
+    return correct;
   }
 
   constructor(
