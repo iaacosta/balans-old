@@ -9,10 +9,19 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { hash, genSalt } from 'bcrypt';
+import { MinLength, IsEmail, IsAlphanumeric, IsIn } from 'class-validator';
+
+import ModelWithValidation from './ModelWithValidation';
+import {
+  emailErrorMessage,
+  minLengthErrorMessage,
+  alphanumericErrorMessage,
+  isInErrorMessage,
+} from '../errors/validationErrorMessages';
 
 @ObjectType()
 @Entity()
-export default class User {
+export default class User extends ModelWithValidation {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id: number;
@@ -29,15 +38,23 @@ export default class User {
   }
 
   @Column()
+  @MinLength(6, { message: minLengthErrorMessage })
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field()
+  @IsEmail({}, { message: emailErrorMessage })
   email: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field()
+  @MinLength(6, { message: minLengthErrorMessage })
+  @IsAlphanumeric(undefined, { message: alphanumericErrorMessage })
   username: string;
+
+  @Column({ default: 'user' })
+  @IsIn(['admin', 'user'], { message: isInErrorMessage })
+  role: 'admin' | 'user';
 
   @CreateDateColumn()
   createdAt: Date;
@@ -60,11 +77,15 @@ export default class User {
     password: string,
     email: string,
     username: string,
+    role?: 'admin' | 'user',
   ) {
+    super();
+
     this.firstName = firstName;
     this.lastName = lastName;
     this.password = password;
     this.email = email;
     this.username = username;
+    this.role = role || 'user';
   }
 }
