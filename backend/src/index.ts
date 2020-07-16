@@ -18,6 +18,7 @@ const server = new ApolloServer({
   context: () => ({ s3: new S3Helper() }),
 });
 
+app.get('/', (req, res) => res.redirect('/graphql'));
 app.post('/graphql', (req, res, next) =>
   passport.authenticate('password', { session: false }, (err) => {
     if (err) return res.status(401).send({ data: null, errors: [err] });
