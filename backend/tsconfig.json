@@ -12,6 +12,7 @@
     "esModuleInterop": true,
     "plugins": [],
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   }
 }
