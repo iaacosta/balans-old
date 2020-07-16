@@ -10,12 +10,14 @@ const repository = getRepository(User);
 @Resolver(User)
 export default class UserResolvers {
   @Query(() => [User])
-  async users(): Promise<User[]> {
-    const users = await repository.find({
+  users(): Promise<User[]> {
+    return repository.find({
       order: { createdAt: 'DESC' },
     });
-
-    return users;
+  }
+  @Query(() => [User])
+  user(@Arg('input') { id }: ByIdInput): Promise<User> {
+    return repository.findOneOrFail(id);
   }
 
   @Mutation(() => User)
