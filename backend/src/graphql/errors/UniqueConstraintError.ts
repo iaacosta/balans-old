@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { ValidationError } from 'apollo-server-express';
 
 export default class UniqueConstraintError extends ValidationError {

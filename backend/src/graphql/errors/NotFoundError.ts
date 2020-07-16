@@ -9,7 +9,7 @@ export default class NotFoundError extends UserInputError {
   constructor(error: Error) {
     let resource = 'resource';
 
-    let matching = error.message.match(/^.* "(.*)" matching.*$/);
+    const matching = error.message.match(/^.* "(.*)" matching.*$/);
     if (matching) resource = matching[1].toLowerCase();
 
     super(
