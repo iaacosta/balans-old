@@ -2,11 +2,9 @@ import { Resolver, Query, Mutation, Arg, ID } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
 import User from '../../models/User';
-import NotFoundError from '../errors/NotFoundError';
 import { CreateUserInput, ByIdInput } from '../inputTypes';
 
 const repository = getRepository(User);
-
 @Resolver(User)
 export default class UserResolvers {
   @Query(() => [User])
@@ -30,8 +28,7 @@ export default class UserResolvers {
 
   @Mutation(() => ID)
   async deleteUser(@Arg('input') { id }: ByIdInput): Promise<number> {
-    const user = await repository.findOne(id);
-    if (!user) throw new NotFoundError('user');
+    const user = await repository.findOneOrFail(id);
     await repository.remove(user);
     return id;
   }
