@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  BeforeInsert,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
+import { hash, genSalt } from 'bcrypt';
 
 @ObjectType()
 @Entity()
@@ -45,4 +47,24 @@ export default class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+    const salt = await genSalt(10);
+    this.password = await hash(this.password, salt);
+  }
+
+  constructor(
+    firstName: string,
+    lastName: string,
+    password: string,
+    email: string,
+    username: string,
+  ) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.password = password;
+    this.email = email;
+    this.username = username;
+  }
 }
