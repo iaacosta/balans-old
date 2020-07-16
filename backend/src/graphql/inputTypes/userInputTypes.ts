@@ -1,4 +1,5 @@
 import { InputType, Field, ID } from 'type-graphql';
+import User from '../../models/User';
 
 @InputType()
 export class CreateUserInput {
@@ -20,6 +21,24 @@ export class CreateUserInput {
 
 @InputType()
 export class UpdateUserInput {
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  password?: string;
+
+  @Field()
+  currentPassword: string;
+}
+
+@InputType()
+export class UpdateAnyUserInput extends UpdateUserInput {
   @Field(() => ID)
   id: number;
 
@@ -35,6 +54,6 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   password?: string;
 
-  @Field()
-  currentPassword: string;
+  @Field(() => String, { nullable: true })
+  role?: User['role'];
 }
