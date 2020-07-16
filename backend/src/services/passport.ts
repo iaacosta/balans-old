@@ -9,7 +9,10 @@ passport.use(
   new BearerStrategy(async (token, done) => {
     try {
       const { id } = jwt.verify(token, process.env.SECRET!) as { id: number };
-      const user = await getRepository(User).findOne(id);
+      const user = await getRepository(User).findOne(id, {
+        select: ['id', 'role'],
+      });
+
       if (!user) done(null, null);
       done(null, user);
     } catch (err) {
@@ -18,9 +21,7 @@ passport.use(
   }),
 );
 
-export const authenticateUser = (
-  req: Express.Request,
-): Promise<object | null> =>
+export default (req: Express.Request): Promise<User | null> =>
   new Promise((resolve, reject) =>
     passport.authenticate('bearer', { session: false }, (err, user) => {
       if (err) reject(err);

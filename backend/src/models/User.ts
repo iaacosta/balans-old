@@ -5,11 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  BeforeInsert,
-  BeforeUpdate,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { hash, genSalt, compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { MinLength, IsEmail, IsAlphanumeric, IsIn } from 'class-validator';
 import { AuthenticationError } from 'apollo-server-express';
 
@@ -55,6 +53,7 @@ export default class User extends ModelWithValidation {
   username: string;
 
   @Column({ default: 'user' })
+  @Field()
   @IsIn(['admin', 'user'], { message: isInErrorMessage })
   role: 'admin' | 'user';
 
@@ -66,13 +65,6 @@ export default class User extends ModelWithValidation {
 
   @DeleteDateColumn()
   deletedAt?: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    const salt = await genSalt(10);
-    this.password = await hash(this.password, salt);
-  }
 
   async verifyPassword(password: string) {
     const error = new AuthenticationError('incorrect username or password');

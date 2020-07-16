@@ -1,5 +1,5 @@
 import S3Helper from '../utils/S3Helper';
-import { authenticateUser } from '../services/passport';
+import authenticateUser from '../services/passport';
 
 export type CategoryType = 'income' | 'expense';
 
