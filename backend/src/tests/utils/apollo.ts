@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { createTestClient } from 'apollo-server-testing';
 import { ApolloServer } from 'apollo-server-express';
 
