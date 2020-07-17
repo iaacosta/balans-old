@@ -29,6 +29,7 @@ export const seedTestDatabase = async (_client: Client) => {
     ...placeQueries(),
     ...incomeQueries(),
     ...expenseQueries(),
+    ...userQueries(),
   ];
 
   for (const query of queries) {
@@ -135,4 +136,9 @@ const expenseQueries = () => [
       '',
     )
     .slice(2)};`,
+];
+
+const userQueries = () => [
+  'ALTER SEQUENCE user_id_seq RESTART;',
+  'DELETE FROM public.user;',
 ];

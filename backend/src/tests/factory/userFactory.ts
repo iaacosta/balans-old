@@ -14,7 +14,7 @@ export const buildUser = build<BuildType>('User', {
     lastName: fake((faker) => faker.name.lastName()),
     email: fake((faker) => faker.internet.email()),
     password: fake((faker) => faker.internet.password()),
-    username: fake((faker) => faker.internet.userName()),
+    username: fake((faker) => faker.internet.userName().padStart(7, '_')),
     role: oneOf('admin', 'user'),
   },
 });
