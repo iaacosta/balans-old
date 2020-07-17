@@ -8,3 +8,5 @@ export const emailErrorMessage = 'must be a valid email';
 export const alphanumericErrorMessage = 'must only contain letters and numbers';
 export const isInErrorMessage = ({ constraints }: ValidationArguments) =>
   `must be ${constraints[0].map((value: string) => `'${value}'`).join(' or ')}`;
+export const isUsernameErrorMessage =
+  "must only contain letters, numbers, '-' or '_'";

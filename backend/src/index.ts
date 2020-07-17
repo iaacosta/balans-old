@@ -1,7 +1,7 @@
 import express from 'express';
 import { createConnection } from 'typeorm';
 
-import mountApollo from './config/apollo';
+import { mountApollo } from './config/apollo';
 
 const { PORT, NODE_ENV } = process.env;
 const app = express();

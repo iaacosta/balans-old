@@ -1,4 +1,6 @@
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { AuthenticationError } from 'apollo-server-express';
+
 import UniqueConstraintError from '../graphql/errors/UniqueConstraintError';
 import NotFoundError from '../graphql/errors/NotFoundError';
 
@@ -10,11 +12,20 @@ const formatError = (error: GraphQLError): GraphQLFormattedError<any> => {
       originalError.name === 'QueryFailedError' &&
       error.message.includes('unique')
     ) {
-      throw new UniqueConstraintError(originalError);
+      return new UniqueConstraintError(originalError);
     }
 
     if (originalError.name === 'EntityNotFound') {
-      throw new NotFoundError(originalError);
+      return new NotFoundError(originalError);
+    }
+
+    if (
+      originalError.name === 'Error' &&
+      originalError.message.includes('Access denied')
+    ) {
+      return new AuthenticationError(
+        "you don't have enough access to perform this action",
+      );
     }
   }
 
