@@ -38,7 +38,7 @@ export class UpdateUserInput {
 }
 
 @InputType()
-export class UpdateAnyUserInput extends UpdateUserInput {
+export class UpdateAnyUserInput {
   @Field(() => ID)
   id: number;
 

@@ -1,6 +1,6 @@
 import { UserInputError } from 'apollo-server-express';
 
-const prependAToResource = (resource: string) => {
+export const prependAToResource = (resource: string) => {
   if (['a', 'e', 'i', 'o', 'u'].includes(resource[0])) return `an ${resource}`;
   return `a ${resource}`;
 };

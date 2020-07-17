@@ -8,14 +8,14 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { compare } from 'bcrypt';
-import { MinLength, IsEmail, IsAlphanumeric, IsIn } from 'class-validator';
+import { MinLength, IsEmail, IsIn, Matches } from 'class-validator';
 import { AuthenticationError } from 'apollo-server-express';
 
 import ModelWithValidation from './ModelWithValidation';
 import {
   emailErrorMessage,
   minLengthErrorMessage,
-  alphanumericErrorMessage,
+  isUsernameErrorMessage,
   isInErrorMessage,
 } from '../errors/validationErrorMessages';
 
@@ -49,7 +49,7 @@ export default class User extends ModelWithValidation {
   @Column({ unique: true })
   @Field()
   @MinLength(6, { message: minLengthErrorMessage })
-  @IsAlphanumeric(undefined, { message: alphanumericErrorMessage })
+  @Matches(/[\w\d_\-\\.]+/, { message: isUsernameErrorMessage })
   username: string;
 
   @Column({ default: 'user' })
