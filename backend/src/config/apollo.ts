@@ -5,7 +5,7 @@ import { resolve } from 'path';
 import { authenticateUser } from '../services/passport';
 import S3Helper from '../utils/S3Helper';
 import { Context } from '../@types';
-import formatError from './errors';
+import formatError from '../errors/apolloErrorFormatter';
 
 export const buildOwnSchema = async () => {
   const authChecker: AuthChecker<Context> = ({ context }, roles) => {
