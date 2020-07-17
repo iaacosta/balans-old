@@ -7,6 +7,7 @@ module.exports = {
     'node_modules',
     'src/tests/',
     'src/migrations/',
+    'src/index',
     'ormconfig.js',
   ],
 };
