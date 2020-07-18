@@ -20,5 +20,9 @@ module.exports = {
     project: './tsconfig.json',
     createDefaultProgram: true,
   },
-  rules: { 'react/prop-types': 'off' },
+  rules: {
+    'react/prop-types': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'import/prefer-default-export': 'off',
+  },
 };

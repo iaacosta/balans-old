@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import './config/yup';
 import App from './App';
 import AppProviders from './AppProviders';
 
