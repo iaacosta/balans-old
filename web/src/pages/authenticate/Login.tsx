@@ -14,6 +14,8 @@ import routing from '../../constants/routing';
 import AuthWrapper from '../../components/authenticate/AuthWrapper';
 import { addToken } from '../../config/redux';
 import FormikCheckbox from '../../components/formik/FormikCheckbox';
+import { LoginMutation, LoginMutationVariables } from '../../@types/graphql';
+import { UNKNOWN_ERROR } from '../../constants/errorMessages';
 
 const schema = yup.object().shape({
   username: yup.string().required(),
@@ -30,7 +32,7 @@ const Login: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const [login, { loading }] = useMutation(loginMutation);
+  const [login, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(loginMutation);
 
   return (
     <AuthWrapper>
@@ -42,8 +44,12 @@ const Login: React.FC = () => {
         onSubmit={async ({ rememberMe, ...values }) => {
           try {
             const { data } = await login({ variables: values });
-            dispatch(addToken(data.token));
-            if (rememberMe) localStorage.setItem('x-auth', data.token);
+            if (data) {
+              dispatch(addToken(data.token));
+              if (rememberMe) localStorage.setItem('x-auth', data.token);
+            } else {
+              enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });
+            }
           } catch (err) {
             enqueueSnackbar(err.message, { variant: 'error' });
           }

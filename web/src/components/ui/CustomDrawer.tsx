@@ -71,6 +71,12 @@ const useStyles = makeStyles((theme) => ({
   listItemIcon: { color: theme.palette.background.default },
 }));
 
+const initialsFromName = (name: string) =>
+  name
+    .split(' ')
+    .map((_name) => _name[0])
+    .join('');
+
 const CustomDrawer: React.FC = () => {
   const classes = useStyles();
   const { user, loading } = useMe();
@@ -81,12 +87,7 @@ const CustomDrawer: React.FC = () => {
     <Drawer classes={{ paper: classes.drawer }} variant="permanent" anchor="left">
       {user && (
         <Box className={classes.profile}>
-          <Avatar className={classes.profileAvatar}>
-            {user.name
-              .split(' ')
-              .map((name) => name[0])
-              .join('')}
-          </Avatar>
+          <Avatar className={classes.profileAvatar}>{initialsFromName(user.name)}</Avatar>
           <Box className={classes.profileInfo}>
             <Typography variant="body1">{user.name}</Typography>
             <Typography className={classes.profileUsername} variant="caption">
