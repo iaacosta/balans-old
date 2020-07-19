@@ -5,6 +5,10 @@ const routing = {
   },
   authenticated: {
     dashboard: { path: '/' },
+    movements: { path: '/movements' },
+    otherMovements: { path: '/debts-and-loans' },
+    places: { path: '/places' },
+    people: { path: '/people' },
   },
 } as const;
 

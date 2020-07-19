@@ -19,46 +19,38 @@ import {
   People,
   ExpandMore,
 } from '@material-ui/icons';
+import { Link, useLocation } from 'react-router-dom';
+
 import routing from '../../constants/routing';
 import { useMe } from '../../hooks/useMe';
 
 const items = [
   {
-    id: 'dashboard',
+    id: routing.authenticated.dashboard.path,
     Icon: <InsertChartOutlined />,
     label: 'Dashboard',
-    link: routing.authenticated.dashboard,
-    inactive: false,
   },
   {
-    id: 'movements',
+    id: routing.authenticated.movements.path,
     Icon: <AttachMoneyOutlined />,
     label: 'Expenses and incomes',
-    link: null,
-    inactive: true,
   },
   {
-    id: 'otherMovements',
+    id: routing.authenticated.otherMovements.path,
     Icon: <AccountBalanceOutlined />,
     label: 'Loans and debts',
-    link: null,
-    inactive: true,
   },
   {
-    id: 'places',
+    id: routing.authenticated.places.path,
     Icon: <Place />,
     label: 'Places',
-    link: null,
-    inactive: true,
   },
   {
-    id: 'people',
+    id: routing.authenticated.people.path,
     Icon: <People />,
     label: 'People',
-    link: null,
-    inactive: true,
   },
-];
+] as const;
 
 const useStyles = makeStyles((theme) => ({
   drawer: { backgroundColor: theme.palette.primary.main, minWidth: theme.spacing(32) },
@@ -80,6 +72,7 @@ const initialsFromName = (name: string) =>
 const CustomDrawer: React.FC = () => {
   const classes = useStyles();
   const { user, loading } = useMe();
+  const { pathname } = useLocation();
 
   if (loading) return null;
 
@@ -101,7 +94,14 @@ const CustomDrawer: React.FC = () => {
       )}
       <List>
         {items.map(({ id, Icon, label }) => (
-          <ListItem className={classes.listItem} button key={id}>
+          <ListItem
+            key={id}
+            component={Link}
+            selected={id === pathname}
+            to={id}
+            className={classes.listItem}
+            button
+          >
             <ListItemIcon className={classes.listItemIcon}>{Icon}</ListItemIcon>
             <ListItemText primary={label} />
           </ListItem>
