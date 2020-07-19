@@ -1,6 +1,12 @@
 import React from 'react';
-import UnauthenticatedApp from './routes/UnauthenticatedApp';
+import { useSelector } from 'react-redux';
 
-const App: React.FC = () => <UnauthenticatedApp />;
+import UnauthenticatedApp from './routers/UnauthenticatedApp';
+import AuthenticatedApp from './routers/AuthenticatedApp';
+
+const App: React.FC = () => {
+  const token = useSelector((state: { token: string }) => state.token);
+  return token ? <AuthenticatedApp /> : <UnauthenticatedApp />;
+};
 
 export default App;

@@ -11,3 +11,14 @@ export const signUpMutation = gql`
     token: signUp(input: $input)
   }
 `;
+
+export const meQuery = gql`
+  query Me {
+    user: me {
+      id
+      name
+      username
+      role
+    }
+  }
+`;
