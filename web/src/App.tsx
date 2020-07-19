@@ -1,26 +1,6 @@
 import React from 'react';
-import { Box, makeStyles } from '@material-ui/core';
+import UnauthenticatedApp from './routes/UnauthenticatedApp';
 
-import Authenticate from './pages/Authenticate';
-
-const useStyles = makeStyles((theme) => ({
-  main: {
-    backgroundColor: theme.palette.primary.main,
-    width: '100vw',
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}));
-
-const App: React.FC = () => {
-  const classes = useStyles();
-  return (
-    <Box className={classes.main}>
-      <Authenticate />
-    </Box>
-  );
-};
+const App: React.FC = () => <UnauthenticatedApp />;
 
 export default App;
