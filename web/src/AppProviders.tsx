@@ -12,7 +12,7 @@ const AppProviders: React.FC = ({ children }) => {
     <RouterProvider>
       <ApolloProvider client={client}>
         <ThemeProvider theme={theme}>
-          <SnackbarProvider maxSnack={2} autoHideDuration={1500}>
+          <SnackbarProvider maxSnack={2} autoHideDuration={2000}>
             <CssBaseline />
             {children}
           </SnackbarProvider>
