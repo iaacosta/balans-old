@@ -1,7 +1,7 @@
+/* eslint-disable no-template-curly-in-string */
 import { setLocale } from 'yup';
 
 setLocale({
-  mixed: {
-    required: 'This field is required',
-  },
+  mixed: { required: 'This field is required' },
+  string: { email: 'Invalid email', min: 'Must be at least ${min} characters long' },
 });
