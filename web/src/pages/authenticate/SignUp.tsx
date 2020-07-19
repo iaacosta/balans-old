@@ -13,6 +13,8 @@ import { signUpMutation } from '../../graphql/authentication';
 import routing from '../../constants/routing';
 import AuthWrapper from '../../components/authenticate/AuthWrapper';
 import { addToken } from '../../config/redux';
+import { SignUpMutationVariables, SignUpMutation } from '../../@types/graphql';
+import { UNKNOWN_ERROR } from '../../constants/errorMessages';
 
 const schema = yup.object().shape({
   firstName: yup.string().required(),
@@ -40,7 +42,9 @@ const SignUp: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const [signUp, { loading }] = useMutation(signUpMutation);
+  const [signUp, { loading }] = useMutation<SignUpMutation, SignUpMutationVariables>(
+    signUpMutation,
+  );
 
   return (
     <AuthWrapper>
@@ -61,7 +65,11 @@ const SignUp: React.FC = () => {
         onSubmit={async ({ confirmPassword, ...values }) => {
           try {
             const { data } = await signUp({ variables: { input: values } });
-            dispatch(addToken(data.token));
+            if (data) {
+              dispatch(addToken(data.token));
+            } else {
+              enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });
+            }
           } catch (err) {
             enqueueSnackbar(err.message, { variant: 'error' });
           }
