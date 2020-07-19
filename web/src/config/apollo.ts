@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
+import { capitalize } from 'lodash';
 
 const baseLink = new HttpLink({
   uri: process.env.API_URL || 'http://localhost:5000/graphql',
@@ -8,13 +9,14 @@ const baseLink = new HttpLink({
 
 const errorLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors && process.env.NODE_ENV !== 'production')
-    graphQLErrors.map(({ message, locations, path }) =>
-      console.log(`[GraphQL Error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
-    );
+    graphQLErrors.forEach(({ message }, idx) => {
+      // eslint-disable-next-line no-param-reassign
+      graphQLErrors[idx].message = capitalize(message);
+    });
 });
 
 const client = new ApolloClient({
-  link: from([baseLink, errorLink]),
+  link: ApolloLink.from([errorLink, baseLink]),
   cache: new InMemoryCache(),
 });
 
