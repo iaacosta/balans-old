@@ -9,7 +9,12 @@ interface Props {
 
 const FormikCheckbox: React.FC<Props & CheckboxProps> = ({ name, label, ...props }) => {
   const [fieldProps] = useField(name);
-  return <FormControlLabel control={<Checkbox {...fieldProps} {...props} />} label={label} />;
+  return (
+    <FormControlLabel
+      control={<Checkbox color="secondary" {...fieldProps} {...props} />}
+      label={label}
+    />
+  );
 };
 
 export default FormikCheckbox;
