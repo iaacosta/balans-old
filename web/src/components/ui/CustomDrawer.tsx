@@ -7,9 +7,11 @@ import {
   ListItemText,
   makeStyles,
   Avatar,
-  Box,
-  Typography,
   IconButton,
+  ListItemAvatar,
+  Collapse,
+  withStyles,
+  Box,
 } from '@material-ui/core';
 import {
   InsertChartOutlined,
@@ -18,13 +20,19 @@ import {
   Place,
   People,
   ExpandMore,
+  ExpandLess,
+  ExitToApp,
 } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import routing from '../../constants/routing';
 import { useMe } from '../../hooks/useMe';
+import { useToggleable } from '../../hooks/useToggleable';
+import { removeToken } from '../../config/redux';
+import Logo from './Logo';
 
-const items = [
+const navigationItems = [
   {
     id: routing.authenticated.dashboard.path,
     Icon: <InsertChartOutlined />,
@@ -53,15 +61,32 @@ const items = [
 ] as const;
 
 const useStyles = makeStyles((theme) => ({
-  drawer: { backgroundColor: theme.palette.primary.main, minWidth: theme.spacing(32) },
-  profile: { padding: theme.spacing(2), display: 'flex', alignItems: 'center' },
+  drawer: {
+    backgroundColor: theme.palette.primary.main,
+    minWidth: theme.spacing(32),
+    borderRight: 'none',
+  },
   profileAvatar: { backgroundColor: theme.palette.secondary.main },
-  profileInfo: { flex: 1, color: theme.palette.background.default, marginLeft: theme.spacing(2) },
-  profileUsername: { opacity: 0.6 },
+  profileName: { color: theme.palette.background.default },
+  profileUsername: { color: theme.palette.background.default, opacity: 0.6 },
   profileIcon: { color: theme.palette.background.default },
-  listItem: { color: theme.palette.background.default },
-  listItemIcon: { color: theme.palette.background.default },
+  profileList: {
+    backgroundColor: theme.palette.background.default,
+    borderRightColor: theme.palette.secondary.main,
+    borderRightWidth: theme.spacing(0.25),
+    borderRightStyle: 'solid',
+  },
+  profileListItem: { paddingLeft: theme.spacing(4) },
 }));
+
+const WhiteListItemText = withStyles((theme) => ({
+  primary: { color: theme.palette.background.default },
+  secondary: { color: theme.palette.background.default, opacity: 0.6 },
+}))(ListItemText);
+
+const WhiteListIcon = withStyles((theme) => ({
+  root: { color: theme.palette.background.default },
+}))(ListItemIcon);
 
 const initialsFromName = (name: string) =>
   name
@@ -70,40 +95,58 @@ const initialsFromName = (name: string) =>
     .join('');
 
 const CustomDrawer: React.FC = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const { user, loading } = useMe();
   const { pathname } = useLocation();
+  const { toggled, toggle } = useToggleable();
 
   if (loading) return null;
 
+  const handleExit = () => {
+    dispatch(removeToken());
+    if (localStorage.getItem('x-auth')) localStorage.removeItem('x-auth');
+  };
+
   return (
     <Drawer classes={{ paper: classes.drawer }} variant="permanent" anchor="left">
-      {user && (
-        <Box className={classes.profile}>
-          <Avatar className={classes.profileAvatar}>{initialsFromName(user.name)}</Avatar>
-          <Box className={classes.profileInfo}>
-            <Typography variant="body1">{user.name}</Typography>
-            <Typography className={classes.profileUsername} variant="caption">
-              @{user.username}
-            </Typography>
-          </Box>
-          <IconButton>
-            <ExpandMore className={classes.profileIcon} />
-          </IconButton>
-        </Box>
-      )}
+      <Box p={2} alignSelf="center">
+        <Logo />
+      </Box>
       <List>
-        {items.map(({ id, Icon, label }) => (
-          <ListItem
-            key={id}
-            component={Link}
-            selected={id === pathname}
-            to={id}
-            className={classes.listItem}
-            button
-          >
-            <ListItemIcon className={classes.listItemIcon}>{Icon}</ListItemIcon>
-            <ListItemText primary={label} />
+        {user && (
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar className={classes.profileAvatar}>{initialsFromName(user.name)}</Avatar>
+            </ListItemAvatar>
+            <WhiteListItemText
+              classes={{ primary: classes.profileName, secondary: classes.profileUsername }}
+              primary={user.name}
+              secondary={`@${user.username}`}
+            />
+            <IconButton onClick={toggle} size="small">
+              {!toggled ? (
+                <ExpandMore className={classes.profileIcon} />
+              ) : (
+                <ExpandLess className={classes.profileIcon} />
+              )}
+            </IconButton>
+          </ListItem>
+        )}
+        <Collapse in={toggled} unmountOnExit>
+          <List className={classes.profileList}>
+            <ListItem button className={classes.profileListItem} onClick={handleExit}>
+              <ListItemIcon>
+                <ExitToApp />
+              </ListItemIcon>
+              <ListItemText primary="Exit" />
+            </ListItem>
+          </List>
+        </Collapse>
+        {navigationItems.map(({ id, Icon, label }) => (
+          <ListItem component={Link} to={id} key={id} selected={id === pathname} button>
+            <WhiteListIcon>{Icon}</WhiteListIcon>
+            <WhiteListItemText primary={label} />
           </ListItem>
         ))}
       </List>

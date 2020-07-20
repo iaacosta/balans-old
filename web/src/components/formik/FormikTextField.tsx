@@ -22,7 +22,7 @@ const FormikTextField: React.FC<Props & TextFieldProps> = ({ name, label, varian
       label={label}
       error={hasError}
       helperText={hasError && error}
-      color="primary"
+      color="secondary"
       variant={variant || ('outlined' as any)}
       classes={classes}
       {...props}
