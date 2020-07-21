@@ -121,6 +121,7 @@ const CustomDrawer: React.FC = () => {
             </ListItemAvatar>
             <WhiteListItemText
               classes={{ primary: classes.profileName, secondary: classes.profileUsername }}
+              primaryTypographyProps={{ 'data-testid': 'userFullName' }}
               primary={user.name}
               secondary={`@${user.username}`}
             />

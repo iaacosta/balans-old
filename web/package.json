@@ -32,13 +32,18 @@
     "yup": "^0.29.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write src/**/*.ts{,x}",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
-    "generate-types": "graphql-codegen --config codegen.yml"
+    "generate-types": "graphql-codegen --config codegen.yml",
+    "start:backend": "yarn --cwd ../backend cypress:dev",
+    "cypress:ci": "cypress run",
+    "cypress:ci:start": "start-server-and-test start:backend 5000 start 3000 cypress:ci",
+    "cypress:dev": "cypress open",
+    "cypress:dev:start": "start-server-and-test start:backend 5000 start 3000 cypress:dev"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -59,13 +64,16 @@
     "@apollo/react-common": "^3.1.4",
     "@apollo/react-components": "^3.1.5",
     "@apollo/react-hoc": "^3.1.5",
+    "@cypress/webpack-preprocessor": "^5.4.1",
     "@graphql-codegen/cli": "1.17.0",
     "@graphql-codegen/typescript": "1.17.0",
     "@graphql-codegen/typescript-operations": "1.17.0",
     "@graphql-codegen/typescript-react-apollo": "1.17.0",
     "@graphql-codegen/typescript-type-graphql": "^1.17.0",
+    "@jackfranklin/test-data-bot": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
+    "cypress": "^4.10.0",
     "eslint-config-airbnb": "18.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-config-prettier": "^6.11.0",
@@ -75,6 +83,9 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "4.0.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "start-server-and-test": "^1.11.2",
+    "ts-loader": "^8.0.1",
+    "webpack": "4.42.0"
   }
 }
