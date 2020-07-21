@@ -11,6 +11,7 @@ const FormikCheckbox: React.FC<Props & CheckboxProps> = ({ name, label, ...props
   const [fieldProps] = useField(name);
   return (
     <FormControlLabel
+      data-testid={`${name}Input`}
       control={<Checkbox color="secondary" {...fieldProps} {...props} />}
       label={label}
     />

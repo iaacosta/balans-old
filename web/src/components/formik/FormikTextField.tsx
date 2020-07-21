@@ -25,6 +25,7 @@ const FormikTextField: React.FC<Props & TextFieldProps> = ({ name, label, varian
       color="secondary"
       variant={variant || ('outlined' as any)}
       classes={classes}
+      data-testid={`${name}Input`}
       {...props}
       {...fieldProps}
     />
