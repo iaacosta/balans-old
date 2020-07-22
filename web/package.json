@@ -68,8 +68,6 @@
     "@graphql-codegen/cli": "1.17.0",
     "@graphql-codegen/typescript": "1.17.0",
     "@graphql-codegen/typescript-operations": "1.17.0",
-    "@graphql-codegen/typescript-react-apollo": "1.17.0",
-    "@graphql-codegen/typescript-type-graphql": "^1.17.0",
     "@jackfranklin/test-data-bot": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
