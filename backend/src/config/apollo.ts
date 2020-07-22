@@ -18,8 +18,8 @@ export const buildOwnSchema = async () => {
 
   return buildSchema({
     resolvers: [
-      resolve(__dirname, '..', 'graphql', 'resolvers', '*.ts'),
-      resolve(__dirname, '..', 'models', '*.ts'),
+      resolve(__dirname, '..', 'graphql', 'resolvers', '*'),
+      resolve(__dirname, '..', 'models', '*'),
     ],
     authChecker,
   });
