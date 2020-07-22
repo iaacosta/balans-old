@@ -22,7 +22,17 @@ jobs:
         - yarn --cwd backend audit
         - yarn --cwd web lint
         - yarn --cwd web cypress:ci:start
+    - stage: Release
+      node_js: lts/*
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release
+        on:
+          branch: release
 branches:
   only:
-    - master
     - dev
+    - release
