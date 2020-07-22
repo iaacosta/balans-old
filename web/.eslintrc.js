@@ -20,7 +20,7 @@ module.exports = {
     project: './tsconfig.json',
     createDefaultProgram: true,
   },
-  ignorePatterns: ['src/@types/graphql.tsx'],
+  ignorePatterns: ['src/@types/graphql.ts'],
   rules: {
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
