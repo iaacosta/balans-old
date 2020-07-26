@@ -20,10 +20,8 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
-      - IAM_ID=${IAM_ID}
-      - IAM_SECRET=${IAM_SECRET}
-      - S3_URL=${S3_URL}
-    command: bash -c 'yarn install --prod false && yarn db:migrate-dev && yarn start'
+      - DB_HOSTNAME=localhost
+    command: bash -c 'yarn install && yarn db:migrate && yarn start'
     ports:
       - 5000:5000
     depends_on:
