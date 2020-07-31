@@ -1,17 +1,16 @@
-language: node_js
-node_js:
-  - 12.13.0
-services: postgresql
-cache: yarn
 jobs:
   include:
-    - stage: Pipeline
+    - stage: SQA pipeline
+      language: node_js
+      node_js: 12.13.0
+      services: postgresql
+      cache: yarn
       env:
         - PORT=5000
         - SECRET=test
         - API_URL=http://localhost:5000/graphql
       install:
-        - psql -c 'CREATE DATABASE finanzie_test;' -U postgres
+        - psql -c 'CREATE DATABASE balans_test;' -U postgres
         - yarn --cwd backend install --frozen-lockfile
         - yarn --cwd web install --frozen-lockfile
         - yarn --cwd web cypress install
@@ -22,16 +21,55 @@ jobs:
         - yarn --cwd backend audit
         - yarn --cwd web lint
         - yarn --cwd web cypress:ci:start
-    - stage: Release
-      node_js: lts/*
-      script: skip
+    - stage: Release pipeline
+      if: type = push AND branch = release
+      language: node_js
+      node_js: 12.13.0
+      services: docker
+      env:
+        - REACT_APP_API_URL=http://server.balans.cf/graphql
+      install:
+        - yarn --cwd backend install --frozen-lockfile
+        - yarn --cwd web install --frozen-lockfile
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      before_script:
+        - cp backend/ormconfig.prod.js backend/ormconfig.js
+      script:
+        - yarn --cwd web build
+        - yarn --cwd backend build
+      before_deploy:
+        - zip -r release.zip proxy/ Dockerrun.aws.json
+        - sh backend/scripts/docker-build.sh
       deploy:
-        provider: script
-        skip_cleanup: true
-        script:
-          - npx semantic-release
-        on:
-          branch: release
+        - provider: s3
+          access_key_id: $IAM_ID
+          secret_access_key: $IAM_SECRET
+          skip_cleanup: true
+          bucket: balans.cf
+          acl: public_read
+          local_dir: web/build
+          region: sa-east-1
+          on:
+            branch: release
+        - provider: elasticbeanstalk
+          edge: true
+          skip_cleanup: true
+          access_key_id: $IAM_ID
+          secret_access_key: $IAM_SECRET
+          region: 'us-east-1'
+          app: 'balans'
+          env: 'default-env'
+          bucket: 'elasticbeanstalk-sa-east-1-511811702480'
+          wait_until_deployed: true
+          zip_file: ./release.zip
+          on:
+            branch: release
+        - provider: script
+          skip_cleanup: true
+          script:
+            - npx semantic-release
+          on:
+            branch: release
 branches:
   only:
     - dev
