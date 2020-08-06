@@ -1,38 +1,33 @@
-FROM node:12.16.1
+FROM node:12-alpine
 
-# Setup
+# setup environment
+ENV NODE_ENV=production
+
+# working directory
 WORKDIR /app
 
-# Environment variables
-ARG PORT=5000
-ENV PORT=$PORT
-EXPOSE ${PORT}
+# copy dependencies files
+COPY package.json ./
+COPY yarn.lock ./
 
-ARG SECRET
-ENV SECRET=$SECRET
-
-ARG DB_HOSTNAME
-ENV DB_HOSTNAME=$DB_HOSTNAME
-
-ARG DB_USERNAME
-ENV DB_USERNAME=$DB_USERNAME
-
-ARG DB_PASSWORD
-ENV DB_PASSWORD=$DB_PASSWORD
-
-ARG DB_NAME
-ENV DB_NAME=$DB_NAME
-
-ARG DB_PORT=5432
-ENV DB_PORT=$DB_PORT
-
-# Copy files
-COPY . .
-RUN cp ormconfig.prod.js ormconfig.js
-
-# Install and build
+# install dependencies
 RUN yarn
+
+# copy rest of the files
+COPY ./ ./
+COPY tsconfig.prod.json tsconfig.json
+
+# build source
 RUN yarn build
 
-# Command
-CMD bash -c "yarn db:migrate && yarn start"
+# remove src files
+RUN rm -r src/
+
+# set default port
+ENV PORT=4000
+
+# entrypoint
+ENTRYPOINT ["sh", "/app/docker/entrypoint.sh"]
+
+# start process
+CMD ["yarn", "start"]
