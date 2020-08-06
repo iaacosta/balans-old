@@ -1,0 +1,29 @@
+version: '3'
+services:
+  database:
+    image: postgres:12-alpine
+    volumes:
+      - ./data/dev:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - 5433:5432
+  server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./docker/server-development-entrypoint.sh:/app/docker/entrypoint.sh
+      - ./backend:/app
+    environment:
+      - PORT=4000
+      - DB_HOSTNAME=database
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_NAME
+    ports:
+      - 4000:4000
+    depends_on:
+      - database
