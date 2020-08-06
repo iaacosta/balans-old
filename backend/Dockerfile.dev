@@ -1,0 +1,22 @@
+FROM node:12-alpine
+
+# timezone for tests
+RUN apk add --update tzdata
+RUN cp /usr/share/zoneinfo/America/Santiago /etc/localtime
+RUN echo "America/Santiago" > /etc/timezone
+
+# working directory
+WORKDIR /app
+
+# copy dependencies files
+COPY package.json ./
+COPY yarn.lock ./
+
+# install dependencies
+RUN yarn
+
+# copy all files
+COPY ./ ./
+
+# start process
+CMD ["yarn", "dev"]
