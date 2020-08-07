@@ -34,27 +34,27 @@ import Logo from './Logo';
 
 const navigationItems = [
   {
-    id: routing.authenticated.dashboard.path,
+    id: routing.authenticated.dashboard,
     Icon: <InsertChartOutlined />,
     label: 'Dashboard',
   },
   {
-    id: routing.authenticated.movements.path,
+    id: routing.authenticated.movements,
     Icon: <AttachMoneyOutlined />,
     label: 'Expenses and incomes',
   },
   {
-    id: routing.authenticated.otherMovements.path,
+    id: routing.authenticated.otherMovements,
     Icon: <AccountBalanceOutlined />,
     label: 'Loans and debts',
   },
   {
-    id: routing.authenticated.places.path,
+    id: routing.authenticated.places,
     Icon: <Place />,
     label: 'Places',
   },
   {
-    id: routing.authenticated.people.path,
+    id: routing.authenticated.people,
     Icon: <People />,
     label: 'People',
   },
