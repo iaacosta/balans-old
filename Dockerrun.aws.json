@@ -1,39 +1,5 @@
 {
-  "AWSEBDockerrunVersion": 2,
-  "volumes": [
-    {
-      "name": "nginx-proxy-conf",
-      "host": {
-        "sourcePath": "/var/app/current/proxy/conf.d"
-      }
-    }
-  ],
-  "containerDefinitions": [
-    {
-      "name": "server",
-      "image": "registry.hub.docker.com/nacho19/balans",
-      "essential": true,
-      "memory": 128
-    },
-    {
-      "name": "nginx-proxy",
-      "image": "nginx",
-      "essential": true,
-      "memory": 128,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 80
-        }
-      ],
-      "links": ["server"],
-      "mountPoints": [
-        {
-          "sourceVolume": "nginx-proxy-conf",
-          "containerPath": "/etc/nginx/conf.d",
-          "readOnly": true
-        }
-      ]
-    }
-  ]
+  "AWSEBDockerrunVersion": "1",
+  "Image": { "Name": "nacho19/balans-backend", "Update": "true" },
+  "Ports": [{ "ContainerPort": "4000", "HostPort": "4000" }]
 }
