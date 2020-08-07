@@ -1,0 +1,17 @@
+FROM node:12-alpine
+
+# working directory
+WORKDIR /app
+
+# copy dependencies files
+COPY package.json ./
+COPY yarn.lock ./
+
+# install dependencies
+RUN yarn
+
+# copy rest of the files
+COPY ./ ./
+
+# start process
+CMD ["yarn", "start"]
