@@ -1,14 +1,15 @@
 const routing = {
   unauthenticated: {
-    login: { path: '/login' },
-    signUp: { path: '/signup' },
+    login: '/login',
+    signUp: '/signup',
   },
   authenticated: {
-    dashboard: { path: '/' },
-    movements: { path: '/movements' },
-    otherMovements: { path: '/debts-and-loans' },
-    places: { path: '/places' },
-    people: { path: '/people' },
+    dashboard: '/',
+    movements: '/movements',
+    otherMovements: '/debts-and-loans',
+    places: '/places',
+    people: '/people',
+    users: '/users',
   },
 } as const;
 

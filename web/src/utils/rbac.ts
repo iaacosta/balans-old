@@ -3,7 +3,7 @@ import { User } from '../@types/graphql';
 export const roles = {
   USER: 'user',
   ADMIN: 'admin',
-};
+} as const;
 
 export const actions = {
   routes: {
