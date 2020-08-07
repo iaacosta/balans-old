@@ -23,10 +23,10 @@ const UnauthenticatedApp: React.FC = () => {
   return (
     <Box className={classes.main}>
       <Switch>
-        <Route path={routing.unauthenticated.login.path} component={Login} exact />
-        <Route path={routing.unauthenticated.signUp.path} component={SignUp} exact />
+        <Route path={routing.unauthenticated.login} component={Login} exact />
+        <Route path={routing.unauthenticated.signUp} component={SignUp} exact />
         <Route>
-          <Redirect to={routing.unauthenticated.login.path} />
+          <Redirect to={routing.unauthenticated.login} />
         </Route>
       </Switch>
     </Box>

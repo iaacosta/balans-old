@@ -71,7 +71,7 @@ const Login: React.FC = () => {
             <Box className={classes.buttons}>
               <Button
                 component={Link}
-                to={routing.unauthenticated.signUp.path}
+                to={routing.unauthenticated.signUp}
                 type="button"
                 className={classes.signUp}
                 color="secondary"
