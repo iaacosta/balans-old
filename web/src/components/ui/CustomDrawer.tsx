@@ -12,6 +12,7 @@ import {
   Collapse,
   withStyles,
   Box,
+  Divider,
 } from '@material-ui/core';
 import {
   InsertChartOutlined,
@@ -22,6 +23,7 @@ import {
   ExpandMore,
   ExpandLess,
   ExitToApp,
+  SupervisedUserCircleSharp,
 } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -31,32 +33,51 @@ import { useMe } from '../../hooks/useMe';
 import { useToggleable } from '../../hooks/useToggleable';
 import { removeToken } from '../../config/redux';
 import Logo from './Logo';
+import { actions } from '../../utils/rbac';
+import { useCan } from '../../hooks/useRbac';
 
 const navigationItems = [
   {
     id: routing.authenticated.dashboard,
+    action: actions.routes.dashboard,
     Icon: <InsertChartOutlined />,
     label: 'Dashboard',
+    divides: false,
   },
   {
     id: routing.authenticated.movements,
+    action: actions.routes.movements,
     Icon: <AttachMoneyOutlined />,
     label: 'Expenses and incomes',
+    divides: false,
   },
   {
     id: routing.authenticated.otherMovements,
+    action: actions.routes.otherMovements,
     Icon: <AccountBalanceOutlined />,
     label: 'Loans and debts',
+    divides: false,
   },
   {
     id: routing.authenticated.places,
+    action: actions.routes.places,
     Icon: <Place />,
     label: 'Places',
+    divides: false,
   },
   {
     id: routing.authenticated.people,
+    action: actions.routes.people,
     Icon: <People />,
     label: 'People',
+    divides: false,
+  },
+  {
+    id: routing.authenticated.users,
+    action: actions.routes.users,
+    Icon: <SupervisedUserCircleSharp />,
+    label: 'Users',
+    divides: true,
   },
 ] as const;
 
@@ -77,6 +98,7 @@ const useStyles = makeStyles((theme) => ({
     borderRightStyle: 'solid',
   },
   profileListItem: { paddingLeft: theme.spacing(4) },
+  divider: { backgroundColor: theme.palette.background.default, opacity: 0.3 },
 }));
 
 const WhiteListItemText = withStyles((theme) => ({
@@ -95,6 +117,7 @@ const initialsFromName = (name: string) =>
     .join('');
 
 const CustomDrawer: React.FC = () => {
+  const canPerform = useCan();
   const dispatch = useDispatch();
   const classes = useStyles();
   const { user, loading } = useMe();
@@ -144,12 +167,18 @@ const CustomDrawer: React.FC = () => {
             </ListItem>
           </List>
         </Collapse>
-        {navigationItems.map(({ id, Icon, label }) => (
-          <ListItem component={Link} to={id} key={id} selected={id === pathname} button>
-            <WhiteListIcon>{Icon}</WhiteListIcon>
-            <WhiteListItemText primary={label} />
-          </ListItem>
-        ))}
+        {navigationItems.map(
+          ({ id, Icon, label, action, divides }) =>
+            canPerform(action) && (
+              <React.Fragment key={id}>
+                {divides && <Divider className={classes.divider} />}
+                <ListItem component={Link} to={id} selected={id === pathname} button>
+                  <WhiteListIcon>{Icon}</WhiteListIcon>
+                  <WhiteListItemText primary={label} />
+                </ListItem>
+              </React.Fragment>
+            ),
+        )}
       </List>
     </Drawer>
   );
