@@ -27,6 +27,7 @@ import {
 } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useApolloClient } from '@apollo/client';
 
 import routing from '../../constants/routing';
 import { useMe } from '../../hooks/useMe';
@@ -120,15 +121,18 @@ const CustomDrawer: React.FC = () => {
   const canPerform = useCan();
   const dispatch = useDispatch();
   const classes = useStyles();
+  const client = useApolloClient();
   const { user, loading } = useMe();
   const { pathname } = useLocation();
   const { toggled, toggle } = useToggleable();
 
   if (loading) return null;
 
-  const handleExit = () => {
+  const handleExit = async () => {
     dispatch(removeToken());
     if (localStorage.getItem('x-auth')) localStorage.removeItem('x-auth');
+    await client.clearStore();
+    await client.resetStore();
   };
 
   return (
