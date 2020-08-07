@@ -1,45 +1,33 @@
 jobs:
   include:
     - stage: SQA pipeline
-      language: node_js
-      node_js: 12.13.0
-      services: postgresql
-      cache: yarn
-      env:
-        - PORT=5000
-        - SECRET=test
-        - API_URL=http://localhost:5000/graphql
+      services: docker
       install:
-        - psql -c 'CREATE DATABASE balans_test;' -U postgres
-        - yarn --cwd backend install --frozen-lockfile
-        - yarn --cwd web install --frozen-lockfile
-        - yarn --cwd web cypress install
-        - yarn --cwd backend db:test:migrate
+        - docker build -f ./backend/Dockerfile.dev -t balans-backend ./backend
+        - docker build -f ./web/Dockerfile.dev -t balans-web ./web
+        - docker pull postgres:12-alpine
+      before_script:
+        - docker run -d --network host -e POSTGRES_PASSWORD=balans -e POSTGRES_DB=balans_test postgres:12-alpine
       script:
-        - yarn --cwd backend lint
-        - yarn --cwd backend test --coverage
-        - yarn --cwd backend audit
-        - yarn --cwd web lint
-        - yarn --cwd web cypress:ci:start
+        - docker run balans-backend yarn lint
+        - docker run -e CI -e SECRET=travis -e DB_USERNAME=postgres -e DB_PASSWORD=balans --network host balans-backend sh -c "yarn db:test:migrate && yarn test --coverage"
+        - docker run balans-backend yarn audit
+        - docker run balans-web yarn lint
     - stage: Release pipeline
       if: type = push AND branch = release
       language: node_js
       node_js: 12.13.0
       services: docker
-      env:
-        - REACT_APP_API_URL=http://server.balans.cf/graphql
+      cache: yarn
       install:
-        - yarn --cwd backend install --frozen-lockfile
-        - yarn --cwd web install --frozen-lockfile
+        - docker build -t nacho19/balans-backend ./backend
+        - docker build -t nacho19/balans-web ./web
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      before_script:
-        - cp backend/ormconfig.prod.js backend/ormconfig.js
       script:
-        - yarn --cwd web build
-        - yarn --cwd backend build
-      before_deploy:
-        - zip -r release.zip proxy/ Dockerrun.aws.json
-        - sh backend/scripts/docker-build.sh
+        - docker run -v $(pwd)/web/build:/app/build nacho19/balans-web
+      after_success:
+        - docker push nacho19/balans-backend
+        - zip -r release.zip Dockerrun.aws.json
       deploy:
         - provider: s3
           access_key_id: $IAM_ID
@@ -52,15 +40,13 @@ jobs:
           on:
             branch: release
         - provider: elasticbeanstalk
-          edge: true
           skip_cleanup: true
           access_key_id: $IAM_ID
           secret_access_key: $IAM_SECRET
-          region: 'us-east-1'
-          app: 'balans'
-          env: 'default-env'
-          bucket: 'elasticbeanstalk-sa-east-1-511811702480'
-          wait_until_deployed: true
+          region: sa-east-1
+          app: balans-server
+          env: default-env
+          bucket: elasticbeanstalk-sa-east-1-511811702480
           zip_file: ./release.zip
           on:
             branch: release
