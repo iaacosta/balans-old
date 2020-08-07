@@ -5,9 +5,9 @@ services:
     volumes:
       - ./data/dev:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=balans
+      - POSTGRES_PASSWORD=balans
+      - POSTGRES_DB=balans
     ports:
       - 5433:5432
   server:
@@ -18,12 +18,26 @@ services:
       - ./docker/server-development-entrypoint.sh:/app/docker/entrypoint.sh
       - ./backend:/app
     environment:
+      - SECRET=docker
       - PORT=4000
       - DB_HOSTNAME=database
-      - DB_USERNAME
-      - DB_PASSWORD
-      - DB_NAME
+      - DB_USERNAME=balans
+      - DB_PASSWORD=balans
+      - DB_NAME=balans
     ports:
       - 4000:4000
     depends_on:
       - database
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    stdin_open: true
+    volumes:
+      - ./web:/app
+    environment:
+      - REACT_APP_API_URL=http://localhost:4000/graphql
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
