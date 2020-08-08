@@ -12,8 +12,8 @@ export const useRbac = ({ action }: Props): boolean => {
   return canPerform(user!, action);
 };
 
-export const useCan = (): ((action: Action) => boolean) => {
+export const useCan = (): { canPerform: (action: Action) => boolean; loading: boolean } => {
   const { user, loading, error } = useMe();
-  if (loading || error) return () => false;
-  return (action) => canPerform(user!, action);
+  if (loading || error) return { canPerform: () => false, loading };
+  return { canPerform: (action) => canPerform(user!, action), loading };
 };
