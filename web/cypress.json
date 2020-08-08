@@ -3,7 +3,5 @@
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
-  "env": {
-    "API_URL": "http://localhost:5000"
-  }
+  "env": { "API_URL": "http://localhost:4000" }
 }
