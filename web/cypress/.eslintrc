@@ -1,4 +1,5 @@
 {
+  "ignorePatterns": "**/*.d.ts",
   "rules": {
     "no-undef": "off"
   }

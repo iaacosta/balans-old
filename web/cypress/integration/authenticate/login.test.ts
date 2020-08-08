@@ -1,8 +1,10 @@
+import { BaseUser } from '../../support/build/user';
+
 describe('login', () => {
-  let adminUser: any;
+  let adminUser: BaseUser;
 
   beforeEach(() => {
-    cy.fixture('adminUser').then((user) => {
+    cy.fixture('adminUser').then((user: BaseUser) => {
       adminUser = user;
     });
 
