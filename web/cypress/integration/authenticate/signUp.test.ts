@@ -1,7 +1,7 @@
 import { buildUser } from '../../support/build/user';
 import { validationMatchers } from '../../support/matchers';
 
-describe('Sign up', () => {
+describe('sign up', () => {
   beforeEach(() => cy.visit('/signUp'));
 
   it('should be accesible from login', () => {

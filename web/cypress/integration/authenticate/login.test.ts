@@ -1,7 +1,13 @@
-import { adminUser } from '../../support/build/user';
-
 describe('login', () => {
-  beforeEach(() => cy.visit('/login'));
+  let adminUser: any;
+
+  beforeEach(() => {
+    cy.fixture('adminUser').then((user) => {
+      adminUser = user;
+    });
+
+    cy.visit('/login');
+  });
 
   it('should be home page if not authenticated', () => {
     cy.visit('/');

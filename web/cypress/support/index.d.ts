@@ -36,6 +36,9 @@ declare namespace Cypress {
     /**
      * Custom command to send a GraphQL request
      */
-    graphQLRequest(request: { query: any; variables: { [key: string]: any } }): void;
+    graphQLRequest(request: {
+      query: any;
+      variables: { [key: string]: any };
+    }): Chainable<Cypress.Response>;
   }
 }

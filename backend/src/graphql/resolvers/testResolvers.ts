@@ -1,13 +1,20 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import { Mutation, Resolver, Ctx } from 'type-graphql';
+import { Mutation, Resolver, Ctx, Arg } from 'type-graphql';
+import { getRepository } from 'typeorm';
 import { Context } from '../../@types';
+import { CreateUserInput } from '../inputTypes';
+import User from '../../models/User';
 
 @Resolver()
 export default class TestResolvers {
-  @Mutation(() => Boolean)
-  async resetDatabase(@Ctx() { connection }: Context): Promise<boolean> {
-    if (process.env.NODE_ENV !== 'cypress') return false;
+  @Mutation(() => User, { nullable: true })
+  async setupDatabase(
+    @Arg('adminUser')
+    { firstName, lastName, password, email, username }: CreateUserInput,
+    @Ctx() { connection }: Context,
+  ): Promise<User | null> {
+    if (process.env.NODE_ENV !== 'cypress') return null;
 
     const entities = connection.entityMetadatas;
     for (const entity of entities) {
@@ -21,6 +28,17 @@ export default class TestResolvers {
       await repository.query(query);
     }
 
-    return true;
+    const newUser = new User(
+      firstName,
+      lastName,
+      password,
+      email,
+      username,
+      'admin',
+    );
+
+    const user = await getRepository(User).save(newUser);
+
+    return user;
   }
 }
