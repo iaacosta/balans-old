@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Column } from 'react-table';
-import { capitalize } from '@material-ui/core';
+import { capitalize, makeStyles } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
@@ -11,8 +11,10 @@ import routing from '../../constants/routing';
 import ActiveActionsCell from './ActiveActionCell';
 import EnhancedTable from '../ui/EnhancedTable';
 
+const useStyles = makeStyles(() => ({ table: { flex: 1 } }));
 const ActiveUsersTable: React.FC = () => {
   const history = useHistory();
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery<AllUsersQuery>(usersQuery);
 
@@ -35,7 +37,9 @@ const ActiveUsersTable: React.FC = () => {
     }
   }, [error, enqueueSnackbar, history]);
 
-  return <EnhancedTable columns={columns} data={users} loading={loading} />;
+  return (
+    <EnhancedTable className={classes.table} columns={columns} data={users} loading={loading} />
+  );
 };
 
 export default ActiveUsersTable;
