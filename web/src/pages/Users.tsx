@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Tabs, Tab, makeStyles, Paper } from '@material-ui/core';
 import { useTabs } from '../hooks/useTabs';
 import ActiveUsersTable from '../components/users/ActiveUsersTable';
+import DeletedUsersTable from '../components/users/DeletedUsersTable';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
@@ -31,7 +32,7 @@ const Users: React.FC = () => {
         </Tabs>
       </Paper>
       {selected === 'active' && <ActiveUsersTable />}
-      {selected === 'deleted' && null}
+      {selected === 'deleted' && <DeletedUsersTable />}
     </>
   );
 };
