@@ -12,6 +12,8 @@ export type Scalars = {
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
   name: Scalars['String'];
   email: Scalars['String'];
   username: Scalars['String'];
@@ -147,7 +149,7 @@ export type AllUsersQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'username' | 'role'>
+    & Pick<User, 'id' | 'firstName' | 'lastName' | 'name' | 'email' | 'username' | 'role'>
   )> }
 );
 
@@ -160,6 +162,19 @@ export type AllDeletedUsersQuery = (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'email' | 'username' | 'role'>
   )> }
+);
+
+export type UpdateUserMutationVariables = Exact<{
+  input: UpdateAnyUserInput;
+}>;
+
+
+export type UpdateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUser: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'firstName' | 'lastName' | 'name' | 'email' | 'username' | 'role'>
+  ) }
 );
 
 export type DeleteUserMutationVariables = Exact<{
