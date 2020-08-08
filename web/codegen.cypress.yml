@@ -1,0 +1,10 @@
+overwrite: true
+schema: 'http://localhost:4000/graphql'
+documents: 'cypress/support/graphql/*.js'
+config:
+  noExport: true
+generates:
+  cypress/graphql.d.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'

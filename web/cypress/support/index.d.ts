@@ -34,6 +34,10 @@ declare namespace Cypress {
      */
     attachFileByTestId(testId: string, filePath: string): Chainable<Element>;
     /**
+     * Command to setup database in backend side
+     */
+    setupDatabase(): Chainable<SetupDatabaseMutation['setupDatabase']>;
+    /**
      * Custom command to send a GraphQL request
      */
     graphQLRequest(request: {
