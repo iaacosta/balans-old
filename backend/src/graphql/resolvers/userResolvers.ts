@@ -13,7 +13,6 @@ import { size, forEach } from 'lodash';
 import User from '../../models/User';
 import {
   CreateUserInput,
-  ByIdInput,
   UpdateUserInput,
   UpdateAnyUserInput,
 } from '../inputTypes';
@@ -39,7 +38,7 @@ export default class UserResolvers {
 
   @Query(() => User)
   @Authorized(roles.ADMIN)
-  user(@Arg('input') { id }: ByIdInput): Promise<User> {
+  user(@Arg('id', () => ID) id: string): Promise<User> {
     return this.repository.findOneOrFail(id);
   }
 
@@ -94,9 +93,9 @@ export default class UserResolvers {
 
   @Mutation(() => ID)
   @Authorized(roles.ADMIN)
-  async deleteUser(@Arg('input') { id }: ByIdInput): Promise<number> {
+  async deleteUser(@Arg('id', () => ID) id: string): Promise<string> {
     const user = await this.repository.findOneOrFail(id);
-    await this.repository.remove(user);
+    await this.repository.softRemove(user);
     return id;
   }
 }
