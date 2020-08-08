@@ -7,7 +7,7 @@ import {
   Authorized,
   Ctx,
 } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, IsNull, Not } from 'typeorm';
 import { size, forEach } from 'lodash';
 
 import User from '../../models/User';
@@ -33,6 +33,16 @@ export default class UserResolvers {
   users(): Promise<User[]> {
     return this.repository.find({
       order: { createdAt: 'DESC' },
+    });
+  }
+
+  @Query(() => [User])
+  @Authorized(roles.ADMIN)
+  deletedUsers(): Promise<User[]> {
+    return this.repository.find({
+      order: { createdAt: 'DESC' },
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
     });
   }
 
@@ -97,5 +107,13 @@ export default class UserResolvers {
     const user = await this.repository.findOneOrFail(id);
     await this.repository.softRemove(user);
     return id;
+  }
+
+  @Mutation(() => User)
+  @Authorized(roles.ADMIN)
+  async restoreUser(@Arg('id', () => ID) id: string): Promise<User> {
+    const user = await this.repository.findOneOrFail(id, { withDeleted: true });
+    await this.repository.recover(user);
+    return user;
   }
 }
