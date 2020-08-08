@@ -3,10 +3,11 @@ import { Typography, Tabs, Tab, makeStyles, Paper } from '@material-ui/core';
 import { useTabs } from '../hooks/useTabs';
 import ActiveUsersTable from '../components/users/ActiveUsersTable';
 import DeletedUsersTable from '../components/users/DeletedUsersTable';
+import ViewportContainer from '../components/ui/ViewportContainer';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
-  paper: { display: 'inline-block' },
+  paper: { display: 'inline-block', alignSelf: 'flex-start' },
 }));
 
 const Users: React.FC = () => {
@@ -17,7 +18,7 @@ const Users: React.FC = () => {
   });
 
   return (
-    <>
+    <ViewportContainer>
       <Typography className={classes.title} variant="h5">
         Platform users
       </Typography>
@@ -33,7 +34,7 @@ const Users: React.FC = () => {
       </Paper>
       {selected === 'active' && <ActiveUsersTable />}
       {selected === 'deleted' && <DeletedUsersTable />}
-    </>
+    </ViewportContainer>
   );
 };
 
