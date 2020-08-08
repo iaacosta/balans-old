@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { usersQuery, deleteUserMutation, deletedUsersQuery } from '../../graphql/users';
+import { useToggleable } from '../../hooks/useToggleable';
 import {
   AllUsersQuery,
   DeleteUserMutation,
@@ -13,6 +14,7 @@ import {
 } from '../../@types/graphql';
 import { roles } from '../../utils/rbac';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
+import UpdateUserDialog from './UpdateUserDialog';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -23,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void>> = ({ row }) => {
+  const { toggled, set } = useToggleable();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -43,9 +46,10 @@ const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void
 
   return (
     <Box className={classes.wrapper}>
-      <EnhancedIconButton contained color="info">
+      <EnhancedIconButton onClick={() => set(true)} contained color="info">
         <EditIcon />
       </EnhancedIconButton>
+      <UpdateUserDialog open={toggled} onClose={() => set(false)} user={row.original} />
       <EnhancedIconButton
         contained
         color="error"

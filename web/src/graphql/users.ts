@@ -4,6 +4,8 @@ export const usersQuery = gql`
   query AllUsers {
     users {
       id
+      firstName
+      lastName
       name
       email
       username
@@ -16,6 +18,20 @@ export const deletedUsersQuery = gql`
   query AllDeletedUsers {
     users: deletedUsers {
       id
+      name
+      email
+      username
+      role
+    }
+  }
+`;
+
+export const updateUserMutation = gql`
+  mutation UpdateUser($input: UpdateAnyUserInput!) {
+    updateUser(input: $input) {
+      id
+      firstName
+      lastName
       name
       email
       username
