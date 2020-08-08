@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, useTable } from 'react-table';
+import { Column, useTable, usePagination } from 'react-table';
 import {
   Table,
   TableHead,
@@ -10,7 +10,9 @@ import {
   Typography,
   TableContainer,
   Paper,
+  makeStyles,
 } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
 import ContainerLoader from './ContainerLoader';
 
 type Props<T extends Record<string, unknown>> = {
@@ -18,6 +20,7 @@ type Props<T extends Record<string, unknown>> = {
   columns: Column<T>[];
   loading?: boolean;
   noEntriesLabel?: string;
+  className?: string;
 };
 
 const EnhancedCell = withStyles((theme) => ({
@@ -28,16 +31,30 @@ const EnhancedCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
+const useStyles = makeStyles((theme) => ({
+  root: { marginTop: theme.spacing(2) },
+  ul: { justifyContent: 'center' },
+}));
+
 const EnhancedTable = <T extends Record<string, unknown>>({
   data,
   columns,
   loading,
   noEntriesLabel,
+  className,
 }: Props<T>): React.ReactElement => {
-  const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable({
-    columns,
-    data,
-  });
+  const classes = useStyles();
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headers,
+    rows,
+    prepareRow,
+    pageCount,
+    gotoPage,
+    page,
+    state: { pageIndex },
+  } = useTable({ columns, data, initialState: { pageSize: 8 } }, usePagination);
 
   let Body = (
     <TableRow>
@@ -50,7 +67,7 @@ const EnhancedTable = <T extends Record<string, unknown>>({
   if (!loading && rows.length > 0) {
     Body = (
       <>
-        {rows.map((row) => {
+        {page.map((row) => {
           prepareRow(row);
           return (
             <TableRow {...row.getRowProps()}>
@@ -67,7 +84,7 @@ const EnhancedTable = <T extends Record<string, unknown>>({
   } else if (!loading && rows.length === 0) {
     Body = (
       <TableRow>
-        <TableCell>
+        <TableCell colSpan={columns.length}>
           <Typography variant="caption" color="textSecondary">
             {noEntriesLabel || 'No entries'}
           </Typography>
@@ -77,20 +94,29 @@ const EnhancedTable = <T extends Record<string, unknown>>({
   }
 
   return (
-    <TableContainer component={Paper} elevation={1}>
-      <Table {...getTableProps()}>
-        <TableHead>
-          <TableRow>
-            {headers.map(({ getHeaderProps, render }) => (
-              <EnhancedCell {...getHeaderProps()} variant="head">
-                {render('Header')}
-              </EnhancedCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody {...getTableBodyProps()}>{Body}</TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer className={className} component={Paper} elevation={1}>
+        <Table {...getTableProps()}>
+          <TableHead>
+            <TableRow>
+              {headers.map(({ getHeaderProps, render }) => (
+                <EnhancedCell {...getHeaderProps()} variant="head">
+                  {render('Header')}
+                </EnhancedCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody {...getTableBodyProps()}>{Body}</TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination
+        classes={classes}
+        count={pageCount}
+        page={pageIndex + 1}
+        color="secondary"
+        onChange={(event, newPage) => gotoPage(newPage - 1)}
+      />
+    </>
   );
 };
 
