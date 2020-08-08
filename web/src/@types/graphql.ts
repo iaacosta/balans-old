@@ -51,6 +51,7 @@ export type LoginInput = {
 export type Query = {
   __typename?: 'Query';
   users: Array<User>;
+  deletedUsers: Array<User>;
   user: User;
   me: User;
 };
@@ -69,6 +70,7 @@ export type Mutation = {
   updateUser: User;
   updateMe: User;
   deleteUser: Scalars['ID'];
+  restoreUser: User;
 };
 
 
@@ -98,6 +100,11 @@ export type MutationUpdateMeArgs = {
 
 
 export type MutationDeleteUserArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationRestoreUserArgs = {
   id: Scalars['ID'];
 };
 
@@ -144,6 +151,17 @@ export type AllUsersQuery = (
   )> }
 );
 
+export type AllDeletedUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllDeletedUsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'username' | 'role'>
+  )> }
+);
+
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -152,4 +170,17 @@ export type DeleteUserMutationVariables = Exact<{
 export type DeleteUserMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteUser'>
+);
+
+export type RestoreUserMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RestoreUserMutation = (
+  { __typename?: 'Mutation' }
+  & { restoreUser: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  ) }
 );
