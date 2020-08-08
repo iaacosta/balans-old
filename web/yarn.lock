@@ -2255,6 +2255,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-table@^7.0.21":
+  version "7.0.21"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.0.21.tgz#d236bb1a8addf7a6969ceb8c9a9b2988e7e95b40"
+  integrity sha512-7k5iy0HiejewXlu9g8rUAIRijo07aa5S11uz5jiPwEu9xr5JAtpAyBuTr/8lHQHCA3EzdVgYO//FgrTxsi6jEQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.0.tgz#882839db465df1320e4753e6e9f70ca7e9b4d46d"
@@ -10966,6 +10973,11 @@ react-scripts@3.4.1:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-table@^7.5.0:
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.5.0.tgz#87326d92cdffbbf970f49b395bcafc3f84989ddf"
+  integrity sha512-hLsbNqLJkkYiATVteM8mthP8y5vnLPB2qdi9FeGZjsvb2m5vxj6cavIgk35oulvBmYD6Kox0HFfI332HPZpC7w==
 
 react-transition-group@^4.4.0:
   version "4.4.1"
