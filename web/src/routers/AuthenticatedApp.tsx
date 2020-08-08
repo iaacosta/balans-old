@@ -6,6 +6,7 @@ import routing from '../constants/routing';
 import CustomDrawer from '../components/ui/CustomDrawer';
 import { useCan } from '../hooks/useRbac';
 import { actions } from '../utils/rbac';
+import ContainerLoader from '../components/ui/ContainerLoader';
 
 const Placeholder: React.FC = () => {
   const { pathname } = useLocation();
@@ -26,7 +27,15 @@ const Placeholder: React.FC = () => {
 };
 
 const AuthenticatedApp: React.FC = () => {
-  const canPerform = useCan();
+  const { canPerform, loading } = useCan();
+
+  if (loading) {
+    return (
+      <Box height="100vh">
+        <ContainerLoader color="secondary" />
+      </Box>
+    );
+  }
 
   return (
     <>

@@ -118,7 +118,7 @@ const initialsFromName = (name: string) =>
     .join('');
 
 const CustomDrawer: React.FC = () => {
-  const canPerform = useCan();
+  const { canPerform } = useCan();
   const dispatch = useDispatch();
   const classes = useStyles();
   const client = useApolloClient();
