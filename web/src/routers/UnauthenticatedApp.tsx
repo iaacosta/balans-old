@@ -3,8 +3,8 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { Box, makeStyles } from '@material-ui/core';
 
 import routing from '../constants/routing';
-import Login from '../pages/authenticate/Login';
-import SignUp from '../pages/authenticate/SignUp';
+import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
 
 const useStyles = makeStyles((theme) => ({
   main: {

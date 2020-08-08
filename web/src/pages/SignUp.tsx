@@ -7,14 +7,14 @@ import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import FormikTextField from '../../components/formik/FormikTextField';
-import FormikSubmitButton from '../../components/formik/FormikSubmitButton';
-import { signUpMutation } from '../../graphql/authentication';
-import routing from '../../constants/routing';
-import AuthWrapper from '../../components/authenticate/AuthWrapper';
-import { addToken } from '../../config/redux';
-import { SignUpMutationVariables, SignUpMutation } from '../../@types/graphql';
-import { UNKNOWN_ERROR } from '../../constants/errorMessages';
+import FormikTextField from '../components/formik/FormikTextField';
+import FormikSubmitButton from '../components/formik/FormikSubmitButton';
+import { signUpMutation } from '../graphql/authentication';
+import routing from '../constants/routing';
+import AuthWrapper from '../components/authenticate/AuthWrapper';
+import { addToken } from '../config/redux';
+import { SignUpMutationVariables, SignUpMutation } from '../@types/graphql';
+import { UNKNOWN_ERROR } from '../constants/errorMessages';
 
 const schema = yup.object().shape({
   firstName: yup.string().required(),
