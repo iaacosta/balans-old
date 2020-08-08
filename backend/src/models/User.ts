@@ -26,9 +26,11 @@ export default class User extends ModelWithValidation {
   @Field(() => ID)
   id: number;
 
+  @Field()
   @Column()
   firstName: string;
 
+  @Field()
   @Column()
   lastName: string;
 
