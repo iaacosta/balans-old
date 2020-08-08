@@ -22,13 +22,14 @@ const FormikSubmitButton: React.FC<Props & ButtonProps> = ({
   loading,
   size = 24,
   children,
+  disabled,
   ...props
 }) => {
   const classes = useStyles();
 
   return (
     <Box className={classes.wrapper}>
-      <Button type="submit" variant="contained" disabled={loading} fullWidth {...props}>
+      <Button type="submit" variant="contained" disabled={loading || disabled} fullWidth {...props}>
         {children}
       </Button>
       {loading && <CircularProgress size={size} className={classes.buttonProgress} />}
