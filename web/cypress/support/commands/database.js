@@ -1,14 +1,12 @@
 /// <reference types="cypress" />
-import { gql } from '@apollo/client';
 
-Cypress.Commands.add('setupDatabase', (user) => {
-  const setupDatabase = gql`
-    mutation SetupDatabase($user: CreateUserInput!) {
-      setupDatabase(adminUser: $user) {
-        id
-      }
-    }
-  `;
+import { setupDatabaseMutation } from '../graphql/test';
 
-  cy.graphQLRequest({ request: setupDatabase, variables: { user } });
+Cypress.Commands.add('setupDatabase', () => {
+  cy.fixture('adminUser').then((user) =>
+    cy.graphQLRequest({
+      request: setupDatabaseMutation,
+      variables: { user: { ...user, role: undefined } },
+    }),
+  );
 });

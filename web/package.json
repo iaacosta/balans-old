@@ -43,6 +43,7 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "generate-types": "graphql-codegen --config codegen.yml",
     "start:backend": "yarn --cwd ../backend cypress:dev",
+    "cypress:generate-types": "graphql-codegen --config codegen.cypress.yml",
     "cypress:ci": "cypress run",
     "cypress:ci:start": "start-server-and-test start:backend 5000 start 3000 cypress:ci",
     "cypress:dev": "cypress open",
