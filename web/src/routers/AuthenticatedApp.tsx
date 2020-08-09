@@ -8,22 +8,25 @@ import { useCan } from '../hooks/useRbac';
 import { actions } from '../utils/rbac';
 import ContainerLoader from '../components/ui/ContainerLoader';
 import Users from '../pages/Users';
+import ViewportContainer from '../components/ui/ViewportContainer';
 
 const Placeholder: React.FC = () => {
   const { pathname } = useLocation();
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      height="100vh"
-    >
-      <Typography variant="h2">Oops!</Typography>
-      <Typography variant="h5">
-        <span style={{ color: '#999' }}>{pathname}</span> site under construction
-      </Typography>
-    </Box>
+    <ViewportContainer>
+      <Box
+        flex="1"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Typography variant="h2">Oops!</Typography>
+        <Typography variant="h5">
+          <span style={{ color: '#999' }}>{pathname}</span> site under construction
+        </Typography>
+      </Box>
+    </ViewportContainer>
   );
 };
 
