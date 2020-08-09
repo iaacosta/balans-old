@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { ApolloError } from '@apollo/client';
 import { Action, canPerform } from '../utils/rbac';
 import { useMe } from './useMe';
 
@@ -12,8 +13,12 @@ export const useRbac = ({ action }: Props): boolean => {
   return canPerform(user!, action);
 };
 
-export const useCan = (): { canPerform: (action: Action) => boolean; loading: boolean } => {
+export const useCan = (): {
+  canPerform: (action: Action) => boolean;
+  loading: boolean;
+  error?: ApolloError;
+} => {
   const { user, loading, error } = useMe();
-  if (loading || error) return { canPerform: () => false, loading };
-  return { canPerform: (action) => canPerform(user!, action), loading };
+  if (loading || error) return { canPerform: () => false, loading, error };
+  return { canPerform: (action) => canPerform(user!, action), loading, error };
 };

@@ -28,9 +28,9 @@ const Placeholder: React.FC = () => {
 };
 
 const AuthenticatedApp: React.FC = () => {
-  const { canPerform, loading } = useCan();
+  const { canPerform, loading, error } = useCan();
 
-  if (loading) {
+  if (loading || error) {
     return (
       <Box height="100vh">
         <ContainerLoader color="secondary" />
