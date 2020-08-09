@@ -755,6 +755,11 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
   integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
 
+"@types/indefinite@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@types/indefinite/-/indefinite-2.3.0.tgz#a01558845cd8bf759c5564b9d762b0806432742d"
+  integrity sha512-vUbzBClWsKK3ET0bk8P3AaFaSpAObT3FeQqJcAM1tl6QSjDvK1si2Ky26hz4igRfu3l78nna9GXdVIxEpX9M+w==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"
@@ -3338,6 +3343,11 @@ imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
+
+indefinite@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/indefinite/-/indefinite-2.3.2.tgz#e3c5163ae60c2b810b3b5ffc57e8d57c52859d55"
+  integrity sha512-+RqxIRGrhBOfV8KONFaAuNvx1pg6Qh+Ge9w+15TI2LRfVu3aSf5bj9w3OU2GT3k8H13/7Q+C9+pek0jjYby3ZA==
 
 indent-string@^2.1.0:
   version "2.1.0"
