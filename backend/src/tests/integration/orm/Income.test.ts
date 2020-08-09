@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { seedTestDatabase, createPgClient } from '../../utils';
 import { incomes } from '../../utils/data.json';
 import Income from '../../../models/Income';
-import Account from '../../../models/Account';
+import Account from '../../../models/_Account';
 import SubCategory from '../../../models/SubCategory';
 import Currency from '../../../models/Currency';
 import { AccountType } from '../../../@types';

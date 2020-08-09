@@ -3,7 +3,7 @@ import { validateOrReject } from 'class-validator';
 import mockDate from 'mockdate';
 import dayjs from 'dayjs';
 
-import Account from '../../../models/Account';
+import Account from '../../../models/_Account';
 import _Currency from '../../../models/Currency';
 import { AccountType } from '../../../@types';
 

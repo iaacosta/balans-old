@@ -7,7 +7,7 @@ import Income from '../../models/Income';
 import { accountById } from './account';
 import { subCategoryById } from './subCategory';
 import SubCategory from '../../models/SubCategory';
-import Account from '../../models/Account';
+import Account from '../../models/_Account';
 
 type Queries = 'getIncome' | 'getIncomes';
 type Mutations = 'createIncome' | 'updateIncome' | 'deleteIncome';

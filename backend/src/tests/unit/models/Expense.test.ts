@@ -1,7 +1,7 @@
 import { validateOrReject } from 'class-validator';
 
 import Expense from '../../../models/Expense';
-import _Account from '../../../models/Account';
+import _Account from '../../../models/_Account';
 import _SubCategory from '../../../models/SubCategory';
 import _Place from '../../../models/Place';
 

@@ -11,7 +11,7 @@ import {
 import dayjs from 'dayjs';
 import { Min, IsObject } from 'class-validator';
 
-import Account from './Account';
+import Account from './_Account';
 import SubCategory from './SubCategory';
 import Place from './Place';
 import { IsInstallments } from '../utils';
@@ -36,25 +36,15 @@ export default class Expense {
   @IsInstallments()
   installments: number;
 
-  @ManyToOne(
-    () => Account,
-    (acc) => acc.expenses,
-    { onDelete: 'CASCADE' },
-  )
+  @ManyToOne(() => Account, (acc) => acc.expenses, { onDelete: 'CASCADE' })
   account: Account;
 
-  @ManyToOne(
-    () => SubCategory,
-    (subCat) => subCat.expenses,
-    { onDelete: 'SET NULL' },
-  )
+  @ManyToOne(() => SubCategory, (subCat) => subCat.expenses, {
+    onDelete: 'SET NULL',
+  })
   subCategory: SubCategory;
 
-  @ManyToOne(
-    () => Place,
-    (place) => place.expenses,
-    { onDelete: 'SET NULL' },
-  )
+  @ManyToOne(() => Place, (place) => place.expenses, { onDelete: 'SET NULL' })
   place: Place;
 
   @CreateDateColumn()

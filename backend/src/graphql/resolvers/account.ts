@@ -1,7 +1,7 @@
 import { getRepository, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 
-import Account from '../../models/Account';
+import Account from '../../models/_Account';
 import Currency from '../../models/Currency';
 import { currencyById } from './currency';
 import { incomesById } from './income';

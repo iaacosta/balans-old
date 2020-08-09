@@ -8,7 +8,7 @@ import { accountById } from './account';
 import { subCategoryById } from './subCategory';
 import { placeById } from './place';
 import SubCategory from '../../models/SubCategory';
-import Account from '../../models/Account';
+import Account from '../../models/_Account';
 import Place from '../../models/Place';
 
 type Queries = 'getExpense' | 'getExpenses';
