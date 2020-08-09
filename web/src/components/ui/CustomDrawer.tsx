@@ -26,16 +26,14 @@ import {
   SupervisedUserCircleSharp,
 } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useApolloClient } from '@apollo/client';
 
 import routing from '../../constants/routing';
 import { useMe } from '../../hooks/useMe';
 import { useToggleable } from '../../hooks/useToggleable';
-import { removeToken } from '../../config/redux';
 import Logo from './Logo';
 import { actions } from '../../utils/rbac';
 import { useCan } from '../../hooks/useRbac';
+import { useLogout } from '../../hooks/useLogout';
 
 const navigationItems = [
   {
@@ -119,21 +117,13 @@ const initialsFromName = (name: string) =>
 
 const CustomDrawer: React.FC = () => {
   const { canPerform } = useCan();
-  const dispatch = useDispatch();
   const classes = useStyles();
-  const client = useApolloClient();
+  const logout = useLogout();
   const { user, loading } = useMe();
   const { pathname } = useLocation();
   const { toggled, toggle } = useToggleable();
 
   if (loading) return null;
-
-  const handleExit = async () => {
-    dispatch(removeToken());
-    if (localStorage.getItem('x-auth')) localStorage.removeItem('x-auth');
-    await client.clearStore();
-    await client.resetStore();
-  };
 
   return (
     <Drawer classes={{ paper: classes.drawer }} variant="permanent" anchor="left">
@@ -163,7 +153,7 @@ const CustomDrawer: React.FC = () => {
         )}
         <Collapse in={toggled} unmountOnExit>
           <List className={classes.profileList}>
-            <ListItem button className={classes.profileListItem} onClick={handleExit}>
+            <ListItem button className={classes.profileListItem} onClick={logout}>
               <ListItemIcon>
                 <ExitToApp />
               </ListItemIcon>
