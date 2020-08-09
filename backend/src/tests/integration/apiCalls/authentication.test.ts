@@ -41,7 +41,7 @@ describe('authentication API calls', () => {
 
       expect(response).toBeSuccessful();
       const payload = jwt.verify(response.data!.login, process.env.SECRET!);
-      expect((payload as any).id).toBe(databaseUser.id);
+      expect((payload as any).user.id).toBe(databaseUser.id);
     });
 
     it('should not login with incorrect username', async () => {

@@ -8,7 +8,7 @@ import User from '../models/User';
 import TokenExpiredError from '../errors/TokenExpiredError';
 
 export type ContextUser = Promise<Pick<User, 'role' | 'id'> | null>;
-export const getUserFromToken: VerifyFunction = async (token, done) => {
+export const getUserFromToken: VerifyFunction = (token, done) => {
   try {
     const { user } = jwt.verify(token, process.env.SECRET!) as { user: User };
     if (!user) done(null, null);
