@@ -141,7 +141,7 @@ describe('user API calls', () => {
       async () => {
         const user = (await createUser(connection, { role: 'user' }))
           .databaseUser;
-        getRepository(User).softRemove(user);
+        await getRepository(User).softRemove(user);
         return user;
       },
     );
