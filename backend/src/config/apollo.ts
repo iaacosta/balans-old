@@ -5,7 +5,6 @@ import { Connection } from 'typeorm';
 
 import { authenticateUser } from '../services/passport';
 import { Context } from '../@types';
-import S3Helper from '../utils/S3Helper';
 import formatError from '../errors/apolloErrorFormatter';
 
 export const buildOwnSchema = async () => {
@@ -30,7 +29,6 @@ export const mountApollo = async (connection: Connection) =>
     schema: await buildOwnSchema(),
     formatError,
     context: async ({ req }): Promise<Context> => ({
-      s3: new S3Helper(),
       currentUser: await authenticateUser(req),
       connection,
     }),

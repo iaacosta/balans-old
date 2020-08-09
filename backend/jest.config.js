@@ -6,13 +6,13 @@ module.exports = {
   setupFilesAfterEnv: ['./src/tests/setup.ts'],
   coveragePathIgnorePatterns: [
     'node_modules',
-    'src/tests/',
-    'src/migrations/',
-    'src/index',
     'src/@types',
-    'src/jestMatchers.d.ts',
-    'src/config',
     'src/graphql/resolvers/testResolvers.ts',
+    'src/migrations/',
+    'src/config/',
+    'src/tests/',
+    'src/index.ts',
+    'src/jestMatchers.d.ts',
     'ormconfig.js',
   ],
 };
