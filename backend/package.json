@@ -20,7 +20,7 @@
     "db:all:migrate-revert": "yarn db:migrate-revert && yarn db:test:migrate-revert",
     "db:all:drop": "yarn db:drop && yarn db:test:drop",
     "dev": "ts-node-dev --ignore-watch node_modules --clear --no-notify ./src/index.ts",
-    "cypress:dev": "NODE_ENV=cypress NODE_ENV=test yarn dev",
+    "cypress:dev": "NODE_ENV=cypress yarn dev",
     "build": "tsc -p .",
     "start": "node ./dist/index.js",
     "lint": "eslint src/**/*.ts --ext ts",
