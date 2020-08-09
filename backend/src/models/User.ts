@@ -51,7 +51,7 @@ export default class User extends ModelWithValidation {
   @Column({ unique: true })
   @Field()
   @MinLength(6, { message: minLengthErrorMessage })
-  @Matches(/[\w\d_\-\\.]+/, { message: isUsernameErrorMessage })
+  @Matches(/^[a-zA-Z0-9_\-\\.]+$/, { message: isUsernameErrorMessage })
   username: string;
 
   @Column({ default: 'user' })
