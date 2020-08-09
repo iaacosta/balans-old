@@ -31,9 +31,9 @@ interface Props {
 }
 
 const schema = yup.object().shape({
-  firstName: yup.string(),
-  lastName: yup.string(),
-  email: yup.string().email(),
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  email: yup.string().email().required(),
   role: yup.string().oneOf(_values(roles), 'Invalid option').required(),
   password: yup.string().min(6),
 });

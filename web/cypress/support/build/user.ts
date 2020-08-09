@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { build, fake, oneOf } from '@jackfranklin/test-data-bot';
-import { User } from '../../@types/graphql';
+import { build, fake } from '@jackfranklin/test-data-bot';
 
-export type BaseUser = Omit<User, '__typename' | 'id' | 'name'> & { password: string };
+export type BaseUser = Omit<User, '__typename' | 'id' | 'name' | 'role'> & { password: string };
 
 export const buildUser = build<BaseUser>('user', {
   fields: {
@@ -11,6 +10,5 @@ export const buildUser = build<BaseUser>('user', {
     email: fake((faker) => faker.internet.email()),
     username: fake((faker) => faker.internet.userName()),
     password: fake((faker) => faker.internet.password()),
-    role: oneOf('user', 'admin'),
   },
 });

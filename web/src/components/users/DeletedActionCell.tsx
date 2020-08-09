@@ -33,6 +33,7 @@ const DeletedActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], voi
     <EnhancedIconButton
       contained
       color="success"
+      data-testid={`restoreUser${id}`}
       disabled={restoreLoading}
       onClick={() => handleRestore()}
     >

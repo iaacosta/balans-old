@@ -70,7 +70,7 @@ const EnhancedTable = <T extends Record<string, unknown>>({
         {page.map((row) => {
           prepareRow(row);
           return (
-            <TableRow {...row.getRowProps()}>
+            <TableRow {...row.getRowProps()} data-testid={`row${row.original.id}`}>
               {row.cells.map(({ getCellProps, render }) => (
                 <EnhancedCell {...getCellProps()} variant="body">
                   {render('Cell')}

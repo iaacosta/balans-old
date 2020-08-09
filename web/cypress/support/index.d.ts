@@ -3,6 +3,7 @@
 
 declare namespace Cypress {
   interface Chainable {
+    /* Helpers */
     /**
      * Custom command to press a submit button in a form
      * @example cy.submitForm()
@@ -33,10 +34,34 @@ declare namespace Cypress {
      * @example cy.attachFileByTestId('preference-input', 'sample_file.png')
      */
     attachFileByTestId(testId: string, filePath: string): Chainable<Element>;
+
+    /* Users */
+    /**
+     * Login to the platform with user and password
+     */
+    login(username: string, password: string): Chainable<string>;
+    /*
+     * Gets the data of the logged in user
+     */
+    getMe(): Chainable<MeQuery['me']>;
+    /**
+     * Creates a user
+     */
+    createUser(
+      user: CreateUserMutationVariables['input'],
+    ): Chainable<CreateUserMutation['createUser']>;
+    /**
+     * Deletes a user
+     */
+    deleteUser(id: Scalars['ID']): Chainable<DeleteUserMutation['deleteUser']>;
+
+    /* Database */
     /**
      * Command to setup database in backend side
      */
     setupDatabase(): Chainable<SetupDatabaseMutation['setupDatabase']>;
+
+    /* Main */
     /**
      * Custom command to send a GraphQL request
      */

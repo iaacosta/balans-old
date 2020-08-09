@@ -128,6 +128,17 @@ type SetupDatabaseMutation = (
   )> }
 );
 
+type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'username' | 'email' | 'role'>
+  ) }
+);
+
 type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
@@ -149,4 +160,14 @@ type CreateUserMutation = (
     { __typename?: 'User' }
     & Pick<User, 'id'>
   ) }
+);
+
+type DeleteUserMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+type DeleteUserMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteUser'>
 );
