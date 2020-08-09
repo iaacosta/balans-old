@@ -10,7 +10,7 @@ import {
   createPgClient,
 } from '../../utils';
 import { accounts } from '../../utils/data.json';
-import Account from '../../../models/Account';
+import Account from '../../../models/_Account';
 
 const {
   GET_ACCOUNTS,

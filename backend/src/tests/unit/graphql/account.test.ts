@@ -3,7 +3,7 @@
 import * as typeorm from 'typeorm';
 import * as classValidator from 'class-validator';
 import * as resolvers from '../../../graphql/resolvers/account';
-import * as model from '../../../models/Account';
+import * as model from '../../../models/_Account';
 import { currencyById } from '../../../graphql/resolvers/currency';
 import { incomesById } from '../../../graphql/resolvers/income';
 import { expensesById } from '../../../graphql/resolvers/expense';

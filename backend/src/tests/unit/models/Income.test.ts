@@ -1,7 +1,7 @@
 import { validateOrReject } from 'class-validator';
 
 import Income from '../../../models/Income';
-import _Account from '../../../models/Account';
+import _Account from '../../../models/_Account';
 import _SubCategory from '../../../models/SubCategory';
 
 jest.mock('../../../models/Account.ts', () => jest.fn());

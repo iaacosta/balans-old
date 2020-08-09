@@ -11,7 +11,7 @@ import {
 import dayjs from 'dayjs';
 import { Min, IsObject } from 'class-validator';
 
-import Account from './Account';
+import Account from './_Account';
 import SubCategory from './SubCategory';
 
 @Entity()
@@ -30,18 +30,12 @@ export default class Income {
   @IsObject()
   date: dayjs.Dayjs;
 
-  @ManyToOne(
-    () => Account,
-    (acc) => acc.incomes,
-    { onDelete: 'CASCADE' },
-  )
+  @ManyToOne(() => Account, (acc) => acc.incomes, { onDelete: 'CASCADE' })
   account: Account;
 
-  @ManyToOne(
-    () => SubCategory,
-    (subCat) => subCat.incomes,
-    { onDelete: 'SET NULL' },
-  )
+  @ManyToOne(() => SubCategory, (subCat) => subCat.incomes, {
+    onDelete: 'SET NULL',
+  })
   subCategory: SubCategory;
 
   @CreateDateColumn()

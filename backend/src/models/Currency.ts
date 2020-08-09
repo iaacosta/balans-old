@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Length } from 'class-validator';
-import Account from './Account';
+import Account from './_Account';
 
 @Entity()
 export default class Currency {
@@ -18,10 +18,7 @@ export default class Currency {
   @Length(3, 3)
   name: string;
 
-  @OneToMany(
-    () => Account,
-    (acc) => acc.currency,
-  )
+  @OneToMany(() => Account, (acc) => acc.currency)
   accounts!: Account[];
 
   @CreateDateColumn()
