@@ -1,14 +1,20 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable import/no-extraneous-dependencies */
 import { createTestClient } from 'apollo-server-testing';
 import { ApolloServer } from 'apollo-server-express';
 
-import typeDefs from '../../graphql/schemas';
-import resolvers from '../../graphql/resolvers';
+import { buildOwnSchema } from '../../config/apollo';
+import formatError from '../../errors/apolloErrorFormatter';
+import { Context } from '../../@types';
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: () => ({ s3: { removeFile: () => true } }),
-});
+export const mountTestClient = async (context?: Partial<Context>) => {
+  const schema = await buildOwnSchema();
 
-export const { query, mutate } = createTestClient(server);
+  const server = new ApolloServer({
+    schema,
+    formatError,
+    context: context || { s3: {}, currentUser: {} },
+  });
+
+  return createTestClient(server);
+};

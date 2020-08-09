@@ -11,8 +11,7 @@ export type ContextUser = Promise<Pick<User, 'role' | 'id'> | null>;
 export const getUserFromToken: VerifyFunction = (token, done) => {
   try {
     const { user } = jwt.verify(token, process.env.SECRET!) as { user: User };
-    if (!user) done(null, null);
-    else done(null, user);
+    done(null, user);
   } catch (err) {
     done(new TokenExpiredError());
   }
