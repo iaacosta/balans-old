@@ -2,21 +2,7 @@
 
 Cypress.Commands.add('submitForm', () => cy.get('button[type="submit"]').click());
 
-Cypress.Commands.add('findByTestId', (testId) => cy.get(`[data-testid='${testId}']`));
-
-Cypress.Commands.add('getSelectOptions', () => cy.get('[role="presentation"] li'));
-
-Cypress.Commands.add('changeSelectOption', (testId, optionLabel) => {
+Cypress.Commands.add('changeSelectOption', (testId, idx) => {
   cy.findByTestId(testId).click();
-  if (optionLabel) {
-    cy.get('[role="presentation"] li').contains(optionLabel).click();
-  } else {
-    cy.get('[role="presentation"] li').last().click();
-  }
+  cy.findByRole('presentation').within(() => cy.get('li').eq(idx).click());
 });
-
-Cypress.Commands.add('attachFileByTestId', (testId, filePath) =>
-  cy.findByTestId(testId).within(() => {
-    cy.get('input').attachFile(filePath);
-  }),
-);
