@@ -14,7 +14,7 @@ import {
 export const createPgClient = () => {
   const { DB_USERNAME, DB_PASSWORD, DB_NAME } = process.env;
   return new Client({
-    database: DB_NAME,
+    database: `${DB_NAME}_test`,
     user: DB_USERNAME,
     password: DB_PASSWORD,
   });
