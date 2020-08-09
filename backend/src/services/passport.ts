@@ -3,22 +3,18 @@ import {
   Strategy as BearerStrategy,
   VerifyFunction,
 } from 'passport-http-bearer';
-import { getRepository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import TokenExpiredError from '../errors/TokenExpiredError';
 
 export type ContextUser = Promise<Pick<User, 'role' | 'id'> | null>;
 export const getUserFromToken: VerifyFunction = async (token, done) => {
   try {
-    const { id } = jwt.verify(token, process.env.SECRET!) as { id: number };
-    const user = await getRepository(User).findOne(id, {
-      select: ['id', 'role'],
-    });
-
+    const { user } = jwt.verify(token, process.env.SECRET!) as { user: User };
     if (!user) done(null, null);
     else done(null, user);
   } catch (err) {
-    done(err);
+    done(new TokenExpiredError());
   }
 };
 
