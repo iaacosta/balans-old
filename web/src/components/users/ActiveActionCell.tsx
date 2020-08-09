@@ -46,12 +46,18 @@ const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void
 
   return (
     <Box className={classes.wrapper}>
-      <EnhancedIconButton onClick={() => set(true)} contained color="info">
+      <EnhancedIconButton
+        data-testid={`updateUser${id}`}
+        onClick={() => set(true)}
+        contained
+        color="info"
+      >
         <EditIcon />
       </EnhancedIconButton>
       <UpdateUserDialog open={toggled} onClose={() => set(false)} user={row.original} />
       <EnhancedIconButton
         contained
+        data-testid={`deleteUser${id}`}
         color="error"
         disabled={deleteLoading || role === roles.ADMIN}
         onClick={() => handleDelete()}
