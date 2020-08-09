@@ -1,6 +1,7 @@
 {
   "ignorePatterns": "**/*.d.ts",
   "rules": {
-    "no-undef": "off"
+    "no-undef": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }

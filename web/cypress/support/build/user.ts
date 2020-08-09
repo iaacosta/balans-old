@@ -8,7 +8,11 @@ export const buildUser = build<BaseUser>('user', {
     firstName: fake((faker) => faker.name.firstName()),
     lastName: fake((faker) => faker.name.lastName()),
     email: fake((faker) => faker.internet.email()),
-    username: fake((faker) => faker.internet.userName()),
+    username: fake((faker) => {
+      const username = faker.internet.userName();
+      if (username.length < 7) return `______${username}`;
+      return username;
+    }),
     password: fake((faker) => faker.internet.password()),
   },
 });
