@@ -77,6 +77,7 @@ export default class UserResolvers {
     if (!size(toChange)) throw new NoChangesError();
     const user = await this.repository.findOneOrFail(id);
     forEach(toChange, (value, key) => {
+      /* istanbul ignore next */
       if (value) (user as any)[key] = value;
     });
     await this.repository.save(user);
@@ -95,6 +96,7 @@ export default class UserResolvers {
     const user = await this.repository.findOneOrFail(currentUser!.id);
     await user.verifyPassword(currentPassword);
     forEach(toChange, (value, key) => {
+      /* istanbul ignore next */
       if (value) (user as any)[key] = value;
     });
     await this.repository.save(user);
