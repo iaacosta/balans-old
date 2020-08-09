@@ -10,7 +10,7 @@ jobs:
         - docker run -d --network host -e POSTGRES_PASSWORD=balans -e POSTGRES_DB=balans_test postgres:12-alpine
       script:
         - docker run balans-backend yarn lint
-        - docker run -e CI -e SECRET=travis -e DB_USERNAME=postgres -e DB_PASSWORD=balans --network host balans-backend sh -c "yarn db:test:migrate && yarn test --coverage"
+        - docker run -e CI -e SECRET=travis -e DB_NAME=balans -e DB_USERNAME=postgres -e DB_PASSWORD=balans --network host balans-backend sh -c "yarn db:test:migrate && yarn test --coverage"
         - docker run balans-backend yarn audit
         - docker run balans-web yarn lint
     - stage: Release pipeline
