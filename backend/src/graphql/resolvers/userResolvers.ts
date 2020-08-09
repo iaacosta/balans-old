@@ -15,7 +15,7 @@ import {
   CreateUserInput,
   UpdateUserInput,
   UpdateAnyUserInput,
-} from '../inputTypes';
+} from '../helpers';
 import NoChangesError from '../errors/NoChangesError';
 import roles from '../../constants/roles';
 import { Context } from '../../@types';

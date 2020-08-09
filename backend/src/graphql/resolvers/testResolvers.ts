@@ -3,7 +3,7 @@
 import { Mutation, Resolver, Ctx, Arg } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import { Context } from '../../@types';
-import { CreateUserInput } from '../inputTypes';
+import { CreateUserInput } from '../helpers';
 import User from '../../models/User';
 
 @Resolver()

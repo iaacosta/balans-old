@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'apollo-server-express';
 
 import User from '../../models/User';
-import { LoginInput, CreateUserInput } from '../inputTypes';
+import { LoginInput, CreateUserInput } from '../helpers';
 
 @Resolver(User)
 export default class AuthenticationResolvers {
