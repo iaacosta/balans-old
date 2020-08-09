@@ -13,7 +13,8 @@ describe('User resolvers', () => {
   let find: jest.Mock;
   let findOneOrFail: jest.Mock;
   let save: jest.Mock;
-  let remove: jest.Mock;
+  let softRemove: jest.Mock;
+  let recover: jest.Mock;
   let validateOrReject: jest.SpyInstance;
   let resolvers: Resolvers;
 
@@ -26,7 +27,8 @@ describe('User resolvers', () => {
     find = jest.fn(() => [exampleUser]);
     findOneOrFail = jest.fn(() => exampleUser);
     save = jest.fn(() => exampleUser);
-    remove = jest.fn(() => 0);
+    softRemove = jest.fn(() => 0);
+    recover = jest.fn(() => exampleUser);
 
     validateOrReject = jest
       .spyOn(classValidator, 'validateOrReject')
@@ -34,7 +36,9 @@ describe('User resolvers', () => {
 
     getRepository = jest
       .spyOn(typeorm, 'getRepository')
-      .mockImplementation(() => ({ find, findOneOrFail, save, remove } as any));
+      .mockImplementation(
+        () => ({ find, findOneOrFail, save, softRemove, recover } as any),
+      );
 
     resolvers = new Resolvers();
   });
@@ -45,7 +49,7 @@ describe('User resolvers', () => {
     find.mockClear();
     findOneOrFail.mockClear();
     save.mockClear();
-    remove.mockClear();
+    softRemove.mockClear();
   });
 
   describe('Query', () => {
@@ -58,16 +62,25 @@ describe('User resolvers', () => {
 
     describe('user', () => {
       it('should call user with correct id', async () => {
-        const testId = 1;
-        await resolvers.user({ id: testId });
+        const testId = '1';
+        await resolvers.user(testId);
         expect(findOneOrFail).toHaveBeenCalledTimes(1);
         expect(findOneOrFail).toHaveBeenCalledWith(testId);
       });
     });
 
+    describe('deletedUsers', () => {
+      it('should call find when invoked users', async () => {
+        await resolvers.deletedUsers();
+        expect(find).toHaveBeenCalledTimes(1);
+        const args = find.mock.calls[0][0];
+        expect(args.withDeleted).toBe(true);
+      });
+    });
+
     describe('me', () => {
       it('should call user with correct id', async () => {
-        const testId = 1;
+        const testId = '1';
         await resolvers.me({ currentUser: { id: testId } } as any);
         expect(findOneOrFail).toHaveBeenCalledTimes(1);
         expect(findOneOrFail).toHaveBeenCalledWith(testId);
@@ -137,7 +150,7 @@ describe('User resolvers', () => {
 
     describe('updateMe', () => {
       const verifyPassword = jest.fn();
-      const testId = 1;
+      const testId = '1';
       const testPassword = 'example';
 
       beforeEach(() => {
@@ -181,19 +194,38 @@ describe('User resolvers', () => {
     });
 
     describe('deleteUser', () => {
-      const testId = 1;
+      const testId = '1';
       beforeEach(() => findOneOrFail.mockImplementation(() => testUser));
 
       it('should call findOneOrFail when invoked', async () => {
-        await resolvers.deleteUser({ id: testId });
+        await resolvers.deleteUser(testId);
         expect(findOneOrFail).toHaveBeenCalledTimes(1);
         expect(findOneOrFail).toHaveBeenCalledWith(testId);
       });
 
       it('should call remove when invoked', async () => {
-        await resolvers.deleteUser({ id: testId });
-        expect(remove).toHaveBeenCalledTimes(1);
-        expect(remove).toHaveBeenCalledWith(testUser);
+        await resolvers.deleteUser(testId);
+        expect(softRemove).toHaveBeenCalledTimes(1);
+        expect(softRemove).toHaveBeenCalledWith(testUser);
+      });
+    });
+
+    describe('restoreUser', () => {
+      const testId = '1';
+      beforeEach(() => findOneOrFail.mockImplementation(() => testUser));
+
+      it('should call findOneOrFail when invoked', async () => {
+        await resolvers.restoreUser(testId);
+        expect(findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(findOneOrFail).toHaveBeenCalledWith(testId, {
+          withDeleted: true,
+        });
+      });
+
+      it('should call recover when invoked', async () => {
+        await resolvers.restoreUser(testId);
+        expect(recover).toHaveBeenCalledTimes(1);
+        expect(recover).toHaveBeenCalledWith(testUser);
       });
     });
   });

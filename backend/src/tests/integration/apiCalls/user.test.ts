@@ -18,9 +18,21 @@ const USERS = gql`
   }
 `;
 
+const DELETED_USERS = gql`
+  query DeletedUsers {
+    users: deletedUsers {
+      id
+      name
+      username
+      email
+      role
+    }
+  }
+`;
+
 const USER = gql`
   query User($id: ID!) {
-    user(input: { id: $id }) {
+    user(id: $id) {
       id
       name
       username
@@ -96,7 +108,15 @@ const UPDATE_ME = gql`
 
 const DELETE_USER = gql`
   mutation DeleteUser($id: ID!) {
-    deleteUser(input: { id: $id })
+    deleteUser(id: $id)
+  }
+`;
+
+const RESTORE_USER = gql`
+  mutation RestoreUser($id: ID!) {
+    restoreUser(id: $id) {
+      id
+    }
   }
 `;
 
@@ -104,6 +124,7 @@ describe('user API calls', () => {
   let connection: Connection;
   let normalUsers: User[];
   let adminUsers: User[];
+  let softDeletedUsers: User[];
 
   const pgClient = createPgClient();
 
@@ -111,8 +132,18 @@ describe('user API calls', () => {
     connection = await createConnection();
     await pgClient.connect();
     await seedTestDatabase(pgClient);
+
     const createUserPromises = Array.from(Array(2).keys()).map(
       async () => (await createUser(connection, { role: 'user' })).databaseUser,
+    );
+
+    const softDeletedUserPromises = Array.from(Array(2).keys()).map(
+      async () => {
+        const user = (await createUser(connection, { role: 'user' }))
+          .databaseUser;
+        getRepository(User).softRemove(user);
+        return user;
+      },
     );
 
     const createAdminPromises = Array.from(Array(2).keys()).map(
@@ -122,6 +153,7 @@ describe('user API calls', () => {
 
     normalUsers = await Promise.all(createUserPromises);
     adminUsers = await Promise.all(createAdminPromises);
+    softDeletedUsers = await Promise.all(softDeletedUserPromises);
   });
 
   afterAll(() => {
@@ -177,6 +209,31 @@ describe('user API calls', () => {
         query: USER,
         variables: { id: targetUser.id },
       });
+      expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('deletedUsers', () => {
+    let allUsers: User[];
+
+    beforeAll(async () => {
+      allUsers = softDeletedUsers;
+    });
+
+    it('should get correct users if admin', async () => {
+      const { query } = await mountTestClient({ currentUser: adminUsers[0] });
+      const response = await query({ query: DELETED_USERS });
+      expect(response).toBeSuccessful();
+      expect(response.data!.users).toHaveLength(allUsers.length);
+      const usersById = keyBy(response.data!.users, 'id');
+      allUsers.forEach((_user) => {
+        expect(usersById[_user.id].username).toBe(_user.username);
+      });
+    });
+
+    it('should not authorize normal users', async () => {
+      const { query } = await mountTestClient({ currentUser: normalUsers[0] });
+      const response = await query({ query: DELETED_USERS });
       expect(response).toBeRejectedByAuth();
     });
   });
@@ -299,7 +356,7 @@ describe('user API calls', () => {
       createdUser = (await createUser(connection)).databaseUser;
     });
 
-    it('should delete a user if admin', async () => {
+    it('should soft delete a user if admin', async () => {
       const { mutate } = await mountTestClient({ currentUser: adminUsers[0] });
       const response = await mutate({
         mutation: DELETE_USER,
@@ -310,12 +367,49 @@ describe('user API calls', () => {
       await expect(
         getRepository(User).findOneOrFail(response.data!.deleteUser),
       ).rejects.toBeTruthy();
+      await expect(
+        getRepository(User).findOneOrFail(response.data!.deleteUser, {
+          withDeleted: true,
+        }),
+      ).resolves.toBeTruthy();
+    });
+
+    it('should not soft delete a user if normal user', async () => {
+      const { mutate } = await mountTestClient({ currentUser: normalUsers[0] });
+      const response = await mutate({
+        mutation: DELETE_USER,
+        variables: { id: createdUser.id },
+      });
+
+      expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('restoreUser', () => {
+    let createdUser: User;
+
+    beforeAll(async () => {
+      createdUser = (await createUser(connection)).databaseUser;
+      await getRepository(User).softRemove(createdUser);
+    });
+
+    it('should restore a user if admin', async () => {
+      const { mutate } = await mountTestClient({ currentUser: adminUsers[0] });
+      const response = await mutate({
+        mutation: RESTORE_USER,
+        variables: { id: createdUser.id },
+      });
+
+      expect(response).toBeSuccessful();
+      await expect(
+        getRepository(User).findOneOrFail(response.data!.deleteUser),
+      ).resolves.toBeTruthy();
     });
 
     it('should not delete a user if normal user', async () => {
       const { mutate } = await mountTestClient({ currentUser: normalUsers[0] });
       const response = await mutate({
-        mutation: DELETE_USER,
+        mutation: RESTORE_USER,
         variables: { id: createdUser.id },
       });
 

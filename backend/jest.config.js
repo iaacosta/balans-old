@@ -12,6 +12,7 @@ module.exports = {
     'src/@types',
     'src/jestMatchers.d.ts',
     'src/config',
+    'src/graphql/resolvers/testResolvers.ts',
     'ormconfig.js',
   ],
 };
