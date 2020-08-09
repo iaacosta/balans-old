@@ -46,11 +46,10 @@ describe('active users table', () => {
     cy.findByTestId(updateId).should('exist').should('not.be.disabled').click();
 
     /* change fields and submit */
+    cy.changeSelectOption('roleInput', 1);
     (['firstName', 'lastName', 'email', 'password'] as const).forEach((field) =>
       cy.findByTestId(`${field}Input`).within(() => cy.get('input').clear().type(newUser[field])),
     );
-    cy.findByTestId('roleInput').click();
-    cy.get('[role="presentation"] li').eq(1).click();
     cy.submitForm();
 
     /* expect changes to be there */
