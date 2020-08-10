@@ -1,9 +1,9 @@
 import { registerEnumType } from 'type-graphql';
 
 export enum AccountType {
-  CASH = 'cash',
-  VISTA = 'vista',
-  CHECKING = 'checking',
+  cash = 'cash',
+  vista = 'vista',
+  checking = 'checking',
 }
 
 registerEnumType(AccountType, { name: 'AccountType' });
