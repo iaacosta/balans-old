@@ -19,8 +19,9 @@
     "db:all:migrate": "yarn db:migrate && yarn db:test:migrate",
     "db:all:migrate-revert": "yarn db:migrate-revert && yarn db:test:migrate-revert",
     "db:all:drop": "yarn db:drop && yarn db:test:drop",
-    "dev": "ts-node-dev --ignore-watch node_modules --clear --no-notify ./src/index.ts",
+    "dev": "nodemon",
     "cypress:dev": "NODE_ENV=cypress yarn dev",
+    "console": "ts-node ./src/console.ts",
     "build": "tsc -p .",
     "start": "node ./dist/index.js",
     "lint": "eslint src/**/*.ts --ext ts",
@@ -42,10 +43,10 @@
     "eslint-plugin-import": "^2.20.1",
     "jest": "^25.1.0",
     "mockdate": "^2.0.5",
+    "nodemon": "^2.0.4",
     "supertest": "^4.0.2",
     "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
-    "ts-node-dev": "^1.0.0-pre.52",
     "wait-on": "^5.1.0"
   },
   "dependencies": {
