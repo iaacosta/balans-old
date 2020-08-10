@@ -59,12 +59,15 @@ export default class User extends ModelWithValidation {
   @IsIn(['admin', 'user'], { message: isInErrorMessage })
   role: 'admin' | 'user';
 
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field({ nullable: true })
   @DeleteDateColumn()
   deletedAt?: Date;
 
