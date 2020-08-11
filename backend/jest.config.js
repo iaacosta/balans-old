@@ -13,6 +13,7 @@ module.exports = {
     'src/tests/',
     'src/index.ts',
     'src/jestMatchers.d.ts',
+    'src/console.ts',
     'ormconfig.js',
   ],
 };
