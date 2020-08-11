@@ -1,5 +1,4 @@
 import express from 'express';
-import './config/typeorm';
 import { createConnection } from 'typeorm';
 
 import { mountApollo } from './config/apollo';
