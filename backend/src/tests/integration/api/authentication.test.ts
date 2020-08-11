@@ -1,13 +1,20 @@
-import { createConnection, Connection } from 'typeorm';
+import { createConnection, Connection, createQueryBuilder } from 'typeorm';
 import { gql } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
-import { createUser } from '../../factory/userFactory';
+import { createUser, buildUser } from '../../factory/userFactory';
+import User from '../../../models/User';
 
 const LOGIN = gql`
   mutation Login($username: String!, $password: String!) {
     login(input: { username: $username, password: $password })
+  }
+`;
+
+const SIGN_UP = gql`
+  mutation SignUp($input: CreateUserInput!) {
+    signUp(input: $input)
   }
 `;
 
@@ -63,6 +70,39 @@ describe('authentication API calls', () => {
       });
 
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('signUp', () => {
+    let testUser: ReturnType<typeof buildUser>;
+
+    beforeEach(() => {
+      testUser = buildUser();
+      delete testUser.role;
+    });
+
+    it('should return a token', async () => {
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: SIGN_UP,
+        variables: { input: testUser },
+      });
+
+      expect(response).toBeSuccessful();
+      const { user } = jwt.decode(response.data!.signUp) as any;
+      expect(user.username).toBe(testUser.username);
+    });
+
+    it('should create a user', async () => {
+      const { mutate } = await mountTestClient();
+      await mutate({ mutation: SIGN_UP, variables: { input: testUser } });
+
+      const user = await createQueryBuilder(User)
+        .select()
+        .where('username = :username', { username: testUser.username })
+        .getOneOrFail();
+
+      expect(user.username).toBe(testUser.username);
     });
   });
 });
