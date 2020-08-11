@@ -17,6 +17,7 @@ import {
   isUsernameErrorMessage,
   isInErrorMessage,
 } from '../errors/validationErrorMessages';
+import Account from './Account';
 
 @ObjectType()
 @Entity()
@@ -59,6 +60,9 @@ export default class User {
   @Field()
   @IsIn(['admin', 'user'], { message: isInErrorMessage })
   role: 'admin' | 'user';
+
+  @Field(() => [Account])
+  accounts: Account[];
 
   @Field()
   @CreateDateColumn()

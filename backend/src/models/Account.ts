@@ -42,10 +42,10 @@ export default class Account {
   balance: number;
 
   @Column({ nullable: true })
-  userId: number | null;
+  userId?: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { eager: false })
   user?: User;
 
   @Field()
@@ -72,6 +72,6 @@ export default class Account {
     this.name = account.name;
     this.bank = account.bank;
     this.balance = account.initialBalance;
-    this.userId = account.userId || null;
+    this.userId = account.userId;
   }
 }
