@@ -108,7 +108,7 @@ export default class UserResolvers {
   @Mutation(() => User)
   @Authorized(roles.ADMIN)
   async restoreUser(@Arg('id', () => ID) id: string): Promise<User> {
-    const user = await this.repository.findOneOrFail(id);
+    const user = await this.repository.findOneOrFail(id, { withDeleted: true });
     return this.repository.recover(user);
   }
 

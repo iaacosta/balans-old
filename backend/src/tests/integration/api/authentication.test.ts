@@ -1,4 +1,4 @@
-import { createConnection, Connection, createQueryBuilder } from 'typeorm';
+import { createConnection, Connection, getRepository } from 'typeorm';
 import { gql } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 
@@ -97,10 +97,9 @@ describe('authentication API calls', () => {
       const { mutate } = await mountTestClient();
       await mutate({ mutation: SIGN_UP, variables: { input: testUser } });
 
-      const user = await createQueryBuilder(User)
-        .select()
-        .where('username = :username', { username: testUser.username })
-        .getOneOrFail();
+      const user = await getRepository(User).findOneOrFail({
+        username: testUser.username,
+      });
 
       expect(user.username).toBe(testUser.username);
     });
