@@ -40,10 +40,10 @@ export default class AuthenticationResolvers {
   @Mutation(() => String)
   async signUp(
     @Arg('input')
-    { firstName, lastName, password, email, username }: CreateUserInput,
+    user: CreateUserInput,
   ): Promise<string> {
-    const newUser = new User(firstName, lastName, password, email, username);
-    const user = await this.repository.save(newUser);
-    return AuthenticationResolvers.generateToken(user);
+    const newUser = new User(user);
+    const createdUser = await this.repository.save(newUser);
+    return AuthenticationResolvers.generateToken(createdUser);
   }
 }

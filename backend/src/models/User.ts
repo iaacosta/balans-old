@@ -8,10 +8,9 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { compare } from 'bcrypt';
-import { MinLength, IsEmail, IsIn, Matches } from 'class-validator';
+import { MinLength, IsEmail, IsIn, Matches, IsNotEmpty } from 'class-validator';
 import { AuthenticationError } from 'apollo-server-express';
 
-import ModelWithValidation from './ModelWithValidation';
 import {
   emailErrorMessage,
   minLengthErrorMessage,
@@ -21,17 +20,19 @@ import {
 
 @ObjectType()
 @Entity()
-export default class User extends ModelWithValidation {
+export default class User {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id: number;
 
   @Field()
   @Column()
+  @IsNotEmpty()
   firstName: string;
 
   @Field()
   @Column()
+  @IsNotEmpty()
   lastName: string;
 
   @Field()
@@ -80,21 +81,21 @@ export default class User extends ModelWithValidation {
     }
   }
 
-  constructor(
-    firstName: string,
-    lastName: string,
-    password: string,
-    email: string,
-    username: string,
-    role?: 'admin' | 'user',
-  ) {
-    super();
-
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.password = password;
-    this.email = email;
-    this.username = username;
-    this.role = role || 'user';
+  constructor(user: {
+    firstName: string;
+    lastName: string;
+    password: string;
+    email: string;
+    username: string;
+    role?: 'admin' | 'user';
+  }) {
+    if (user) {
+      this.firstName = user.firstName;
+      this.lastName = user.lastName;
+      this.password = user.password;
+      this.email = user.email;
+      this.username = user.username;
+      this.role = user.role || 'user';
+    }
   }
 }
