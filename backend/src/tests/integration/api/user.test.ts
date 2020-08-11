@@ -14,6 +14,12 @@ const USERS = gql`
       username
       email
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -26,6 +32,12 @@ const DELETED_USERS = gql`
       username
       email
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -38,6 +50,12 @@ const USER = gql`
       username
       email
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -50,6 +68,12 @@ const ME = gql`
       username
       email
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -76,6 +100,12 @@ const CREATE_USER = gql`
       email
       username
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -88,6 +118,12 @@ const UPDATE_USER = gql`
       email
       username
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -102,6 +138,12 @@ const UPDATE_ME = gql`
       email
       username
       role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -116,6 +158,16 @@ const RESTORE_USER = gql`
   mutation RestoreUser($id: ID!) {
     restoreUser(id: $id) {
       id
+      name
+      email
+      username
+      role
+      accounts {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;

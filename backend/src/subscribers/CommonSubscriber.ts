@@ -23,13 +23,10 @@ export class CommonSubscriber<T extends object>
   }
 
   async beforeInsert({ entity, metadata }: InsertEvent<T>) {
-    /* istanbul ignore next */
-    if (!entity) return;
     await this.validate(entity, metadata.tableName);
   }
 
   async beforeUpdate({ entity, metadata }: UpdateEvent<T>) {
-    if (!entity) return;
     await this.validate(entity, metadata.tableName);
   }
 }
