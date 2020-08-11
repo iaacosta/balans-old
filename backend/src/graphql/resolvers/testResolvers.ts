@@ -11,7 +11,7 @@ export default class TestResolvers {
   @Mutation(() => User, { nullable: true })
   async setupDatabase(
     @Arg('adminUser')
-    { firstName, lastName, password, email, username }: CreateUserInput,
+    user: CreateUserInput,
     @Ctx() { connection }: Context,
   ): Promise<User | null> {
     if (process.env.NODE_ENV !== 'cypress') return null;
@@ -28,17 +28,10 @@ export default class TestResolvers {
       await repository.query(query);
     }
 
-    const newUser = new User(
-      firstName,
-      lastName,
-      password,
-      email,
-      username,
-      'admin',
+    const createdUser = await getRepository(User).save(
+      new User({ ...user, role: 'admin' }),
     );
 
-    const user = await getRepository(User).save(newUser);
-
-    return user;
+    return createdUser;
   }
 }
