@@ -6,9 +6,11 @@ import {
   ID,
   Authorized,
   Ctx,
+  FieldResolver,
+  Root,
 } from 'type-graphql';
-import { getRepository, Repository, IsNull, Not } from 'typeorm';
-import { size, forEach } from 'lodash';
+import { getRepository, Repository } from 'typeorm';
+import { size } from 'lodash';
 
 import User from '../../models/User';
 import {
@@ -19,6 +21,8 @@ import {
 import NoChangesError from '../errors/NoChangesError';
 import roles from '../../constants/roles';
 import { Context } from '../../@types';
+import { updateEntity } from '../../utils/typeORM';
+import Account from '../../models/Account';
 
 @Resolver(User)
 export default class UserResolvers {
@@ -31,19 +35,19 @@ export default class UserResolvers {
   @Query(() => [User])
   @Authorized(roles.ADMIN)
   users(): Promise<User[]> {
-    return this.repository.find({
-      order: { createdAt: 'DESC' },
-    });
+    return this.repository.find({ order: { createdAt: 'DESC' } });
   }
 
   @Query(() => [User])
   @Authorized(roles.ADMIN)
   deletedUsers(): Promise<User[]> {
-    return this.repository.find({
-      order: { createdAt: 'DESC' },
-      where: { deletedAt: Not(IsNull()) },
-      withDeleted: true,
-    });
+    return this.repository
+      .createQueryBuilder()
+      .select()
+      .orderBy('"createdAt"', 'DESC')
+      .withDeleted()
+      .where('"deletedAt" IS NOT NULL')
+      .getMany();
   }
 
   @Query(() => User)
@@ -59,13 +63,11 @@ export default class UserResolvers {
   }
 
   @Mutation(() => User)
-  async createUser(
+  createUser(
     @Arg('input')
-    { firstName, lastName, password, email, username }: CreateUserInput,
+    user: CreateUserInput,
   ): Promise<User> {
-    const newUser = new User(firstName, lastName, password, email, username);
-    const user = await this.repository.save(newUser);
-    return user;
+    return this.repository.save(new User(user));
   }
 
   @Mutation(() => User)
@@ -76,12 +78,8 @@ export default class UserResolvers {
   ): Promise<User> {
     if (!size(toChange)) throw new NoChangesError();
     const user = await this.repository.findOneOrFail(id);
-    forEach(toChange, (value, key) => {
-      /* istanbul ignore next */
-      if (value) (user as any)[key] = value;
-    });
-    await this.repository.save(user);
-    return user;
+    updateEntity(user, toChange);
+    return this.repository.save(user);
   }
 
   @Mutation(() => User)
@@ -95,12 +93,8 @@ export default class UserResolvers {
     if (!size(toChange)) throw new NoChangesError();
     const user = await this.repository.findOneOrFail(currentUser!.id);
     await user.verifyPassword(currentPassword);
-    forEach(toChange, (value, key) => {
-      /* istanbul ignore next */
-      if (value) (user as any)[key] = value;
-    });
-    await this.repository.save(user);
-    return user;
+    updateEntity(user, toChange);
+    return this.repository.save(user);
   }
 
   @Mutation(() => ID)
@@ -114,8 +108,12 @@ export default class UserResolvers {
   @Mutation(() => User)
   @Authorized(roles.ADMIN)
   async restoreUser(@Arg('id', () => ID) id: string): Promise<User> {
-    const user = await this.repository.findOneOrFail(id, { withDeleted: true });
-    await this.repository.recover(user);
-    return user;
+    const user = await this.repository.findOneOrFail(id);
+    return this.repository.recover(user);
+  }
+
+  @FieldResolver()
+  accounts(@Root() { id }: User): Promise<Account[]> {
+    return getRepository(Account).find({ where: { userId: id } });
   }
 }
