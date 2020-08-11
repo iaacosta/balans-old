@@ -12,14 +12,14 @@ export const createPgClient = () => {
 };
 
 export const seedTestDatabase = async (_client: Client) => {
-  const queries = [...userQueries()];
+  const queries = [
+    'ALTER SEQUENCE user_id_seq RESTART;',
+    'DELETE FROM "user" CASCADE;',
+    'ALTER SEQUENCE account_id_seq RESTART;',
+    'DELETE FROM "account";',
+  ];
 
   for (const query of queries) {
     await _client.query(query);
   }
 };
-
-const userQueries = () => [
-  'ALTER SEQUENCE user_id_seq RESTART;',
-  'DELETE FROM public.user;',
-];
