@@ -24,6 +24,16 @@ describe('User model test', () => {
       expect(await validateOrReject(userModelFactory())).toBeUndefined();
     });
 
+    it('should not pass validation if firstName is empty', async () => {
+      const { user } = userModelFactory({ firstName: '' });
+      await expect(validateOrReject(user)).rejects.toBeTruthy();
+    });
+
+    it('should not pass validation if lastName is empty', async () => {
+      const { user } = userModelFactory({ lastName: '' });
+      await expect(validateOrReject(user)).rejects.toBeTruthy();
+    });
+
     it('should not pass validation if password is less than 6 characters', async () => {
       const { user } = userModelFactory({ password: 'noop' });
       await expect(validateOrReject(user)).rejects.toBeTruthy();

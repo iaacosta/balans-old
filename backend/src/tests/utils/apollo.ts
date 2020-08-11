@@ -2,6 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createTestClient } from 'apollo-server-testing';
 import { ApolloServer } from 'apollo-server-express';
+import '../../config/typeorm';
 
 import { buildOwnSchema } from '../../config/apollo';
 import formatError from '../../errors/apolloErrorFormatter';

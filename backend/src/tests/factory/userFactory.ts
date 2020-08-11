@@ -21,15 +21,10 @@ export const buildUser = build<BuildType>('User', {
 });
 
 export const userModelFactory = (overrides?: Partial<BuildType>) => {
-  const factoryUser = buildUser({ overrides: overrides as any });
-  const user = new User(
-    factoryUser.firstName,
-    factoryUser.lastName,
-    factoryUser.password,
-    factoryUser.email,
-    factoryUser.username,
-    factoryUser.role,
-  );
+  const factoryUser = buildUser({
+    map: (user) => ({ ...user, ...overrides }),
+  });
+  const user = new User(factoryUser);
 
   return {
     factoryUser,
@@ -41,16 +36,10 @@ export const createUser = async (
   connection: Connection,
   overrides?: Partial<BuildType>,
 ) => {
-  const factoryUser = buildUser({ overrides: overrides as any });
-  const user = new User(
-    factoryUser.firstName,
-    factoryUser.lastName,
-    factoryUser.password,
-    factoryUser.email,
-    factoryUser.username,
-    factoryUser.role,
-  );
-
+  const factoryUser = buildUser({
+    map: (user) => ({ ...user, ...overrides }),
+  });
+  const user = new User(factoryUser);
   const databaseUser = await connection.getRepository(User).save(user);
 
   return {

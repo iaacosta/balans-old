@@ -211,6 +211,12 @@ describe('user API calls', () => {
       });
       expect(response).toBeRejectedByAuth();
     });
+
+    it('should reject if no user found', async () => {
+      const { query } = await mountTestClient({ currentUser: adminUsers[0] });
+      const response = await query({ query: USER, variables: { id: '-1' } });
+      expect(response).toBeRejected();
+    });
   });
 
   describe('deletedUsers', () => {
@@ -301,6 +307,16 @@ describe('user API calls', () => {
       expect(updatedUsername.firstName).toBe(firstName);
     });
 
+    it('should reject if no changes given', async () => {
+      const { mutate } = await mountTestClient({ currentUser: adminUsers[0] });
+      const response = await mutate({
+        mutation: UPDATE_USER,
+        variables: { id: createdUser.id },
+      });
+
+      expect(response).toBeRejected();
+    });
+
     it('should not authorize normal users', async () => {
       const { mutate } = await mountTestClient({ currentUser: normalUsers[0] });
       const { firstName } = buildUser();
@@ -346,6 +362,33 @@ describe('user API calls', () => {
       } = await createUser(connection, { role: 'user' });
 
       await updateMe(currentUser, builtUser);
+    });
+
+    it('should reject if wrong password given', async () => {
+      const { databaseUser } = await createUser(connection, { role: 'user' });
+      const { mutate } = await mountTestClient({ currentUser: databaseUser });
+      const { firstName } = buildUser();
+
+      const response = await mutate({
+        mutation: UPDATE_ME,
+        variables: { firstName, currentPassword: 'wrongPassword' },
+      });
+
+      expect(response).toBeRejectedByAuth();
+    });
+
+    it('should reject if no changes given', async () => {
+      const { databaseUser, factoryUser } = await createUser(connection, {
+        role: 'user',
+      });
+
+      const { mutate } = await mountTestClient({ currentUser: databaseUser });
+      const response = await mutate({
+        mutation: UPDATE_ME,
+        variables: { currentPassword: factoryUser.password },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 
