@@ -1,7 +1,6 @@
 import { AuthenticationError } from 'apollo-server-express';
 import formatError from '../../../errors/apolloErrorFormatter';
 import UniqueConstraintError from '../../../graphql/errors/UniqueConstraintError';
-import NotFoundError from '../../../graphql/errors/NotFoundError';
 
 describe('formatError', () => {
   it('should return same error if not handled', () => {
@@ -50,33 +49,6 @@ describe('formatError', () => {
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
       expect(error.message.includes('column')).toBe(true);
-    });
-  });
-
-  describe('NotFoundError', () => {
-    it('should return correct error if entity not found', () => {
-      const error = formatError({
-        originalError: {
-          name: 'EntityNotFound',
-          message: 'Example "Mock" matching.',
-        },
-      } as any);
-
-      expect(error).toBeInstanceOf(NotFoundError);
-      expect(error.message.includes('mock')).toBe(true);
-      expect(error.message.includes('resource')).toBe(false);
-    });
-
-    it('should return correct error if incorrect original error message', () => {
-      const error = formatError({
-        originalError: {
-          name: 'EntityNotFound',
-          message: 'noop',
-        },
-      } as any);
-
-      expect(error).toBeInstanceOf(NotFoundError);
-      expect(error.message.includes('resource')).toBe(true);
     });
   });
 
