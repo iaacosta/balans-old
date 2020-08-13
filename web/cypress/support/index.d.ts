@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="cypress" />
 
+type BuildEntityOmit<T, O extends string> = Omit<
+  T,
+  O | 'id' | 'deletedAt' | 'createdAt' | 'updatedAt'
+>;
+
 declare namespace Cypress {
   interface Chainable {
     /* Helpers */
@@ -26,26 +31,26 @@ declare namespace Cypress {
      * Gets the data of the logged in user
      * @example cy.getMe()
      */
-    getMe(): Chainable<MeQuery['me']>;
+    getMe(): Chainable<GQLMeQuery['me']>;
     /**
      * Creates a user
      * @example cy.createUser(buildUser())
      */
     createUser(
-      user: CreateUserMutationVariables['input'],
-    ): Chainable<CreateUserMutation['createUser']>;
+      user: GQLCreateUserMutationVariables['input'],
+    ): Chainable<GQLCreateUserMutation['createUser']>;
     /**
      * Deletes a user
      * @example cy.deleteUser(1)
      */
-    deleteUser(id: Scalars['ID']): Chainable<DeleteUserMutation['deleteUser']>;
+    deleteUser(id: Scalars['ID']): Chainable<GQLDeleteUserMutation['deleteUser']>;
 
     /* Database */
     /**
      * Command to setup database in backend side
      * @example cy.setupDatabase()
      */
-    setupDatabase(): Chainable<SetupDatabaseMutation['setupDatabase']>;
+    setupDatabase(): Chainable<GQLSetupDatabaseMutation['setupDatabase']>;
 
     /* Main */
     /**

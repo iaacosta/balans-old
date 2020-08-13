@@ -1,7 +1,7 @@
 import { buildUser } from '../../support/build/user';
 
 describe('deleted users table', () => {
-  let testUser: CreateUserMutation['createUser'];
+  let testUser: GQLCreateUserMutation['createUser'];
 
   beforeEach(() => {
     cy.fixture('adminUser').then((user) => cy.login(user.username, user.password));

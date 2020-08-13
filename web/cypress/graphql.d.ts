@@ -7,9 +7,30 @@ type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
-type User = {
+type GQLAccount = {
+  __typename?: 'Account';
+  id: Scalars['ID'];
+  type: GQLAccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  balance: Scalars['Int'];
+  user: GQLUser;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+type GQLAccountType = 
+  | 'cash'
+  | 'vista'
+  | 'checking';
+
+
+type GQLUser = {
   __typename?: 'User';
   id: Scalars['ID'];
   firstName: Scalars['String'];
@@ -18,9 +39,13 @@ type User = {
   email: Scalars['String'];
   username: Scalars['String'];
   role: Scalars['String'];
+  accounts: Array<GQLAccount>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
 };
 
-type CreateUserInput = {
+type GQLCreateUserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   username: Scalars['String'];
@@ -28,7 +53,7 @@ type CreateUserInput = {
   password: Scalars['String'];
 };
 
-type UpdateUserInput = {
+type GQLUpdateUserInput = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -36,7 +61,7 @@ type UpdateUserInput = {
   currentPassword: Scalars['String'];
 };
 
-type UpdateAnyUserInput = {
+type GQLUpdateAnyUserInput = {
   id: Scalars['ID'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
@@ -45,129 +70,142 @@ type UpdateAnyUserInput = {
   role?: Maybe<Scalars['String']>;
 };
 
-type LoginInput = {
+type GQLLoginInput = {
   username: Scalars['String'];
   password: Scalars['String'];
 };
 
-type Query = {
+type GQLCreateAccountInput = {
+  type: GQLAccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  initialBalance: Scalars['Int'];
+};
+
+type GQLQuery = {
   __typename?: 'Query';
-  users: Array<User>;
-  deletedUsers: Array<User>;
-  user: User;
-  me: User;
+  users: Array<GQLUser>;
+  deletedUsers: Array<GQLUser>;
+  user: GQLUser;
+  me: GQLUser;
 };
 
 
-type QueryUserArgs = {
+type GQLQueryUserArgs = {
   id: Scalars['ID'];
 };
 
-type Mutation = {
+type GQLMutation = {
   __typename?: 'Mutation';
+  createAccount: GQLAccount;
   login: Scalars['String'];
   signUp: Scalars['String'];
-  setupDatabase?: Maybe<User>;
-  createUser: User;
-  updateUser: User;
-  updateMe: User;
+  setupDatabase?: Maybe<GQLUser>;
+  createUser: GQLUser;
+  updateUser: GQLUser;
+  updateMe: GQLUser;
   deleteUser: Scalars['ID'];
-  restoreUser: User;
+  restoreUser: GQLUser;
 };
 
 
-type MutationLoginArgs = {
-  input: LoginInput;
+type GQLMutationCreateAccountArgs = {
+  input: GQLCreateAccountInput;
 };
 
 
-type MutationSignUpArgs = {
-  input: CreateUserInput;
+type GQLMutationLoginArgs = {
+  input: GQLLoginInput;
 };
 
 
-type MutationSetupDatabaseArgs = {
-  adminUser: CreateUserInput;
+type GQLMutationSignUpArgs = {
+  input: GQLCreateUserInput;
 };
 
 
-type MutationCreateUserArgs = {
-  input: CreateUserInput;
+type GQLMutationSetupDatabaseArgs = {
+  adminUser: GQLCreateUserInput;
 };
 
 
-type MutationUpdateUserArgs = {
-  input: UpdateAnyUserInput;
+type GQLMutationCreateUserArgs = {
+  input: GQLCreateUserInput;
 };
 
 
-type MutationUpdateMeArgs = {
-  input: UpdateUserInput;
+type GQLMutationUpdateUserArgs = {
+  input: GQLUpdateAnyUserInput;
 };
 
 
-type MutationDeleteUserArgs = {
+type GQLMutationUpdateMeArgs = {
+  input: GQLUpdateUserInput;
+};
+
+
+type GQLMutationDeleteUserArgs = {
   id: Scalars['ID'];
 };
 
 
-type MutationRestoreUserArgs = {
+type GQLMutationRestoreUserArgs = {
   id: Scalars['ID'];
 };
 
-type SetupDatabaseMutationVariables = Exact<{
-  user: CreateUserInput;
+type GQLSetupDatabaseMutationVariables = Exact<{
+  user: GQLCreateUserInput;
 }>;
 
 
-type SetupDatabaseMutation = (
+type GQLSetupDatabaseMutation = (
   { __typename?: 'Mutation' }
   & { setupDatabase?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id'>
+    & Pick<GQLUser, 'id'>
   )> }
 );
 
-type MeQueryVariables = Exact<{ [key: string]: never; }>;
+type GQLMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type MeQuery = (
+type GQLMeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'username' | 'email' | 'role'>
+    & Pick<GQLUser, 'id' | 'name' | 'username' | 'email' | 'role'>
   ) }
 );
 
-type LoginMutationVariables = Exact<{
-  input: LoginInput;
+type GQLLoginMutationVariables = Exact<{
+  input: GQLLoginInput;
 }>;
 
 
-type LoginMutation = (
+type GQLLoginMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'login'>
+  & Pick<GQLMutation, 'login'>
 );
 
-type CreateUserMutationVariables = Exact<{
-  input: CreateUserInput;
+type GQLCreateUserMutationVariables = Exact<{
+  input: GQLCreateUserInput;
 }>;
 
 
-type CreateUserMutation = (
+type GQLCreateUserMutation = (
   { __typename?: 'Mutation' }
   & { createUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id'>
+    & Pick<GQLUser, 'id'>
   ) }
 );
 
-type DeleteUserMutationVariables = Exact<{
+type GQLDeleteUserMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-type DeleteUserMutation = (
+type GQLDeleteUserMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteUser'>
+  & Pick<GQLMutation, 'deleteUser'>
 );
