@@ -2,8 +2,8 @@ import { buildUser } from '../../support/build/user';
 import { validationMatchers } from '../../support/matchers';
 
 describe('active users table', () => {
-  let adminUser: MeQuery['me'];
-  let testUser: CreateUserMutation['createUser'];
+  let adminUser: GQLMeQuery['me'];
+  let testUser: GQLCreateUserMutation['createUser'];
 
   beforeEach(() => {
     cy.fixture('adminUser').then((user) => cy.login(user.username, user.password));

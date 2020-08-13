@@ -3,6 +3,8 @@ schema: 'http://localhost:4000/graphql'
 documents: 'cypress/support/graphql/*.js'
 config:
   noExport: true
+  typesPrefix: GQL
+  enumsAsTypes: true
 generates:
   cypress/graphql.d.ts:
     plugins:
