@@ -15,15 +15,16 @@ import {
   Divider,
 } from '@material-ui/core';
 import {
-  InsertChartOutlined,
-  AttachMoneyOutlined,
-  AccountBalanceOutlined,
+  InsertChart,
+  AttachMoney,
+  AccountBalance,
   Place,
   People,
   ExpandMore,
   ExpandLess,
   ExitToApp,
   SupervisedUserCircleSharp,
+  AccountBalanceWallet,
 } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -39,21 +40,28 @@ const navigationItems = [
   {
     id: routing.authenticated.dashboard,
     action: actions.routes.dashboard,
-    Icon: <InsertChartOutlined />,
+    Icon: <InsertChart />,
     label: 'Dashboard',
+    divides: false,
+  },
+  {
+    id: routing.authenticated.accounts,
+    action: actions.routes.accounts,
+    Icon: <AccountBalanceWallet />,
+    label: 'Accounts',
     divides: false,
   },
   {
     id: routing.authenticated.movements,
     action: actions.routes.movements,
-    Icon: <AttachMoneyOutlined />,
+    Icon: <AttachMoney />,
     label: 'Expenses and incomes',
     divides: false,
   },
   {
     id: routing.authenticated.otherMovements,
     action: actions.routes.otherMovements,
-    Icon: <AccountBalanceOutlined />,
+    Icon: <AccountBalance />,
     label: 'Loans and debts',
     divides: false,
   },
