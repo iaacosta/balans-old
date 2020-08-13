@@ -15,7 +15,11 @@ import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
 import * as yup from 'yup';
 
-import { User, UpdateUserMutation, UpdateUserMutationVariables } from '../../@types/graphql';
+import {
+  UpdateUserMutation,
+  UpdateUserMutationVariables,
+  AllUsersQuery,
+} from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import { roles } from '../../utils/rbac';
@@ -25,7 +29,7 @@ import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { useMe } from '../../hooks/useMe';
 
 interface Props {
-  user: User;
+  user: AllUsersQuery['users'][number];
   open: boolean;
   onClose: () => void;
 }
