@@ -8,6 +8,7 @@ import { useCan } from '../hooks/useRbac';
 import { actions } from '../utils/rbac';
 import ContainerLoader from '../components/ui/ContainerLoader';
 import Users from '../pages/Users';
+import Accounts from '../pages/Accounts';
 import ViewportContainer from '../components/ui/ViewportContainer';
 
 const Placeholder: React.FC = () => {
@@ -51,7 +52,7 @@ const AuthenticatedApp: React.FC = () => {
               <Route path={routing.authenticated.dashboard} component={Placeholder} exact />
             )}
             {canPerform(actions.routes.accounts) && (
-              <Route path={routing.authenticated.accounts} component={Placeholder} exact />
+              <Route path={routing.authenticated.accounts} component={Accounts} exact />
             )}
             {canPerform(actions.routes.movements) && (
               <Route path={routing.authenticated.movements} component={Placeholder} exact />

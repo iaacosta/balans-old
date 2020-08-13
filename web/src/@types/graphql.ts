@@ -7,7 +7,29 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
+
+export type Account = {
+  __typename?: 'Account';
+  id: Scalars['ID'];
+  type: AccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  balance: Scalars['Int'];
+  user: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum AccountType {
+  Cash = 'cash',
+  Vista = 'vista',
+  Checking = 'checking'
+}
+
 
 export type User = {
   __typename?: 'User';
@@ -18,6 +40,10 @@ export type User = {
   email: Scalars['String'];
   username: Scalars['String'];
   role: Scalars['String'];
+  accounts: Array<Account>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type CreateUserInput = {
@@ -50,6 +76,13 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+export type CreateAccountInput = {
+  type: AccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  initialBalance: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   users: Array<User>;
@@ -65,14 +98,20 @@ export type QueryUserArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createAccount: Account;
   login: Scalars['String'];
   signUp: Scalars['String'];
-  resetDatabase: Scalars['Boolean'];
+  setupDatabase?: Maybe<User>;
   createUser: User;
   updateUser: User;
   updateMe: User;
   deleteUser: Scalars['ID'];
   restoreUser: User;
+};
+
+
+export type MutationCreateAccountArgs = {
+  input: CreateAccountInput;
 };
 
 
@@ -83,6 +122,11 @@ export type MutationLoginArgs = {
 
 export type MutationSignUpArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationSetupDatabaseArgs = {
+  adminUser: CreateUserInput;
 };
 
 
@@ -109,6 +153,19 @@ export type MutationDeleteUserArgs = {
 export type MutationRestoreUserArgs = {
   id: Scalars['ID'];
 };
+
+export type CreateDebitAccountMutationVariables = Exact<{
+  input: CreateAccountInput;
+}>;
+
+
+export type CreateDebitAccountMutation = (
+  { __typename?: 'Mutation' }
+  & { createAccount: (
+    { __typename?: 'Account' }
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+  ) }
+);
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
