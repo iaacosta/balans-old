@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { IsNotEmpty, IsIn } from 'class-validator';
@@ -15,6 +16,7 @@ import { AccountType } from '../graphql/helpers';
 import User from './User';
 
 @ObjectType()
+@Unique(['name', 'bank'])
 @Entity()
 export default class Account {
   @Field(() => ID)
@@ -27,7 +29,7 @@ export default class Account {
   type: AccountType;
 
   @Field()
-  @Column({ unique: true })
+  @Column()
   @IsNotEmpty()
   name: string;
 
@@ -45,7 +47,7 @@ export default class Account {
   userId?: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, { eager: false })
+  @ManyToOne(() => User, { eager: false, onDelete: 'SET NULL' })
   user?: User;
 
   @Field()
