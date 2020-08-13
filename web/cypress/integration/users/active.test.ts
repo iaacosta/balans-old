@@ -61,7 +61,7 @@ describe('active users table', () => {
 
     /* i should not be allowed to change my role */
     cy.findByTestId(`updateUser${adminUser.id}`).click();
-    cy.findByTestId('roleInput').should('have.class', 'Mui-disabled');
+    cy.findByTestId('roleInput').children().last().should('have.class', 'Mui-disabled');
   });
 
   it('should validate user update', () => {
