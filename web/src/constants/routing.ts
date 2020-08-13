@@ -5,6 +5,7 @@ const routing = {
   },
   authenticated: {
     dashboard: '/',
+    accounts: '/accounts',
     movements: '/movements',
     otherMovements: '/debts-and-loans',
     places: '/places',
