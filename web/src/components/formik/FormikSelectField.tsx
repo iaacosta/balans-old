@@ -14,7 +14,7 @@ import { useField } from 'formik';
 interface Props {
   name: string;
   label: string;
-  options: { key: string; label: string }[];
+  options: (string | { key: string; label: string })[];
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -50,11 +50,24 @@ const FormikSelectField: React.FC<Props & SelectProps> = ({
         {...props}
         {...fieldProps}
       >
-        {options.map(({ key, label: optionLabel }) => (
-          <MenuItem key={key} value={key}>
-            {optionLabel}
-          </MenuItem>
-        ))}
+        {options.map((option) => {
+          let key = '';
+          let optionLabel = '';
+
+          if (typeof option === 'string') {
+            key = option;
+            optionLabel = option;
+          } else {
+            key = option.key;
+            optionLabel = option.label;
+          }
+
+          return (
+            <MenuItem key={key} value={key}>
+              {optionLabel}
+            </MenuItem>
+          );
+        })}
       </Select>
       {hasError && <FormHelperText>{error}</FormHelperText>}
     </FormControl>
