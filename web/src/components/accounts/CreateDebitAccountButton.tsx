@@ -9,7 +9,13 @@ const CreateDebitAccountButton: React.FC = () => {
 
   return (
     <>
-      <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => set(true)}>
+      <Button
+        data-testid="createAccountButton"
+        variant="contained"
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={() => set(true)}
+      >
         Create new debit account
       </Button>
       {toggled && <CreateDebitAccountDialog open={toggled} onClose={() => set(false)} />}
