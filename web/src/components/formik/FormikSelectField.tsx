@@ -40,12 +40,12 @@ const FormikSelectField: React.FC<Props & SelectProps> = ({
       error={hasError}
       classes={classes}
       fullWidth={fullWidth}
+      data-testid={`${name}Input`}
     >
       <InputLabel color={color || 'secondary'}>{label}</InputLabel>
       <Select
         color={color || 'secondary'}
         label={label}
-        data-testid={`${name}Input`}
         fullWidth={fullWidth}
         {...props}
         {...fieldProps}
