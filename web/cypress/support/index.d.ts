@@ -17,9 +17,10 @@ declare namespace Cypress {
     /**
      * Custom command to get change options of a Material UI
      * select field
-     * @example cy.changeSelectOption('testInput, 2);
+     * @example cy.changeSelectOption('testInput', 2);
+     * @example cy.changeSelectOption('testInput', 'option');
      */
-    changeSelectOption(testId: string, idx: number): Chainable<void>;
+    changeSelectOption(testId: string, selector: number | string): Chainable<void>;
 
     /* Users */
     /**
