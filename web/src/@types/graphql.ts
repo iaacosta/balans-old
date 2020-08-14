@@ -85,6 +85,7 @@ export type CreateAccountInput = {
 
 export type Query = {
   __typename?: 'Query';
+  myAccounts: Array<Account>;
   users: Array<User>;
   deletedUsers: Array<User>;
   user: User;
@@ -153,6 +154,17 @@ export type MutationDeleteUserArgs = {
 export type MutationRestoreUserArgs = {
   id: Scalars['ID'];
 };
+
+export type MyAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyAccountsQuery = (
+  { __typename?: 'Query' }
+  & { accounts: Array<(
+    { __typename?: 'Account' }
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+  )> }
+);
 
 export type CreateDebitAccountMutationVariables = Exact<{
   input: CreateAccountInput;

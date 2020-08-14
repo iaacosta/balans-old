@@ -4,10 +4,12 @@ import { useTabs } from '../hooks/useTabs';
 import ViewportContainer from '../components/ui/ViewportContainer';
 import CustomTabs from '../components/ui/CustomTabs';
 import CreateDebitAccountButton from '../components/accounts/CreateDebitAccountButton';
+import DebitAccountsGrid from '../components/accounts/DebitAccountsGrid';
 
 const useStyles = makeStyles((theme) => ({
+  main: { maxWidth: theme.spacing(130) },
   title: { marginBottom: theme.spacing(2) },
-  accounts: { flex: 1, padding: theme.spacing(4) },
+  accounts: { flex: 1, padding: theme.spacing(4), overflow: 'auto' },
   buttonWrapper: { display: 'flex', justifyContent: 'flex-end', marginTop: theme.spacing(2) },
 }));
 
@@ -24,13 +26,13 @@ const Accounts: React.FC = () => {
   });
 
   return (
-    <ViewportContainer>
+    <ViewportContainer className={classes.main}>
       <Typography className={classes.title} variant="h5">
         My accounts
       </Typography>
       <CustomTabs tabs={tabs} selected={selected} change={change} />
       <Paper className={classes.accounts} elevation={1}>
-        Accounts
+        {selected === 'debit' && <DebitAccountsGrid />}
       </Paper>
       <Box className={classes.buttonWrapper}>
         {selected === 'debit' && <CreateDebitAccountButton />}

@@ -23,7 +23,7 @@ import {
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
-import { createDebitAccountMutation } from '../../graphql/account';
+import { createDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
 
 interface Props {
   open: boolean;
@@ -68,7 +68,7 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ open, onClose }) => {
   const [createDebitAccount, { loading }] = useMutation<
     CreateDebitAccountMutation,
     CreateDebitAccountMutationVariables
-  >(createDebitAccountMutation);
+  >(createDebitAccountMutation, { refetchQueries: [{ query: myAccountsQuery }] });
 
   const initialValues = useMemo(
     () => ({
