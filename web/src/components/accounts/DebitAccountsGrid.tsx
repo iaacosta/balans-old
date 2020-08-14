@@ -39,9 +39,9 @@ const DebitAccountsGrid: React.FC = () => {
 
   const { accounts } = data;
   return accounts.length > 0 ? (
-    <Grid container spacing={3}>
+    <Grid container data-testid="account" spacing={3}>
       {accounts.map(({ id, bank, name, balance, type }) => (
-        <Grid key={id} item xs={6}>
+        <Grid key={id} data-testid={`account${id}`} item xs={6}>
           <Card>
             <CardContent>
               <Typography variant="body2" color="textSecondary">
