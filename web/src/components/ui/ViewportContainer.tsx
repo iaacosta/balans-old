@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Box } from '@material-ui/core';
+import { makeStyles, Box, BoxProps } from '@material-ui/core';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -9,9 +10,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ViewportContainer: React.FC = ({ children }) => {
+const ViewportContainer: React.FC<BoxProps> = ({ children, className, ...props }) => {
   const classes = useStyles();
-  return <Box className={classes.main}>{children}</Box>;
+  return (
+    <Box className={clsx(classes.main, className)} {...props}>
+      {children}
+    </Box>
+  );
 };
 
 export default ViewportContainer;
