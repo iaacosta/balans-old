@@ -1,22 +1,17 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Column } from 'react-table';
 import { capitalize, makeStyles } from '@material-ui/core';
-import { useQuery } from '@apollo/client';
-import { useSnackbar } from 'notistack';
-import { useHistory } from 'react-router-dom';
 
 import { usersQuery } from '../../graphql/users';
 import { AllUsersQuery } from '../../@types/graphql';
-import routing from '../../constants/routing';
 import ActiveActionsCell from './ActiveActionCell';
 import EnhancedTable from '../ui/EnhancedTable';
+import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
 
 const useStyles = makeStyles(() => ({ table: { flex: 1 } }));
 const ActiveUsersTable: React.FC = () => {
-  const history = useHistory();
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery<AllUsersQuery>(usersQuery);
+  const { data, loading } = useRedirectedQuery<AllUsersQuery>(usersQuery);
 
   const users: AllUsersQuery['users'] = useMemo(() => data?.users || [], [data]);
   const columns: Column<typeof users[number]>[] = useMemo(
@@ -29,13 +24,6 @@ const ActiveUsersTable: React.FC = () => {
     ],
     [],
   );
-
-  useEffect(() => {
-    if (error) {
-      enqueueSnackbar(error.message, { variant: 'error' });
-      history.push(routing.authenticated.dashboard);
-    }
-  }, [error, enqueueSnackbar, history]);
 
   return (
     <EnhancedTable className={classes.table} columns={columns} data={users} loading={loading} />
