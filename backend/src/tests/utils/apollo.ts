@@ -13,7 +13,7 @@ export const mountTestClient = async (context?: Partial<Context>) => {
   const server = new ApolloServer({
     schema,
     formatError,
-    context: context || { s3: {}, currentUser: {} },
+    context: context || { s3: {}, currentUser: null },
   });
 
   return createTestClient(server);
