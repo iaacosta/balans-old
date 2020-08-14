@@ -1,5 +1,17 @@
 import { gql } from '@apollo/client';
 
+export const myAccountsQuery = gql`
+  query MyAccounts {
+    accounts: myAccounts {
+      id
+      name
+      bank
+      type
+      balance
+    }
+  }
+`;
+
 export const createDebitAccountMutation = gql`
   mutation CreateDebitAccount($input: CreateAccountInput!) {
     createAccount(input: $input) {
