@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import { BrowserRouter as RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
+import './config/accounting';
 import client from './config/apollo';
 import customTheme from './config/materialUi';
 import { baseStore } from './config/redux';
