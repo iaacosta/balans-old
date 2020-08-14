@@ -27,6 +27,9 @@ describe('debit accounts table', () => {
 
     /* should notify changes */
     cy.findByText(/account created/i).should('exist');
+
+    /* should show created account */
+    cy.findAllByTestId('account').should('have.length', 1);
   });
 
   it('should validate account fields', () => {
