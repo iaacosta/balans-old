@@ -6,13 +6,13 @@ import {
   Authorized,
   FieldResolver,
   Root,
+  Query,
 } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
 
 import Account from '../../models/Account';
 import { CreateAccountInput } from '../helpers';
 import { Context } from '../../@types';
-import roles from '../../constants/roles';
 import User from '../../models/User';
 
 @Resolver(Account)
@@ -23,8 +23,17 @@ export default class AccountResolvers {
     this.repository = getRepository(Account);
   }
 
+  @Query(() => [Account])
+  @Authorized()
+  async myAccounts(@Ctx() { currentUser }: Context): Promise<Account[]> {
+    return this.repository.find({
+      where: { userId: currentUser!.id },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   @Mutation(() => Account)
-  @Authorized([roles.ADMIN, roles.USER])
+  @Authorized()
   async createAccount(
     @Arg('input') account: CreateAccountInput,
     @Ctx() { currentUser }: Context,
