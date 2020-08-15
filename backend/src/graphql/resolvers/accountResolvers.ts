@@ -27,10 +27,13 @@ export default class AccountResolvers {
   @Query(() => [Account])
   @Authorized()
   async myAccounts(@Ctx() { currentUser }: Context): Promise<Account[]> {
-    return this.repository.find({
-      where: { userId: currentUser!.id },
-      order: { createdAt: 'DESC' },
-    });
+    return this.repository
+      .createQueryBuilder()
+      .select()
+      .where('"userId" = :id', { id: currentUser!.id })
+      .andWhere('"type" != :type', { type: 'root' })
+      .orderBy('"createdAt"', 'DESC')
+      .getMany();
   }
 
   @Mutation(() => Account)

@@ -26,7 +26,7 @@ export default class Account {
   @Field(() => AccountType)
   @Column()
   @IsIn(['cash', 'vista', 'checking'] as AccountType[])
-  type: AccountType;
+  type: AccountType | 'root';
 
   @Field()
   @Column()
@@ -63,7 +63,7 @@ export default class Account {
   deletedAt: Date;
 
   constructor(account: {
-    type: AccountType;
+    type: AccountType | 'root';
     name: string;
     bank: string;
     initialBalance: number;
