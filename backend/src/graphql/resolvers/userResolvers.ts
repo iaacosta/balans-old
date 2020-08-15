@@ -9,7 +9,7 @@ import {
   FieldResolver,
   Root,
 } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, getConnection } from 'typeorm';
 import { size } from 'lodash';
 
 import User from '../../models/User';
@@ -63,11 +63,27 @@ export default class UserResolvers {
   }
 
   @Mutation(() => User)
-  createUser(
+  async createUser(
     @Arg('input')
     user: CreateUserInput,
   ): Promise<User> {
-    return this.repository.save(new User(user));
+    const transactionUser = await getConnection().transaction(async () => {
+      const createdUser = await this.repository.save(new User(user));
+
+      await getRepository(Account).save(
+        new Account({
+          name: 'Root account',
+          bank: 'Balans',
+          initialBalance: 0,
+          userId: createdUser.id,
+          type: 'root',
+        }),
+      );
+
+      return createdUser;
+    });
+
+    return transactionUser;
   }
 
   @Mutation(() => User)
