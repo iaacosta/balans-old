@@ -7,6 +7,7 @@ import {
   FieldResolver,
   Root,
   Query,
+  ID,
 } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
 
@@ -41,6 +42,21 @@ export default class AccountResolvers {
     return this.repository.save(
       new Account({ ...account, userId: currentUser!.id }),
     );
+  }
+
+  /* TODO: use soft removal + UI to restore */
+  @Mutation(() => ID)
+  @Authorized()
+  async deleteAccount(
+    @Arg('id', () => ID) id: number,
+    @Ctx() { currentUser }: Context,
+  ): Promise<number> {
+    const account = await this.repository.findOneOrFail({
+      id,
+      userId: currentUser!.id,
+    });
+    await this.repository.remove(account);
+    return id;
   }
 
   @FieldResolver()
