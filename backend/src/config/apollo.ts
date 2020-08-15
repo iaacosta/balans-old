@@ -1,7 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema, AuthChecker } from 'type-graphql';
 import { resolve } from 'path';
-import { Connection } from 'typeorm';
 
 import { authenticateUser } from '../services/passport';
 import { Context } from '../@types';
@@ -24,12 +23,11 @@ export const buildOwnSchema = async () => {
   });
 };
 
-export const mountApollo = async (connection: Connection) =>
+export const mountApollo = async () =>
   new ApolloServer({
     schema: await buildOwnSchema(),
     formatError,
     context: async ({ req }): Promise<Context> => ({
       currentUser: await authenticateUser(req),
-      connection,
     }),
   });
