@@ -4,6 +4,7 @@
 !src/
 !.eslintrc
 !.prettierrc
+!nodemon.json
 !jest.config.js
 !ormconfig.js
 !package.json
