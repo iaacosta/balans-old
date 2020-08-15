@@ -58,4 +58,17 @@ describe('debit accounts table', () => {
     cy.changeSelectOption('typeInput', 'Vista');
     cy.findByTestId('initialBalanceInput').within(() => cy.contains(minimumNumber).should('exist'));
   });
+
+  it('should be able to delete an account', () => {
+    // eslint-disable-next-line jest/valid-expect-in-promise
+    cy.createAccount(buildAccount()).then((account) => {
+      /* Delete and it shouldn't exist anymore */
+      cy.findByTestId(`deleteAccount${account.id}`)
+        .should('exist')
+        .should('not.be.disabled')
+        .click();
+
+      cy.findByTestId(`account${account.id}`).should('not.exist');
+    });
+  });
 });

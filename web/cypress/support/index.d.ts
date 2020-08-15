@@ -46,6 +46,16 @@ declare namespace Cypress {
      */
     deleteUser(id: Scalars['ID']): Chainable<GQLDeleteUserMutation['deleteUser']>;
 
+    /* Accounts */
+
+    /**
+     * Creates an account
+     * @example cy.createAccount(buildAccount())
+     */
+    createAccount(
+      account: GQLCreateDebitAccountMutationVariables['input'],
+    ): Chainable<GQLCreateDebitAccountMutation['createAccount']>;
+
     /* Database */
     /**
      * Command to setup database in backend side
