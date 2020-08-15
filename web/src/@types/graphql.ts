@@ -100,6 +100,7 @@ export type QueryUserArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   createAccount: Account;
+  deleteAccount: Scalars['ID'];
   login: Scalars['String'];
   signUp: Scalars['String'];
   setupDatabase?: Maybe<User>;
@@ -113,6 +114,11 @@ export type Mutation = {
 
 export type MutationCreateAccountArgs = {
   input: CreateAccountInput;
+};
+
+
+export type MutationDeleteAccountArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -177,6 +183,16 @@ export type CreateDebitAccountMutation = (
     { __typename?: 'Account' }
     & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
   ) }
+);
+
+export type DeleteDebitAccountMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteDebitAccountMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteAccount'>
 );
 
 export type LoginMutationVariables = Exact<{
