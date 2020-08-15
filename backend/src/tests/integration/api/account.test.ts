@@ -56,6 +56,12 @@ const CREATE_ACCOUNT = gql`
   }
 `;
 
+const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($id: ID!) {
+    deleteAccount(id: $id)
+  }
+`;
+
 describe('account API calls', () => {
   let connection: Connection;
   let testUser: User;
@@ -81,7 +87,9 @@ describe('account API calls', () => {
 
     await Promise.all(
       Array.from(Array(4).keys()).map(() =>
-        createAccount(connection, untrackableUser.id),
+        createAccount(connection, untrackableUser.id).then(
+          ({ databaseAccount }) => databaseAccount,
+        ),
       ),
     );
   });
@@ -124,6 +132,38 @@ describe('account API calls', () => {
         response.data!.createAccount.id,
       );
       expect(createdAccount.name).toBe(testAccount.name);
+    });
+  });
+
+  describe('deleteAccount', () => {
+    it('should delete an account if mine', async () => {
+      const createdAccount = (await createAccount(connection, testUser.id))
+        .databaseAccount;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_ACCOUNT,
+        variables: { id: createdAccount.id },
+      });
+
+      expect(response).toBeSuccessful();
+      await expect(
+        getRepository(Account).findOneOrFail(response.data!.deleteAccount),
+      ).rejects.toBeTruthy();
+    });
+
+    it('should not delete an account if not mine', async () => {
+      const otherUser = (await createUser(connection)).databaseUser;
+      const createdAccount = (await createAccount(connection, otherUser.id))
+        .databaseAccount;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_ACCOUNT,
+        variables: { id: createdAccount.id },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 });
