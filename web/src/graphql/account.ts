@@ -23,3 +23,9 @@ export const createDebitAccountMutation = gql`
     }
   }
 `;
+
+export const deleteDebitAccountMutation = gql`
+  mutation DeleteDebitAccount($id: ID!) {
+    deleteAccount(id: $id)
+  }
+`;
