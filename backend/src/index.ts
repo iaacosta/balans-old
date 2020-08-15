@@ -10,9 +10,9 @@ app.get('/', (req, res) => res.send('Cy.ok').status(200));
 /* istanbul ignore next */
 if (NODE_ENV !== 'test') {
   createConnection()
-    .then(async (connection) => {
+    .then(async () => {
       console.log('TypeORM connected to Postgres database');
-      const server = await mountApollo(connection);
+      const server = await mountApollo();
       server.applyMiddleware({ app });
       app.listen(PORT, () =>
         console.log(`Express app running on port ${PORT}`),
