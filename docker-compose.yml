@@ -17,6 +17,8 @@ services:
     volumes:
       - ./docker/server-development-entrypoint.sh:/app/docker/entrypoint.sh
       - ./backend:/app
+    entrypoint: ['sh', '/app/docker/entrypoint.sh']
+    command: ['yarn', 'dev']
     environment:
       - SECRET=docker
       - PORT=4000
@@ -33,7 +35,10 @@ services:
       context: ./web
       dockerfile: Dockerfile.dev
     stdin_open: true
+    entrypoint: ['sh', '/app/docker/entrypoint.sh']
+    command: ['yarn', 'start']
     volumes:
+      - ./docker/web-development-entrypoint.sh:/app/docker/entrypoint.sh
       - ./web:/app
     environment:
       - REACT_APP_API_URL=http://localhost:4000/graphql
