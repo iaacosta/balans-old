@@ -16,7 +16,7 @@ import { AccountType } from '../graphql/helpers';
 import User from './User';
 
 @ObjectType()
-@Unique(['name', 'bank'])
+@Unique(['name', 'bank', 'userId'])
 @Entity()
 export default class Account {
   @Field(() => ID)
