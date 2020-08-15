@@ -78,6 +78,7 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
             </EnhancedIconButton>
             <EnhancedIconButton
               contained
+              data-testid={`deleteAccount${id}`}
               disabled={deleteLoading}
               onClick={handleDelete}
               color="error"
