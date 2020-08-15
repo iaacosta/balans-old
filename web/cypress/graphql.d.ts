@@ -84,6 +84,7 @@ type GQLCreateAccountInput = {
 
 type GQLQuery = {
   __typename?: 'Query';
+  myAccounts: Array<GQLAccount>;
   users: Array<GQLUser>;
   deletedUsers: Array<GQLUser>;
   user: GQLUser;
@@ -98,6 +99,7 @@ type GQLQueryUserArgs = {
 type GQLMutation = {
   __typename?: 'Mutation';
   createAccount: GQLAccount;
+  deleteAccount: Scalars['Boolean'];
   login: Scalars['String'];
   signUp: Scalars['String'];
   setupDatabase?: Maybe<GQLUser>;
@@ -111,6 +113,11 @@ type GQLMutation = {
 
 type GQLMutationCreateAccountArgs = {
   input: GQLCreateAccountInput;
+};
+
+
+type GQLMutationDeleteAccountArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -152,6 +159,19 @@ type GQLMutationDeleteUserArgs = {
 type GQLMutationRestoreUserArgs = {
   id: Scalars['ID'];
 };
+
+type GQLCreateDebitAccountMutationVariables = Exact<{
+  input: GQLCreateAccountInput;
+}>;
+
+
+type GQLCreateDebitAccountMutation = (
+  { __typename?: 'Mutation' }
+  & { createAccount: (
+    { __typename?: 'Account' }
+    & Pick<GQLAccount, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+  ) }
+);
 
 type GQLSetupDatabaseMutationVariables = Exact<{
   user: GQLCreateUserInput;

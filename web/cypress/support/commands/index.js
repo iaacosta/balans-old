@@ -2,6 +2,7 @@
 import './helpers';
 import './database';
 import './users';
+import './account';
 
 Cypress.Commands.add('graphQLRequest', ({ request, variables = {} }) => {
   const token = localStorage.getItem('x-auth');
