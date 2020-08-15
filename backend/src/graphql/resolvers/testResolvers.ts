@@ -1,8 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import { Mutation, Resolver, Ctx, Arg } from 'type-graphql';
-import { getRepository } from 'typeorm';
-import { Context } from '../../@types';
+import { Mutation, Resolver, Arg } from 'type-graphql';
+import { getRepository, getConnection } from 'typeorm';
 import { CreateUserInput } from '../helpers';
 import User from '../../models/User';
 
@@ -12,9 +11,9 @@ export default class TestResolvers {
   async setupDatabase(
     @Arg('adminUser')
     user: CreateUserInput,
-    @Ctx() { connection }: Context,
   ): Promise<User | null> {
     if (process.env.NODE_ENV !== 'cypress') return null;
+    const connection = getConnection();
 
     const entities = connection.entityMetadatas;
     for (const entity of entities) {
