@@ -11,6 +11,33 @@ type Scalars = {
   DateTime: any;
 };
 
+type GQLUser = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  role: Scalars['String'];
+  accounts: Array<GQLAccount>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+type GQLTransaction = {
+  __typename?: 'Transaction';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  resultantBalance: Scalars['Int'];
+  account: GQLAccount;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
 type GQLAccount = {
   __typename?: 'Account';
   id: Scalars['ID'];
@@ -28,22 +55,6 @@ type GQLAccountType =
   | 'cash'
   | 'vista'
   | 'checking';
-
-
-type GQLUser = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  role: Scalars['String'];
-  accounts: Array<GQLAccount>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-};
 
 type GQLCreateUserInput = {
   firstName: Scalars['String'];
@@ -82,6 +93,11 @@ type GQLCreateAccountInput = {
   initialBalance: Scalars['Int'];
 };
 
+type GQLCreateTransactionInput = {
+  amount: Scalars['Int'];
+  accountId: Scalars['ID'];
+};
+
 type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
@@ -99,10 +115,11 @@ type GQLQueryUserArgs = {
 type GQLMutation = {
   __typename?: 'Mutation';
   createAccount: GQLAccount;
-  deleteAccount: Scalars['Boolean'];
+  deleteAccount: Scalars['ID'];
   login: Scalars['String'];
   signUp: Scalars['String'];
   setupDatabase?: Maybe<GQLUser>;
+  createTransaction: GQLTransaction;
   createUser: GQLUser;
   updateUser: GQLUser;
   updateMe: GQLUser;
@@ -133,6 +150,11 @@ type GQLMutationSignUpArgs = {
 
 type GQLMutationSetupDatabaseArgs = {
   adminUser: GQLCreateUserInput;
+};
+
+
+type GQLMutationCreateTransactionArgs = {
+  input: GQLCreateTransactionInput;
 };
 
 
@@ -184,6 +206,19 @@ type GQLSetupDatabaseMutation = (
     { __typename?: 'User' }
     & Pick<GQLUser, 'id'>
   )> }
+);
+
+type GQLCreateTransactionMutationVariables = Exact<{
+  input: GQLCreateTransactionInput;
+}>;
+
+
+type GQLCreateTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & { createTransaction: (
+    { __typename?: 'Transaction' }
+    & Pick<GQLTransaction, 'id'>
+  ) }
 );
 
 type GQLMeQueryVariables = Exact<{ [key: string]: never; }>;

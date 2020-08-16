@@ -27,6 +27,7 @@ const Transactions: React.FC = () => {
         <DialogButton
           buttonLabel="Add new transaction"
           DialogComponent={CreateTransactionDialog}
+          data-testid="createTransactionButton"
           startIcon={<AddIcon />}
         />
       </Box>
