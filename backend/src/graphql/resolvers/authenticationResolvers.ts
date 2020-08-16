@@ -1,11 +1,10 @@
 import { Resolver, Mutation, Arg } from 'type-graphql';
-import { getRepository, Repository, getConnection } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'apollo-server-express';
 
 import User from '../../models/User';
 import { LoginInput, CreateUserInput } from '../helpers';
-import Account from '../../models/Account';
 
 @Resolver(User)
 export default class AuthenticationResolvers {
@@ -43,21 +42,7 @@ export default class AuthenticationResolvers {
     @Arg('input')
     user: CreateUserInput,
   ): Promise<string> {
-    const transactionUser = await getConnection().transaction(async () => {
-      const createdUser = await this.repository.save(new User(user));
-
-      await getRepository(Account).save(
-        new Account({
-          name: 'Root account',
-          bank: 'Balans',
-          userId: createdUser.id,
-          type: 'root',
-        }),
-      );
-
-      return createdUser;
-    });
-
-    return AuthenticationResolvers.generateToken(transactionUser);
+    const createdUser = await this.repository.save(new User(user));
+    return AuthenticationResolvers.generateToken(createdUser);
   }
 }

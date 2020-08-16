@@ -10,6 +10,7 @@ import {
 import { genSalt, hash } from 'bcrypt';
 
 import User from '../models/User';
+import Account from '../models/Account';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
@@ -24,6 +25,17 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
   async beforeInsert({ entity }: InsertEvent<User>) {
     entity.password = await this.hashPassword(entity.password);
+  }
+
+  async afterInsert({ entity, manager }: InsertEvent<User>) {
+    await manager.getRepository(Account).save(
+      new Account({
+        name: 'Root account',
+        bank: 'Balans',
+        userId: entity.id,
+        type: 'root',
+      }),
+    );
   }
 
   async beforeUpdate({ entity, databaseEntity }: UpdateEvent<User>) {

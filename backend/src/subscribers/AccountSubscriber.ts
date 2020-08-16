@@ -6,9 +6,11 @@ import {
   EntitySubscriberInterface,
   UpdateEvent,
   InsertEvent,
+  RemoveEvent,
 } from 'typeorm';
 
 import Account from '../models/Account';
+import Transaction from '../models/Transaction';
 
 type Events = InsertEvent<Account> | UpdateEvent<Account>;
 
@@ -37,5 +39,23 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     if (entity.type === 'root' && entity.type !== databaseEntity.type) {
       await this.checkExistingRootAccount(event);
     }
+  }
+
+  async beforeRemove(event: RemoveEvent<Account>) {
+    const { databaseEntity, manager } = event;
+
+    const { sum } = await manager
+      .getRepository(Transaction)
+      .createQueryBuilder()
+      .select('SUM("amount")')
+      .where('"accountId" = :id', { id: databaseEntity.id })
+      .getRawOne();
+
+    const rootAccount = await manager.getRepository(Account).findOneOrFail({
+      type: 'root',
+      userId: databaseEntity.userId,
+    });
+
+    await rootAccount.performTransaction(parseInt(sum, 10));
   }
 }
