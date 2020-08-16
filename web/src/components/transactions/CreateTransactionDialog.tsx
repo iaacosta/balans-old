@@ -24,7 +24,7 @@ import {
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
-import { createTransactionMutation } from '../../graphql/transaction';
+import { createTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
 import { myAccountsQuery } from '../../graphql/account';
 import ContainerLoader from '../ui/ContainerLoader';
 import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
@@ -54,7 +54,9 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
   const [createTransaction, { loading: createLoading }] = useMutation<
     CreateTransactionMutation,
     CreateTransactionMutationVariables
-  >(createTransactionMutation);
+  >(createTransactionMutation, {
+    refetchQueries: [{ query: myTransactionsQuery }, { query: myAccountsQuery }],
+  });
 
   const initialValues = useMemo(
     () => ({
