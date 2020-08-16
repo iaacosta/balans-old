@@ -1,10 +1,13 @@
 import React from 'react';
 import { Typography, makeStyles, Paper, Box } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
+
 import { useTabs } from '../hooks/useTabs';
 import ViewportContainer from '../components/ui/ViewportContainer';
 import CustomTabs from '../components/ui/CustomTabs';
-import CreateDebitAccountButton from '../components/accounts/CreateDebitAccountButton';
 import DebitAccountsGrid from '../components/accounts/DebitAccountsGrid';
+import DialogButton from '../components/ui/DialogButton';
+import CreateDebitAccountDialog from '../components/accounts/CreateDebitAccountDialog';
 
 const useStyles = makeStyles((theme) => ({
   main: { maxWidth: theme.spacing(130) },
@@ -35,7 +38,13 @@ const Accounts: React.FC = () => {
         {selected === 'debit' && <DebitAccountsGrid />}
       </Paper>
       <Box className={classes.buttonWrapper}>
-        {selected === 'debit' && <CreateDebitAccountButton />}
+        {selected === 'debit' && (
+          <DialogButton
+            buttonLabel="Create new debit account"
+            DialogComponent={CreateDebitAccountDialog}
+            startIcon={<AddIcon />}
+          />
+        )}
       </Box>
     </ViewportContainer>
   );
