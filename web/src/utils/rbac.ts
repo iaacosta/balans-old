@@ -8,7 +8,7 @@ export const roles = {
 export const actions = {
   routes: {
     dashboard: 'routes:dashboard',
-    accounts: 'routes:accounts',
+    transactions: 'routes:transactions',
     movements: 'routes:movements',
     otherMovements: 'routes:otherMovements',
     places: 'routes:places',
@@ -31,7 +31,7 @@ export type Action =
 export const rules = {
   user: new Set<string>([
     actions.routes.dashboard,
-    actions.routes.accounts,
+    actions.routes.transactions,
     actions.routes.movements,
     actions.routes.otherMovements,
     actions.routes.people,
@@ -39,7 +39,7 @@ export const rules = {
   ]),
   admin: new Set<string>([
     actions.routes.dashboard,
-    actions.routes.accounts,
+    actions.routes.transactions,
     actions.routes.movements,
     actions.routes.otherMovements,
     actions.routes.people,
