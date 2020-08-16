@@ -1,5 +1,5 @@
-import React from 'react';
-import { Column, useTable, usePagination } from 'react-table';
+import React, { ReactNode } from 'react';
+import { Column, useTable, usePagination, TableState } from 'react-table';
 import {
   Table,
   TableHead,
@@ -11,6 +11,7 @@ import {
   TableContainer,
   Paper,
   makeStyles,
+  Box,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import ContainerLoader from './ContainerLoader';
@@ -21,6 +22,8 @@ type Props<T extends Record<string, unknown>> = {
   loading?: boolean;
   noEntriesLabel?: string;
   className?: string;
+  initialState?: Partial<TableState<T>>;
+  children?: ReactNode;
 };
 
 const EnhancedCell = withStyles((theme) => ({
@@ -31,9 +34,18 @@ const EnhancedCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
-const useStyles = makeStyles((theme) => ({
-  root: { marginTop: theme.spacing(2) },
+const usePaginationStyles = makeStyles(() => ({
+  root: { flex: 1 },
   ul: { justifyContent: 'center' },
+}));
+
+const useStyles = makeStyles((theme) => ({
+  paginationWrapper: {
+    marginTop: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center',
+    '& > *:not(:last-child)': { marginRight: theme.spacing(1) },
+  },
 }));
 
 const EnhancedTable = <T extends Record<string, unknown>>({
@@ -42,8 +54,11 @@ const EnhancedTable = <T extends Record<string, unknown>>({
   loading,
   noEntriesLabel,
   className,
+  initialState,
+  children,
 }: Props<T>): React.ReactElement => {
   const classes = useStyles();
+  const paginationClasses = usePaginationStyles();
   const {
     getTableProps,
     getTableBodyProps,
@@ -54,7 +69,7 @@ const EnhancedTable = <T extends Record<string, unknown>>({
     gotoPage,
     page,
     state: { pageIndex },
-  } = useTable({ columns, data, initialState: { pageSize: 8 } }, usePagination);
+  } = useTable({ columns, data, initialState: { pageSize: 8, ...initialState } }, usePagination);
 
   let Body = (
     <TableRow>
@@ -109,13 +124,16 @@ const EnhancedTable = <T extends Record<string, unknown>>({
           <TableBody {...getTableBodyProps()}>{Body}</TableBody>
         </Table>
       </TableContainer>
-      <Pagination
-        classes={classes}
-        count={pageCount}
-        page={pageIndex + 1}
-        color="secondary"
-        onChange={(event, newPage) => gotoPage(newPage - 1)}
-      />
+      <Box className={classes.paginationWrapper}>
+        <Pagination
+          classes={paginationClasses}
+          count={pageCount}
+          page={pageIndex + 1}
+          color="secondary"
+          onChange={(event, newPage) => gotoPage(newPage - 1)}
+        />
+        {children}
+      </Box>
     </>
   );
 };
