@@ -13,7 +13,8 @@ describe('Account model test', () => {
     expect(account.name).toBe(factoryAccount.name);
     expect(account.bank).toBe(factoryAccount.bank);
     expect(account.type).toBe(factoryAccount.type);
-    expect(account.balance).toBe(factoryAccount.initialBalance);
+    expect(account.balance).not.toBe(factoryAccount.initialBalance);
+    expect(account.balance).toBe(0);
   });
 
   describe('validation', () => {
@@ -34,50 +35,42 @@ describe('Account model test', () => {
     });
 
     it('should not pass validation if balance < 0 an type is cash', async () => {
-      const { account } = accountModelFactory(1, {
-        type: AccountType.cash,
-        initialBalance: -1000,
-      });
+      const { account } = accountModelFactory(1, { type: AccountType.cash });
+      account.balance = -1000;
       await expect(validateOrReject(account)).rejects.toBeTruthy();
     });
 
     it('should not pass validation if balance < 0 an type is vista', async () => {
-      const { account } = accountModelFactory(1, {
-        type: AccountType.vista,
-        initialBalance: -1000,
-      });
+      const { account } = accountModelFactory(1, { type: AccountType.vista });
+      account.balance = -1000;
       await expect(validateOrReject(account)).rejects.toBeTruthy();
     });
 
     it('should pass validation if balance > 0 an type is cash', async () => {
-      const { account } = accountModelFactory(1, {
-        type: AccountType.cash,
-        initialBalance: 1000,
-      });
+      const { account } = accountModelFactory(1, { type: AccountType.cash });
+      account.balance = 1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
     });
 
     it('should pass validation if balance > 0 an type is vista', async () => {
-      const { account } = accountModelFactory(1, {
-        type: AccountType.vista,
-        initialBalance: 1000,
-      });
+      const { account } = accountModelFactory(1, { type: AccountType.vista });
+      account.balance = 1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
     });
 
     it('should pass validation if balance > 0 an type is checking', async () => {
       const { account } = accountModelFactory(1, {
         type: AccountType.checking,
-        initialBalance: 1000,
       });
+      account.balance = 1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
     });
 
     it('should pass validation if balance < 0 an type is checking', async () => {
       const { account } = accountModelFactory(1, {
         type: AccountType.checking,
-        initialBalance: -1000,
       });
+      account.balance = -1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
     });
   });

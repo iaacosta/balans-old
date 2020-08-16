@@ -38,6 +38,11 @@ describe('account ORM tests', () => {
         const { account } = accountModelFactory(user.id, { name: '' });
         await expect(repo.save(account)).rejects.toThrowError(UserInputError);
       });
+
+      it('should not allow two root type accounts', async () => {
+        const { account } = accountModelFactory(user.id, { type: 'root' });
+        await expect(repo.save(account)).rejects.toThrowError();
+      });
     });
 
     describe('update', () => {
@@ -49,6 +54,14 @@ describe('account ORM tests', () => {
         await expect(repo.save(testAccount)).rejects.toThrowError(
           UserInputError,
         );
+      });
+
+      it('should not allow two root type accounts', async () => {
+        const { databaseAccount } = await createAccount(connection, user.id);
+        const testAccount = (await repo.findOne(databaseAccount.id)) as Account;
+        expect(testAccount).toBeDefined();
+        testAccount.type = 'root';
+        await expect(repo.save(testAccount)).rejects.toThrowError();
       });
     });
   });
