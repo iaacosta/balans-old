@@ -6,6 +6,7 @@ import {
   Authorized,
   FieldResolver,
   Root,
+  Query,
 } from 'type-graphql';
 import { Repository, getRepository, getConnection } from 'typeorm';
 
@@ -23,6 +24,23 @@ export default class TransactionResolvers {
   constructor() {
     this.repository = getRepository(Transaction);
     this.accountRepository = getRepository(Account);
+  }
+
+  @Query(() => [Transaction])
+  @Authorized()
+  myTransactions(@Ctx() { currentUser }: Context): Promise<Transaction[]> {
+    return this.repository
+      .createQueryBuilder()
+      .select()
+      .leftJoin(
+        Account,
+        'Account',
+        '"Account"."id" = "Transaction"."accountId"',
+      )
+      .where('"Account"."userId" = :id', { id: currentUser!.id })
+      .andWhere('"Account"."type" != :type', { type: 'root' })
+      .orderBy('"Transaction"."createdAt"', 'DESC')
+      .getMany();
   }
 
   @Mutation(() => Transaction)
