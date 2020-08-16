@@ -9,7 +9,7 @@ import {
   Query,
   ID,
 } from 'type-graphql';
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, getConnection } from 'typeorm';
 
 import Account from '../../models/Account';
 import { CreateAccountInput } from '../helpers';
@@ -39,12 +39,40 @@ export default class AccountResolvers {
   @Mutation(() => Account)
   @Authorized()
   async createAccount(
-    @Arg('input') account: CreateAccountInput,
+    @Arg('input') { initialBalance, ...accountInput }: CreateAccountInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Account> {
-    return this.repository.save(
-      new Account({ ...account, userId: currentUser!.id }),
-    );
+    const account = getConnection().transaction(async (entityManager) => {
+      const createdAccount = await entityManager
+        .getRepository(Account)
+        .save(new Account({ ...accountInput, userId: currentUser!.id }), {
+          transaction: false,
+        });
+
+      if (initialBalance !== 0) {
+        /* Transact initial balance from the root account */
+        const rootAccount = await entityManager
+          .getRepository(Account)
+          .findOneOrFail({
+            userId: currentUser!.id,
+            type: 'root',
+          });
+
+        await createdAccount.performTransaction(initialBalance, {
+          transaction: false,
+          entityManager,
+        });
+
+        await rootAccount.performTransaction(-initialBalance, {
+          transaction: false,
+          entityManager,
+        });
+      }
+
+      return createdAccount;
+    });
+
+    return account;
   }
 
   /* TODO: use soft removal + UI to restore */

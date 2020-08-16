@@ -50,7 +50,6 @@ export default class AuthenticationResolvers {
         new Account({
           name: 'Root account',
           bank: 'Balans',
-          initialBalance: 0,
           userId: createdUser.id,
           type: 'root',
         }),
