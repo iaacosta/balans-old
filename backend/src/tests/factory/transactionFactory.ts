@@ -3,6 +3,7 @@ import { build, fake } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
 
 import Transaction from '../../models/Transaction';
+import Account from '../../models/Account';
 
 export type BuildType = Pick<Transaction, 'amount'>;
 
@@ -31,27 +32,26 @@ export const transactionModelFactory = (
 
 export const createTransaction = async (
   connection: Connection,
-  accountId: number,
-  resultantBalance: number,
+  account: Account,
   overrides?: Partial<BuildType>,
 ) => {
+  const entityManager = connection.createEntityManager();
   const factoryTransaction = buildTransaction({
     map: (transaction) => ({ ...transaction, ...overrides }),
   });
 
-  const transaction = new Transaction({
-    ...factoryTransaction,
-    accountId,
-    resultantBalance,
-  });
-
-  const databaseTransaction = await connection
-    .getRepository(Transaction)
-    .save(transaction);
+  const databaseTransaction = await account.performTransaction(
+    factoryTransaction.amount,
+    { transaction: false, entityManager },
+  );
 
   return {
     databaseTransaction,
     factoryTransaction,
-    transaction,
+    transaction: new Transaction({
+      amount: factoryTransaction.amount,
+      accountId: account.id,
+      resultantBalance: account.balance,
+    }),
   };
 };

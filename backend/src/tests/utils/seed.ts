@@ -17,6 +17,8 @@ export const seedTestDatabase = async (_client: Client) => {
     'DELETE FROM "user" CASCADE;',
     'ALTER SEQUENCE account_id_seq RESTART;',
     'DELETE FROM "account";',
+    'ALTER SEQUENCE transaction_id_seq RESTART;',
+    'DELETE FROM "transaction";',
   ];
 
   for (const query of queries) {
