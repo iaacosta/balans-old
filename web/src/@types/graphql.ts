@@ -11,6 +11,33 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  role: Scalars['String'];
+  accounts: Array<Account>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+export type Transaction = {
+  __typename?: 'Transaction';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  resultantBalance: Scalars['Int'];
+  account: Account;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt: Scalars['DateTime'];
+};
+
 export type Account = {
   __typename?: 'Account';
   id: Scalars['ID'];
@@ -29,22 +56,6 @@ export enum AccountType {
   Vista = 'vista',
   Checking = 'checking'
 }
-
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  role: Scalars['String'];
-  accounts: Array<Account>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-};
 
 export type CreateUserInput = {
   firstName: Scalars['String'];
@@ -83,6 +94,11 @@ export type CreateAccountInput = {
   initialBalance: Scalars['Int'];
 };
 
+export type CreateTransactionInput = {
+  amount: Scalars['Int'];
+  accountId: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
@@ -104,6 +120,7 @@ export type Mutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   setupDatabase?: Maybe<User>;
+  createTransaction: Transaction;
   createUser: User;
   updateUser: User;
   updateMe: User;
@@ -134,6 +151,11 @@ export type MutationSignUpArgs = {
 
 export type MutationSetupDatabaseArgs = {
   adminUser: CreateUserInput;
+};
+
+
+export type MutationCreateTransactionArgs = {
+  input: CreateTransactionInput;
 };
 
 
@@ -224,6 +246,19 @@ export type MeQuery = (
   & { user: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'username' | 'role'>
+  ) }
+);
+
+export type CreateTransactionMutationVariables = Exact<{
+  input: CreateTransactionInput;
+}>;
+
+
+export type CreateTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & { createTransaction: (
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id'>
   ) }
 );
 
