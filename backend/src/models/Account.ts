@@ -7,6 +7,8 @@ import {
   DeleteDateColumn,
   ManyToOne,
   Unique,
+  getConnection,
+  EntityManager,
 } from 'typeorm';
 import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { IsNotEmpty, IsIn } from 'class-validator';
@@ -14,6 +16,7 @@ import { IsNotEmpty, IsIn } from 'class-validator';
 import { IsValidBalance } from '../utils';
 import { AccountType } from '../graphql/helpers';
 import User from './User';
+import Transaction from './Transaction';
 
 @ObjectType()
 @Unique(['name', 'bank', 'userId'])
@@ -25,7 +28,7 @@ export default class Account {
 
   @Field(() => AccountType)
   @Column()
-  @IsIn(['cash', 'vista', 'checking'] as AccountType[])
+  @IsIn(['cash', 'vista', 'checking', 'root'] as AccountType[])
   type: AccountType | 'root';
 
   @Field()
@@ -66,14 +69,42 @@ export default class Account {
     type: AccountType | 'root';
     name: string;
     bank: string;
-    initialBalance: number;
     userId?: number;
   }) {
     if (!account) return;
     this.type = account.type;
     this.name = account.name;
     this.bank = account.bank;
-    this.balance = account.initialBalance;
     this.userId = account.userId;
+    this.balance = 0;
+  }
+
+  private async _performTransaction(amount: number, manager: EntityManager) {
+    this.balance += amount;
+    await manager.getRepository(Account).save(this);
+    return manager.getRepository(Transaction).save(
+      new Transaction({
+        amount,
+        accountId: this.id,
+        resultantBalance: this.balance,
+      }),
+    );
+  }
+
+  async performTransaction(
+    amount: number,
+    options: PerformTransactionOptions = { transaction: true },
+  ) {
+    if (options.transaction) {
+      return getConnection().transaction((entityManager) =>
+        this._performTransaction(amount, entityManager),
+      );
+    }
+
+    return this._performTransaction(amount, options.entityManager);
   }
 }
+
+type PerformTransactionOptions =
+  | { transaction: false; entityManager: EntityManager }
+  | { transaction: true; entityManager?: EntityManager };
