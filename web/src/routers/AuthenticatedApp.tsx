@@ -51,11 +51,11 @@ const AuthenticatedApp: React.FC = () => {
             {canPerform(actions.routes.dashboard) && (
               <Route path={routing.authenticated.dashboard} component={Placeholder} exact />
             )}
-            {canPerform(actions.routes.accounts) && (
+            {canPerform(actions.routes.transactions) && (
               <Route path={routing.authenticated.accounts} component={Accounts} exact />
             )}
             {canPerform(actions.routes.movements) && (
-              <Route path={routing.authenticated.movements} component={Placeholder} exact />
+              <Route path={routing.authenticated.transactions} component={Placeholder} exact />
             )}
             {canPerform(actions.routes.otherMovements) && (
               <Route path={routing.authenticated.otherMovements} component={Placeholder} exact />

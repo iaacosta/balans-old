@@ -46,16 +46,16 @@ const navigationItems = [
   },
   {
     id: routing.authenticated.accounts,
-    action: actions.routes.accounts,
+    action: actions.routes.transactions,
     Icon: <AccountBalanceWallet />,
     label: 'Accounts',
     divides: false,
   },
   {
-    id: routing.authenticated.movements,
+    id: routing.authenticated.transactions,
     action: actions.routes.movements,
     Icon: <AttachMoney />,
-    label: 'Expenses and incomes',
+    label: 'Transactions',
     divides: false,
   },
   {
