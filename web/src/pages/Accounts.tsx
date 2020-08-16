@@ -42,6 +42,7 @@ const Accounts: React.FC = () => {
           <DialogButton
             buttonLabel="Create new debit account"
             DialogComponent={CreateDebitAccountDialog}
+            data-testid="createAccountButton"
             startIcon={<AddIcon />}
           />
         )}
