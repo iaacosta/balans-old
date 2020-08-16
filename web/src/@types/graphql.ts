@@ -35,7 +35,7 @@ export type Transaction = {
   account: Account;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  deletedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type Account = {
@@ -102,6 +102,7 @@ export type CreateTransactionInput = {
 export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
+  myTransactions: Array<Transaction>;
   users: Array<User>;
   deletedUsers: Array<User>;
   user: User;
@@ -247,6 +248,21 @@ export type MeQuery = (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'username' | 'role'>
   ) }
+);
+
+export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyTransactionsQuery = (
+  { __typename?: 'Query' }
+  & { transactions: Array<(
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'resultantBalance' | 'createdAt'>
+    & { account: (
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    ) }
+  )> }
 );
 
 export type CreateTransactionMutationVariables = Exact<{
