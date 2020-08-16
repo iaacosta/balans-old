@@ -25,6 +25,7 @@ import {
 } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { deleteDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
+import { myTransactionsQuery } from '../../graphql/transaction';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
@@ -43,7 +44,9 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
   const [deleteAccount, { loading: deleteLoading }] = useMutation<
     DeleteDebitAccountMutation,
     DeleteDebitAccountMutationVariables
-  >(deleteDebitAccountMutation, { refetchQueries: [{ query: myAccountsQuery }] });
+  >(deleteDebitAccountMutation, {
+    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
+  });
 
   const handleDelete = async () => {
     try {
