@@ -8,7 +8,9 @@ describe('debit transactions table', () => {
   beforeEach(() => {
     cy.fixture('adminUser')
       .then((user) => cy.login(user.username, user.password))
-      .then(() => cy.createAccount(buildAccount()));
+      .then(() =>
+        cy.createAccount(buildAccount({ map: (account) => ({ ...account, initialBalance: 0 }) })),
+      );
     cy.visit('/transactions');
   });
 
@@ -27,6 +29,9 @@ describe('debit transactions table', () => {
 
     /* should notify changes */
     cy.findByText(/transaction created/i).should('exist');
+
+    /* should show created transaction */
+    cy.get('tbody tr').should('have.length', 1);
   });
 
   it('should validate transaction fields', () => {
