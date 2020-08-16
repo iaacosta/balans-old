@@ -34,12 +34,34 @@ export const createAccount = async (
   userId?: number,
   overrides?: Partial<BuildType>,
 ) => {
+  const entityManager = connection.createEntityManager();
   const factoryAccount = buildAccount({
     map: (account) => ({ ...account, ...overrides }),
   });
-
   const account = new Account({ ...factoryAccount, userId });
-  const databaseAccount = await connection.getRepository(Account).save(account);
+  const databaseAccount = await entityManager
+    .getRepository(Account)
+    .save(account);
+
+  if (factoryAccount.initialBalance !== 0) {
+    /* Transact initial balance from the root account */
+    const rootAccount = await entityManager
+      .getRepository(Account)
+      .findOneOrFail({
+        userId,
+        type: 'root',
+      });
+
+    await databaseAccount.performTransaction(factoryAccount.initialBalance, {
+      transaction: false,
+      entityManager,
+    });
+
+    await rootAccount.performTransaction(-factoryAccount.initialBalance, {
+      transaction: false,
+      entityManager,
+    });
+  }
 
   return {
     databaseAccount,
