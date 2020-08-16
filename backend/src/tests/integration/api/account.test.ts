@@ -133,6 +133,23 @@ describe('account API calls', () => {
       );
       expect(createdAccount.name).toBe(testAccount.name);
     });
+
+    it('should create account with initial balance 0', async () => {
+      const testAccount = buildAccount({
+        map: (account) => ({ ...account, initialBalance: 0 }),
+      });
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: CREATE_ACCOUNT,
+        variables: { input: testAccount },
+      });
+
+      expect(response).toBeSuccessful();
+      const createdAccount = await getRepository(Account).findOneOrFail(
+        response.data!.createAccount.id,
+      );
+      expect(createdAccount.name).toBe(testAccount.name);
+    });
   });
 
   describe('deleteAccount', () => {
