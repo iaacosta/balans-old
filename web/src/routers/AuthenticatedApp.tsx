@@ -10,6 +10,7 @@ import ContainerLoader from '../components/ui/ContainerLoader';
 import Users from '../pages/Users';
 import Accounts from '../pages/Accounts';
 import ViewportContainer from '../components/ui/ViewportContainer';
+import Transactions from '../pages/Transactions';
 
 const Placeholder: React.FC = () => {
   const { pathname } = useLocation();
@@ -55,7 +56,7 @@ const AuthenticatedApp: React.FC = () => {
               <Route path={routing.authenticated.accounts} component={Accounts} exact />
             )}
             {canPerform(actions.routes.movements) && (
-              <Route path={routing.authenticated.transactions} component={Placeholder} exact />
+              <Route path={routing.authenticated.transactions} component={Transactions} exact />
             )}
             {canPerform(actions.routes.otherMovements) && (
               <Route path={routing.authenticated.otherMovements} component={Placeholder} exact />
