@@ -3,7 +3,6 @@ import { build, fake, oneOf } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
 
 import User from '../../models/User';
-import Account from '../../models/Account';
 
 export type BuildType = Pick<
   User,
@@ -43,15 +42,6 @@ export const createUser = async (
 
   const user = new User(factoryUser);
   const databaseUser = await connection.getRepository(User).save(user);
-
-  await connection.getRepository(Account).save(
-    new Account({
-      name: 'Root account',
-      bank: 'Balans',
-      type: 'root',
-      userId: databaseUser.id,
-    }),
-  );
 
   return {
     databaseUser,
