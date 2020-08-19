@@ -42,11 +42,11 @@ export default class UserResolvers {
   @Authorized(roles.ADMIN)
   deletedUsers(): Promise<User[]> {
     return this.repository
-      .createQueryBuilder()
+      .createQueryBuilder('user')
       .select()
-      .orderBy('"createdAt"', 'DESC')
+      .orderBy('user.createdAt', 'DESC')
       .withDeleted()
-      .where('"deletedAt" IS NOT NULL')
+      .where('user.deletedAt IS NOT NULL')
       .getMany();
   }
 

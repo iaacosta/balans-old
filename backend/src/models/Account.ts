@@ -9,6 +9,7 @@ import {
   Unique,
   getConnection,
   EntityManager,
+  OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { IsNotEmpty, IsIn } from 'class-validator';
@@ -52,6 +53,12 @@ export default class Account {
   @Field(() => User)
   @ManyToOne(() => User, { eager: false, onDelete: 'SET NULL' })
   user?: User;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.account, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
+  transactions: Transaction[];
 
   @Field()
   @CreateDateColumn()
