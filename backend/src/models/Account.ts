@@ -86,16 +86,36 @@ export default class Account {
     this.balance = 0;
   }
 
+  private async _findRootAccount(manager: EntityManager) {
+    return manager.getRepository(Account).findOneOrFail({
+      type: 'root',
+      userId: this.userId,
+    });
+  }
+
   private async _performTransaction(amount: number, manager: EntityManager) {
+    const rootAccount = await this._findRootAccount(manager);
+
     this.balance += amount;
+    rootAccount.balance -= amount;
+
     await manager.getRepository(Account).save(this);
-    return manager.getRepository(Transaction).save(
+    await manager.getRepository(Account).save(rootAccount);
+
+    const [transaction] = await manager.getRepository(Transaction).save([
       new Transaction({
         amount,
         accountId: this.id,
         resultantBalance: this.balance,
       }),
-    );
+      new Transaction({
+        amount: -amount,
+        accountId: rootAccount.id,
+        resultantBalance: rootAccount.balance,
+      }),
+    ]);
+
+    return transaction;
   }
 
   async performTransaction(

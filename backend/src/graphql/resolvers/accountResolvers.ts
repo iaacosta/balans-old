@@ -50,20 +50,7 @@ export default class AccountResolvers {
         });
 
       if (initialBalance !== 0) {
-        /* Transact initial balance from the root account */
-        const rootAccount = await entityManager
-          .getRepository(Account)
-          .findOneOrFail({
-            userId: currentUser!.id,
-            type: 'root',
-          });
-
         await createdAccount.performTransaction(initialBalance, {
-          transaction: false,
-          entityManager,
-        });
-
-        await rootAccount.performTransaction(-initialBalance, {
           transaction: false,
           entityManager,
         });
