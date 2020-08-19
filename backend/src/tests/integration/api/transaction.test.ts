@@ -5,7 +5,7 @@ import { keyBy } from 'lodash';
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Transaction from '../../../models/Transaction';
 import {
-  buildTransaction,
+  transactionFactory,
   createTransaction,
 } from '../../factory/transactionFactory';
 import User from '../../../models/User';
@@ -98,7 +98,7 @@ describe('transaction API calls', () => {
 
   describe('createTransaction', () => {
     it('should create transaction', async () => {
-      const testTransaction = buildTransaction();
+      const testTransaction = transactionFactory();
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
         mutation: CREATE_TRANSACTION,
@@ -113,7 +113,7 @@ describe('transaction API calls', () => {
     });
 
     it('should not authorize unauthenticated users', async () => {
-      const testTransaction = buildTransaction();
+      const testTransaction = transactionFactory();
       const { mutate } = await mountTestClient();
       const response = await mutate({
         mutation: CREATE_TRANSACTION,

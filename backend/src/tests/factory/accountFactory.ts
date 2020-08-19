@@ -8,7 +8,7 @@ export type BuildType = Pick<Account, 'name' | 'bank' | 'type'> & {
   initialBalance: number;
 };
 
-export const buildAccount = build<BuildType>('Account', {
+export const accountBuilder = build<BuildType>('Account', {
   fields: {
     name: fake((faker) => faker.commerce.productName()),
     bank: fake((faker) => faker.company.companyName()),
@@ -17,13 +17,14 @@ export const buildAccount = build<BuildType>('Account', {
   },
 });
 
+export const accountFactory = (overrides?: Partial<BuildType>) =>
+  accountBuilder({ map: (account) => ({ ...account, ...overrides }) });
+
 export const accountModelFactory = (
   userId?: number,
   overrides?: Partial<BuildType>,
 ) => {
-  const factoryAccount = buildAccount({
-    map: (account) => ({ ...account, ...overrides }),
-  });
+  const factoryAccount = accountFactory(overrides);
   const account = new Account({ ...factoryAccount, userId });
 
   return { factoryAccount, account };
@@ -35,9 +36,7 @@ export const createAccount = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
-  const factoryAccount = buildAccount({
-    map: (account) => ({ ...account, ...overrides }),
-  });
+  const factoryAccount = accountFactory(overrides);
   const account = new Account({ ...factoryAccount, userId });
   const databaseAccount = await entityManager
     .getRepository(Account)
