@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
-import { createUser, buildUser } from '../../factory/userFactory';
+import { createUser, userBuilder } from '../../factory/userFactory';
 import User from '../../../models/User';
 
 const LOGIN = gql`
@@ -74,10 +74,10 @@ describe('authentication API calls', () => {
   });
 
   describe('signUp', () => {
-    let testUser: ReturnType<typeof buildUser>;
+    let testUser: ReturnType<typeof userBuilder>;
 
     beforeEach(() => {
-      testUser = buildUser();
+      testUser = userBuilder();
       delete testUser.role;
     });
 

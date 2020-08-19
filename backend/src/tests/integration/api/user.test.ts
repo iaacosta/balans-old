@@ -4,7 +4,7 @@ import { keyBy } from 'lodash';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import User from '../../../models/User';
-import { createUser, buildUser } from '../../factory/userFactory';
+import { createUser, userFactory } from '../../factory/userFactory';
 
 const USERS = gql`
   query Users {
@@ -322,7 +322,7 @@ describe('user API calls', () => {
 
   describe('createUser', () => {
     it('should create user', async () => {
-      const testUser = buildUser();
+      const testUser = userFactory();
       const { mutate } = await mountTestClient();
       const response = await mutate({
         mutation: CREATE_USER,
@@ -346,7 +346,7 @@ describe('user API calls', () => {
 
     it('should update user if admin user', async () => {
       const { mutate } = await mountTestClient({ currentUser: adminUsers[0] });
-      const { firstName } = buildUser();
+      const { firstName } = userFactory();
       const response = await mutate({
         mutation: UPDATE_USER,
         variables: { id: createdUser.id, firstName },
@@ -371,7 +371,7 @@ describe('user API calls', () => {
 
     it('should not authorize normal users', async () => {
       const { mutate } = await mountTestClient({ currentUser: normalUsers[0] });
-      const { firstName } = buildUser();
+      const { firstName } = userFactory();
       const response = await mutate({
         mutation: UPDATE_USER,
         variables: { id: createdUser.id, firstName },
@@ -383,7 +383,7 @@ describe('user API calls', () => {
   describe('updateMe', () => {
     const updateMe = async (currentUser: User, factoryUser: Partial<User>) => {
       const { mutate } = await mountTestClient({ currentUser });
-      const { firstName } = buildUser();
+      const { firstName } = userFactory();
 
       const response = await mutate({
         mutation: UPDATE_ME,
@@ -419,7 +419,7 @@ describe('user API calls', () => {
     it('should reject if wrong password given', async () => {
       const { databaseUser } = await createUser(connection, { role: 'user' });
       const { mutate } = await mountTestClient({ currentUser: databaseUser });
-      const { firstName } = buildUser();
+      const { firstName } = userFactory();
 
       const response = await mutate({
         mutation: UPDATE_ME,

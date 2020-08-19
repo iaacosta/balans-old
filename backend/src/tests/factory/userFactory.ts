@@ -9,7 +9,7 @@ export type BuildType = Pick<
   'firstName' | 'lastName' | 'email' | 'password' | 'username' | 'role'
 >;
 
-export const buildUser = build<BuildType>('User', {
+export const userBuilder = build<BuildType>('User', {
   fields: {
     firstName: fake((faker) => faker.name.firstName()),
     lastName: fake((faker) => faker.name.lastName()),
@@ -20,10 +20,13 @@ export const buildUser = build<BuildType>('User', {
   },
 });
 
-export const userModelFactory = (overrides?: Partial<BuildType>) => {
-  const factoryUser = buildUser({
+export const userFactory = (overrides?: Partial<BuildType>) =>
+  userBuilder({
     map: (user) => ({ ...user, ...overrides }),
   });
+
+export const userModelFactory = (overrides?: Partial<BuildType>) => {
+  const factoryUser = userFactory(overrides);
   const user = new User(factoryUser);
 
   return {
@@ -36,10 +39,7 @@ export const createUser = async (
   connection: Connection,
   overrides?: Partial<BuildType>,
 ) => {
-  const factoryUser = buildUser({
-    map: (user) => ({ ...user, ...overrides }),
-  });
-
+  const factoryUser = userFactory(overrides);
   const user = new User(factoryUser);
   const databaseUser = await connection.getRepository(User).save(user);
 
