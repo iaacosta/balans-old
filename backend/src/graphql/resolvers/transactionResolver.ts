@@ -30,16 +30,12 @@ export default class TransactionResolvers {
   @Authorized()
   myTransactions(@Ctx() { currentUser }: Context): Promise<Transaction[]> {
     return this.repository
-      .createQueryBuilder()
+      .createQueryBuilder('transaction')
       .select()
-      .leftJoin(
-        Account,
-        'Account',
-        '"Account"."id" = "Transaction"."accountId"',
-      )
-      .where('"Account"."userId" = :id', { id: currentUser!.id })
-      .andWhere('"Account"."type" != :type', { type: 'root' })
-      .orderBy('"Transaction"."createdAt"', 'DESC')
+      .leftJoin('transaction.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('account.type != :type', { type: 'root' })
+      .orderBy('transaction.createdAt', 'DESC')
       .getMany();
   }
 
