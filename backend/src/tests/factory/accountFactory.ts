@@ -44,20 +44,7 @@ export const createAccount = async (
     .save(account);
 
   if (factoryAccount.initialBalance !== 0) {
-    /* Transact initial balance from the root account */
-    const rootAccount = await entityManager
-      .getRepository(Account)
-      .findOneOrFail({
-        userId,
-        type: 'root',
-      });
-
     await databaseAccount.performTransaction(factoryAccount.initialBalance, {
-      transaction: false,
-      entityManager,
-    });
-
-    await rootAccount.performTransaction(-factoryAccount.initialBalance, {
       transaction: false,
       entityManager,
     });
