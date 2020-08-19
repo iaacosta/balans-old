@@ -16,7 +16,12 @@ const formatError = (error: GraphQLError): GraphQLFormattedError<any> => {
     }
 
     if (originalError.name === 'EntityNotFound') {
-      return new NotFoundError(originalError);
+      let resource = 'resource';
+
+      const matching = originalError.message.match(/^.* "(.*)" matching.*$/);
+      if (matching) resource = matching[1].toLowerCase();
+
+      return new NotFoundError(resource);
     }
 
     if (
