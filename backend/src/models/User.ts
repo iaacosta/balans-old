@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { compare } from 'bcrypt';
@@ -62,6 +63,10 @@ export default class User {
   role: 'admin' | 'user';
 
   @Field(() => [Account])
+  @OneToMany(() => Account, (account) => account.user, {
+    eager: false,
+    onDelete: 'SET NULL',
+  })
   accounts: Account[];
 
   @Field()

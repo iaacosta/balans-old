@@ -28,11 +28,11 @@ export default class AccountResolvers {
   @Authorized()
   async myAccounts(@Ctx() { currentUser }: Context): Promise<Account[]> {
     return this.repository
-      .createQueryBuilder()
+      .createQueryBuilder('account')
       .select()
-      .where('"userId" = :id', { id: currentUser!.id })
-      .andWhere('"type" != :type', { type: 'root' })
-      .orderBy('"createdAt"', 'DESC')
+      .where('account.userId = :id', { id: currentUser!.id })
+      .andWhere('account.type != :type', { type: 'root' })
+      .orderBy('account.createdAt', 'DESC')
       .getMany();
   }
 
