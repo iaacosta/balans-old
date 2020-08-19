@@ -4,7 +4,7 @@ import { keyBy } from 'lodash';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Account from '../../../models/Account';
-import { buildAccount, createAccount } from '../../factory/accountFactory';
+import { createAccount, accountFactory } from '../../factory/accountFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 
@@ -120,7 +120,7 @@ describe('account API calls', () => {
 
   describe('createAccount', () => {
     it('should create account', async () => {
-      const testAccount = buildAccount();
+      const testAccount = accountFactory();
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
         mutation: CREATE_ACCOUNT,
@@ -135,9 +135,7 @@ describe('account API calls', () => {
     });
 
     it('should create account with initial balance 0', async () => {
-      const testAccount = buildAccount({
-        map: (account) => ({ ...account, initialBalance: 0 }),
-      });
+      const testAccount = accountFactory({ initialBalance: 0 });
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
         mutation: CREATE_ACCOUNT,

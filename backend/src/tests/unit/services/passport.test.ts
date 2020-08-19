@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 
 import { authenticateUser, getUserFromToken } from '../../../services/passport';
-import { buildUser } from '../../factory/userFactory';
+import { userFactory } from '../../factory/userFactory';
 import TokenExpiredError from '../../../errors/TokenExpiredError';
 
-const foundUser = buildUser();
+const foundUser = userFactory();
 const token = 'mockToken';
 
 describe('passport', () => {
