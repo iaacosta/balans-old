@@ -8,7 +8,7 @@ import {
   Root,
   Query,
 } from 'type-graphql';
-import { Repository, getRepository, getConnection } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 
 import Transaction from '../../models/Transaction';
 import { CreateTransactionInput } from '../helpers';
@@ -51,22 +51,7 @@ export default class TransactionResolvers {
       userId: currentUser!.id,
     });
 
-    const rootAccount = await this.accountRepository.findOneOrFail({
-      type: 'root',
-      userId: currentUser!.id,
-    });
-
-    return getConnection().transaction(async (manager) => {
-      await rootAccount.performTransaction(-transaction.amount, {
-        transaction: false,
-        entityManager: manager,
-      });
-
-      return account.performTransaction(transaction.amount, {
-        transaction: false,
-        entityManager: manager,
-      });
-    });
+    return account.performTransaction(transaction.amount);
   }
 
   @FieldResolver()
