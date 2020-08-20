@@ -16,11 +16,12 @@ type Events = InsertEvent<Account> | UpdateEvent<Account>;
 
 @EventSubscriber()
 export class AccountSubscriber implements EntitySubscriberInterface<Account> {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   listenTo() {
     return Account;
   }
 
-  async checkExistingRootAccount<T extends Events>(event: T) {
+  async checkExistingRootAccount<T extends Events>(event: T): Promise<void> {
     const { entity, manager } = event;
     const account = await manager
       .getRepository(Account)
@@ -28,20 +29,20 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     if (account) throw new Error('this user has already a root account');
   }
 
-  async beforeInsert(event: InsertEvent<Account>) {
+  async beforeInsert(event: InsertEvent<Account>): Promise<void> {
     if (event.entity.type === 'root') {
       await this.checkExistingRootAccount(event);
     }
   }
 
-  async beforeUpdate(event: UpdateEvent<Account>) {
+  async beforeUpdate(event: UpdateEvent<Account>): Promise<void> {
     const { entity, databaseEntity } = event;
     if (entity.type === 'root' && entity.type !== databaseEntity.type) {
       await this.checkExistingRootAccount(event);
     }
   }
 
-  async beforeRemove(event: RemoveEvent<Account>) {
+  async beforeRemove(event: RemoveEvent<Account>): Promise<void> {
     const { databaseEntity, manager } = event;
 
     const { sum } = await manager
