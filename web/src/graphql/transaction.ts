@@ -23,3 +23,9 @@ export const createTransactionMutation = gql`
     }
   }
 `;
+
+export const deleteTransactionMutation = gql`
+  mutation DeleteTransaction($id: ID!) {
+    deleteTransaction(id: $id)
+  }
+`;
