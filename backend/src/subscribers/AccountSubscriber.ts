@@ -57,6 +57,16 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
       userId: databaseEntity.userId,
     });
 
-    await rootAccount.performTransaction(parseInt(sum, 10));
+    const amount = parseInt(sum, 10);
+    rootAccount.balance += amount;
+
+    await manager.getRepository(Account).save(rootAccount);
+    await manager.getRepository(Transaction).save(
+      new Transaction({
+        amount,
+        accountId: rootAccount.id,
+        resultantBalance: rootAccount.balance,
+      }),
+    );
   }
 }
