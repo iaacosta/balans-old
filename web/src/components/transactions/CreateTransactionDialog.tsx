@@ -39,16 +39,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = yup.object().shape({
-  amount: yup
-    .number()
-    .test('nonZero', 'Must be a non-zero amount', (value) => value !== 0)
-    .required(),
+  amount: yup.number().min(1).required(),
   accountId: yup.string().required(),
 });
 
+const FormWrapper: React.FC<Props & { loading: boolean }> = ({
+  open,
+  onClose,
+  children,
+  loading,
+}) => {
+  const classes = useStyles();
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <Form className={classes.form}>
+        <DialogTitle>Create transaction</DialogTitle>
+        <DialogContent>{children}</DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="secondary">
+            Cancel
+          </Button>
+          <FormikSubmitButton color="primary" loading={loading}>
+            Create
+          </FormikSubmitButton>
+        </DialogActions>
+      </Form>
+    </Dialog>
+  );
+};
+
 const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles();
   const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
 
   const [createTransaction, { loading: createLoading }] = useMutation<
@@ -61,19 +83,35 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
   const initialValues = useMemo(
     () => ({
       amount: 0,
-      accountId: '',
+      type: 'Expense',
+      accountId: data?.accounts[0].id || '',
     }),
-    [],
+    [data],
   );
+
+  if (loading || !data) {
+    return (
+      <FormWrapper open={open} onClose={onClose} loading={createLoading}>
+        <ContainerLoader />
+      </FormWrapper>
+    );
+  }
 
   return (
     <Portal>
       <Formik
         initialValues={initialValues}
         validationSchema={schema}
-        onSubmit={async (values) => {
+        onSubmit={async ({ type, amount, ...values }) => {
           try {
-            await createTransaction({ variables: { input: values } });
+            await createTransaction({
+              variables: {
+                input: {
+                  ...values,
+                  amount: type === 'Expense' ? -amount : amount,
+                },
+              },
+            });
             enqueueSnackbar('Transaction created successfully', { variant: 'success' });
             onClose();
           } catch (err) {
@@ -82,50 +120,42 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
         }}
       >
         {() => (
-          <Dialog open={open} onClose={onClose}>
-            <Form className={classes.form}>
-              <DialogTitle>Create transaction</DialogTitle>
-              <DialogContent>
-                {loading || !data ? (
-                  <ContainerLoader />
-                ) : (
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <FormikTextField
-                        name="amount"
-                        label="Amount"
-                        type="number"
-                        InputProps={{
-                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                        fullWidth
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormikSelectField
-                        name="accountId"
-                        label="Account"
-                        fullWidth
-                        displayEmpty
-                        options={data.accounts.map(({ id, name, bank }) => ({
-                          key: id,
-                          label: `${name} (${bank})`,
-                        }))}
-                      />
-                    </Grid>
-                  </Grid>
-                )}
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={onClose} color="secondary">
-                  Cancel
-                </Button>
-                <FormikSubmitButton color="primary" loading={createLoading}>
-                  Create
-                </FormikSubmitButton>
-              </DialogActions>
-            </Form>
-          </Dialog>
+          <FormWrapper open={open} onClose={onClose} loading={createLoading}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormikTextField
+                  name="amount"
+                  label="Amount"
+                  type="number"
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormikSelectField
+                  name="type"
+                  label="Transaction type"
+                  fullWidth
+                  displayEmpty
+                  options={['Expense', 'Income']}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormikSelectField
+                  name="accountId"
+                  label="Account"
+                  fullWidth
+                  displayEmpty
+                  options={data.accounts.map(({ id, name, bank }) => ({
+                    key: id,
+                    label: `${name} (${bank})`,
+                  }))}
+                />
+              </Grid>
+            </Grid>
+          </FormWrapper>
         )}
       </Formik>
     </Portal>
