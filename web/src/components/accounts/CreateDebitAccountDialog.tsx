@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -77,7 +78,7 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ open, onClose }) => {
     () => ({
       name: '',
       bank: '',
-      initialBalance: ('' as unknown) as number,
+      initialBalance: 0,
       type: '' as AccountType,
     }),
     [],
@@ -98,55 +99,68 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ open, onClose }) => {
           }
         }}
       >
-        {() => (
-          <Dialog open={open} onClose={onClose}>
-            <Form>
-              <DialogTitle>Create account</DialogTitle>
-              <DialogContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <FormikTextField name="name" label="Name" fullWidth />
+        {({ values, setFieldValue }) => {
+          useEffect(() => {
+            if (values.type === 'cash') setFieldValue('bank', 'No bank');
+          }, [values.type, setFieldValue]);
+
+          return (
+            <Dialog open={open} onClose={onClose}>
+              <Form>
+                <DialogTitle>Create account</DialogTitle>
+                <DialogContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <FormikTextField name="name" label="Name" fullWidth />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormikSelectField
+                        name="type"
+                        label="Type"
+                        fullWidth
+                        displayEmpty
+                        options={[
+                          { key: AccountType.Cash, label: 'Cash' },
+                          { key: AccountType.Vista, label: 'Vista' },
+                          { key: AccountType.Checking, label: 'Checking' },
+                        ]}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormikTextField
+                        name="initialBalance"
+                        label="Initial Balance"
+                        type="number"
+                        InputProps={{
+                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        }}
+                        fullWidth
+                      />
+                    </Grid>
+                    {values.type !== 'cash' && (
+                      <Grid item xs={12}>
+                        <FormikSelectField
+                          name="bank"
+                          label="Bank"
+                          fullWidth
+                          options={defaultBanks}
+                        />
+                      </Grid>
+                    )}
                   </Grid>
-                  <Grid item xs={12}>
-                    <FormikSelectField name="bank" label="Bank" fullWidth options={defaultBanks} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormikTextField
-                      name="initialBalance"
-                      label="Initial Balance"
-                      type="number"
-                      InputProps={{
-                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                      }}
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormikSelectField
-                      name="type"
-                      label="Type"
-                      fullWidth
-                      displayEmpty
-                      options={[
-                        { key: AccountType.Cash, label: 'Cash' },
-                        { key: AccountType.Vista, label: 'Vista' },
-                        { key: AccountType.Checking, label: 'Checking' },
-                      ]}
-                    />
-                  </Grid>
-                </Grid>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={onClose} color="secondary">
-                  Cancel
-                </Button>
-                <FormikSubmitButton color="primary" loading={loading}>
-                  Create
-                </FormikSubmitButton>
-              </DialogActions>
-            </Form>
-          </Dialog>
-        )}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={onClose} color="secondary">
+                    Cancel
+                  </Button>
+                  <FormikSubmitButton color="primary" loading={loading}>
+                    Create
+                  </FormikSubmitButton>
+                </DialogActions>
+              </Form>
+            </Dialog>
+          );
+        }}
       </Formik>
     </Portal>
   );
