@@ -5,5 +5,4 @@ export const validationMatchers = {
   username: /numbers, letters and/i,
   beEmail: /valid email/i,
   confirmPassword: /don't match/i,
-  nonZero: /non\-zero/i,
 };
