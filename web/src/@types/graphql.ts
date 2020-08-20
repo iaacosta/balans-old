@@ -1,5 +1,5 @@
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -122,6 +122,7 @@ export type Mutation = {
   signUp: Scalars['String'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
+  deleteTransaction: Scalars['ID'];
   createUser: User;
   updateUser: User;
   updateMe: User;
@@ -157,6 +158,11 @@ export type MutationSetupDatabaseArgs = {
 
 export type MutationCreateTransactionArgs = {
   input: CreateTransactionInput;
+};
+
+
+export type MutationDeleteTransactionArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -276,6 +282,16 @@ export type CreateTransactionMutation = (
     { __typename?: 'Transaction' }
     & Pick<Transaction, 'id'>
   ) }
+);
+
+export type DeleteTransactionMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteTransaction'>
 );
 
 export type AllUsersQueryVariables = Exact<{ [key: string]: never; }>;
