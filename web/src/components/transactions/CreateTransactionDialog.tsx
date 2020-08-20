@@ -10,11 +10,13 @@ import {
   Grid,
   InputAdornment,
   makeStyles,
+  Typography,
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
 import * as yup from 'yup';
+import { map, capitalize } from 'lodash';
 
 import {
   CreateTransactionMutation,
@@ -115,7 +117,19 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
             enqueueSnackbar('Transaction created successfully', { variant: 'success' });
             onClose();
           } catch (err) {
-            enqueueSnackbar(err.message, { variant: 'error' });
+            /* TODO: research how to handle globally this stuff */
+            const [graphQLError] = err.graphQLErrors;
+            if (graphQLError.extensions.code === 'BAD_USER_INPUT') {
+              const messages = map(graphQLError.extensions.fields, (value, idx) => (
+                <Typography key={idx} variant="body2">
+                  {capitalize(value)}
+                </Typography>
+              ));
+
+              enqueueSnackbar(messages, { variant: 'error' });
+            } else {
+              enqueueSnackbar(err.message, { variant: 'error' });
+            }
           }
         }}
       >
