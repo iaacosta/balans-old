@@ -2,9 +2,9 @@ import { buildTransaction } from '../../support/build/transaction';
 import { validationMatchers } from '../../support/matchers';
 import { buildAccount } from '../../support/build/account';
 
-const { requiredField, nonZero } = validationMatchers;
+const { requiredField } = validationMatchers;
 
-describe('debit transactions table', () => {
+describe('transactions table', () => {
   let testAccount: GQLCreateDebitAccountMutation['createAccount'];
 
   beforeEach(() => {
@@ -30,6 +30,7 @@ describe('debit transactions table', () => {
     cy.findByTestId(`amountInput`).within(() =>
       cy.get('input').clear().type(`${newTransaction.amount}`),
     );
+    cy.changeSelectOption('typeInput', 'Income');
     cy.changeSelectOption('accountIdInput', 0);
     cy.submitForm();
 
@@ -39,6 +40,8 @@ describe('debit transactions table', () => {
     /* should show created transaction */
     cy.get('tbody tr').should('have.length', 1);
   });
+
+  /* TODO: should not allow transaction that makes vista/cash account negative */
 
   it('should validate transaction fields', () => {
     /* open dialog and verify */
@@ -50,12 +53,12 @@ describe('debit transactions table', () => {
       cy.get('input').clear();
       cy.contains(requiredField).should('exist');
     });
-    cy.findByTestId('accountIdInput').within(() => cy.contains(requiredField).should('exist'));
+    cy.changeSelectOption('typeInput', 'Income');
 
     /* non zero value */
     cy.findByTestId('amountInput').within(() => {
       cy.get('input').clear().type('0');
-      cy.contains(nonZero).should('exist');
+      cy.contains(/greater than 0/i).should('exist');
     });
   });
 

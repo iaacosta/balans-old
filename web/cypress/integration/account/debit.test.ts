@@ -39,7 +39,10 @@ describe('debit accounts table', () => {
     /* required */
     cy.submitForm();
     cy.findByTestId('nameInput').within(() => cy.contains(requiredField).should('exist'));
-    cy.findByTestId('initialBalanceInput').within(() => cy.contains(requiredField).should('exist'));
+    cy.findByTestId('initialBalanceInput').within(() => {
+      cy.get('input').clear();
+      cy.contains(requiredField).should('exist');
+    });
     cy.findByTestId('bankInput').within(() => cy.contains(requiredField).should('exist'));
     cy.findByTestId('typeInput').within(() => cy.contains(requiredField).should('exist'));
 
@@ -50,13 +53,16 @@ describe('debit accounts table', () => {
       cy.contains(requiredField).should('not.exist');
     });
 
+    /* initial balance if vista */
+    cy.changeSelectOption('typeInput', 'Vista');
+    cy.findByTestId('initialBalanceInput').within(() => cy.contains(minimumNumber).should('exist'));
+
     /* initial balance if cash */
     cy.changeSelectOption('typeInput', 'Cash');
     cy.findByTestId('initialBalanceInput').within(() => cy.contains(minimumNumber).should('exist'));
 
-    /* initial balance if vista */
-    cy.changeSelectOption('typeInput', 'Vista');
-    cy.findByTestId('initialBalanceInput').within(() => cy.contains(minimumNumber).should('exist'));
+    /* should hide bank input */
+    cy.findByTestId('bankInput').should('not.exist');
   });
 
   it('should be able to delete an account', () => {
