@@ -46,6 +46,12 @@ const CREATE_TRANSACTION = gql`
   }
 `;
 
+const DELETE_TRANSACTION = gql`
+  mutation DeleteTransaction($id: ID!) {
+    deleteTransaction(id: $id)
+  }
+`;
+
 describe('transaction API calls', () => {
   let connection: Connection;
   let testUser: User;
@@ -120,6 +126,45 @@ describe('transaction API calls', () => {
         variables: { input: { ...testTransaction, accountId: testAccount.id } },
       });
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('deleteTransaction', () => {
+    it('should delete an transaction if mine', async () => {
+      const createdTransaction = (
+        await createTransaction(connection, testAccount)
+      ).databaseTransaction;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_TRANSACTION,
+        variables: { id: createdTransaction.id },
+      });
+
+      expect(response).toBeSuccessful();
+
+      await expect(
+        getRepository(Transaction).findOneOrFail(
+          response.data!.deleteTransaction,
+        ),
+      ).rejects.toBeTruthy();
+    });
+
+    it('should not delete an transaction if not mine', async () => {
+      const otherUser = (await createUser(connection)).databaseUser;
+      const othersAccount = (await createAccount(connection, otherUser.id))
+        .databaseAccount;
+      const othersTransaction = (
+        await createTransaction(connection, othersAccount)
+      ).databaseTransaction;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_TRANSACTION,
+        variables: { id: othersTransaction.id },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 });
