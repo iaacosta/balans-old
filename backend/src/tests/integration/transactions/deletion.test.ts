@@ -21,6 +21,7 @@ describe('transaction deletion tests', () => {
   beforeAll(async () => {
     connection = await createConnection();
     await pgClient.connect();
+
     await seedTestDatabase(pgClient);
     testUser = (await createUser(connection)).databaseUser;
 
@@ -36,8 +37,10 @@ describe('transaction deletion tests', () => {
   });
 
   describe('delete account', () => {
-    it('should create a transaction to make up root account with many transactions', async () => {
-      const testAccount = (await createAccount(connection, testUser.id))
+    let testAccount: Account;
+
+    beforeAll(async () => {
+      testAccount = (await createAccount(connection, testUser.id))
         .databaseAccount;
 
       for (const { amount } of Array.from(Array(5).keys()).map(() =>
@@ -47,12 +50,85 @@ describe('transaction deletion tests', () => {
       }
 
       await getRepository(Account).remove(testAccount);
+    });
+
+    it('should create a transaction to make up root account with many transactions', async () => {
       const transaction = await getRepository(Transaction).findOne({
         amount: testAccount.balance,
         accountId: testRootAccount.id,
       });
 
       expect(transaction).toBeDefined();
+    });
+
+    it('should have correct balance after deletion', async () => {
+      const refreshedRootAccount = await getRepository(Account).findOneOrFail(
+        testRootAccount.id,
+      );
+
+      expect(refreshedRootAccount.balance).toBe(0);
+    });
+  });
+
+  describe('revertTransaction', () => {
+    const testInitialBalance = 1000;
+    const staticArray = Array.from(Array(5).keys());
+
+    const testTransactions: Transaction[] = [];
+    let testAccount: Account;
+    let testAmounts: number[];
+
+    beforeAll(async () => {
+      const factoryTransactions = staticArray.map(() => transactionFactory());
+
+      testAccount = (
+        await createAccount(connection, testUser.id, {
+          initialBalance: testInitialBalance,
+        })
+      ).databaseAccount;
+
+      testAmounts = factoryTransactions.map(({ amount }) => amount);
+
+      for (const { amount } of factoryTransactions) {
+        testTransactions.push(await testAccount.performTransaction(amount));
+      }
+    });
+
+    describe('delete transaction', () => {
+      let toDeleteTransaction: Transaction;
+
+      beforeAll(async () => {
+        toDeleteTransaction = testTransactions[testTransactions.length - 1];
+        await testAccount.revertTransaction(toDeleteTransaction);
+      });
+
+      it('should create a counter-transaction on root account', async () => {
+        const counterTransaction = await getRepository(Transaction).findOne({
+          amount: toDeleteTransaction.amount,
+          accountId: testRootAccount.id,
+        });
+
+        expect(counterTransaction).toBeDefined();
+      });
+
+      it('should change account balances', async () => {
+        const refreshedAccount = await getRepository(Account).findOneOrFail(
+          testAccount.id,
+        );
+
+        const refreshedRootAccount = await getRepository(Account).findOneOrFail(
+          testRootAccount.id,
+        );
+
+        const expectedBalance =
+          testInitialBalance +
+          testAmounts
+            .slice(0, testTransactions.length - 1)
+            .reduce((accum, curr) => accum + curr, 0);
+
+        expect(refreshedAccount.balance).toBe(expectedBalance);
+        expect(refreshedRootAccount.balance).toBe(-expectedBalance);
+      });
     });
   });
 });
