@@ -58,6 +58,8 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     });
 
     const amount = parseInt(sum, 10);
+    if (Number.isNaN(amount)) return;
+
     rootAccount.balance += amount;
 
     await manager.getRepository(Account).save(rootAccount);
