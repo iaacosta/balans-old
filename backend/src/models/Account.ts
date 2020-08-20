@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -118,9 +119,30 @@ export default class Account {
     return transaction;
   }
 
+  private async _revertTransaction(
+    transaction: Transaction,
+    manager: EntityManager,
+  ) {
+    const rootAccount = await this._findRootAccount(manager);
+
+    this.balance -= transaction.amount;
+    rootAccount.balance += transaction.amount;
+
+    await manager.getRepository(Transaction).save(
+      new Transaction({
+        amount: transaction.amount,
+        accountId: rootAccount.id,
+        resultantBalance: rootAccount.balance,
+      }),
+    );
+
+    await manager.getRepository(Account).save([this, rootAccount]);
+    return manager.getRepository(Transaction).remove(transaction);
+  }
+
   async performTransaction(
     amount: number,
-    options: PerformTransactionOptions = { transaction: true },
+    options: DatabaseTransactionOptions = { transaction: true },
   ): Promise<Transaction> {
     if (options.transaction) {
       return getConnection().transaction((entityManager) =>
@@ -130,8 +152,21 @@ export default class Account {
 
     return this._performTransaction(amount, options.entityManager);
   }
+
+  async revertTransaction(
+    transaction: Transaction,
+    options: DatabaseTransactionOptions = { transaction: true },
+  ): Promise<Transaction> {
+    if (options.transaction) {
+      return getConnection().transaction((entityManager) =>
+        this._revertTransaction(transaction, entityManager),
+      );
+    }
+
+    return this._revertTransaction(transaction, options.entityManager);
+  }
 }
 
-type PerformTransactionOptions =
+type DatabaseTransactionOptions =
   | { transaction: false; entityManager: EntityManager }
   | { transaction: true; entityManager?: EntityManager };

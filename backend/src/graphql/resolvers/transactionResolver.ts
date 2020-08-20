@@ -7,6 +7,7 @@ import {
   FieldResolver,
   Root,
   Query,
+  ID,
 } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
 
@@ -14,6 +15,7 @@ import Transaction from '../../models/Transaction';
 import { CreateTransactionInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
+import NotFoundError from '../errors/NotFoundError';
 
 @Resolver(Transaction)
 export default class TransactionResolvers {
@@ -52,6 +54,25 @@ export default class TransactionResolvers {
     });
 
     return account.performTransaction(transaction.amount);
+  }
+
+  @Mutation(() => ID)
+  @Authorized()
+  async deleteTransaction(
+    @Arg('id', () => ID) id: string,
+    @Ctx() { currentUser }: Context,
+  ): Promise<string> {
+    const transaction = await this.repository
+      .createQueryBuilder('transaction')
+      .select()
+      .leftJoinAndSelect('transaction.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('transaction.id = :id', { id })
+      .getOne();
+
+    if (!transaction) throw new NotFoundError('transaction');
+    await transaction.account.revertTransaction(transaction);
+    return id;
   }
 
   @FieldResolver()
