@@ -20,7 +20,6 @@
     "accounting": "^0.4.1",
     "clsx": "^1.1.1",
     "dayjs": "^1.8.33",
-    "fontsource-roboto": "^3.0.3",
     "formik": "^2.1.5",
     "graphql": "^15.3.0",
     "lodash": "^4.17.20",
