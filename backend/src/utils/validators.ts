@@ -1,6 +1,10 @@
 import { registerDecorator } from 'class-validator';
 
-export const IsValidBalance = () => (object: object, propertyName: string) =>
+export const IsValidBalance = () => (
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  object: object,
+  propertyName: string,
+): void =>
   registerDecorator({
     target: object.constructor,
     propertyName,

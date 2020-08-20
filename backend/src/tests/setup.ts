@@ -2,8 +2,8 @@
 
 const checkIfSuccessful = (response: any) => {
   if (response.data) {
-    for (const [query, _response] of Object.entries(response.data)) {
-      if (_response) return [true, query];
+    for (const [query, queryResponse] of Object.entries(response.data)) {
+      if (queryResponse) return [true, query];
     }
   }
 

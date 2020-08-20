@@ -12,9 +12,9 @@ import { validateOrReject } from 'class-validator';
 import ValidationErrors from '../graphql/errors/ValidationErrors';
 
 @EventSubscriber()
-export class CommonSubscriber<T extends object>
+export class CommonSubscriber<T extends Record<string, unknown>>
   implements EntitySubscriberInterface<T> {
-  async validate(entity: T, name: string) {
+  async validate(entity: T, name: string): Promise<void> {
     try {
       await validateOrReject(entity);
     } catch (validationErrors) {
@@ -22,11 +22,11 @@ export class CommonSubscriber<T extends object>
     }
   }
 
-  async beforeInsert({ entity, metadata }: InsertEvent<T>) {
+  async beforeInsert({ entity, metadata }: InsertEvent<T>): Promise<void> {
     await this.validate(entity, metadata.tableName);
   }
 
-  async beforeUpdate({ entity, metadata }: UpdateEvent<T>) {
+  async beforeUpdate({ entity, metadata }: UpdateEvent<T>): Promise<void> {
     await this.validate(entity, metadata.tableName);
   }
 }

@@ -121,7 +121,7 @@ export default class Account {
   async performTransaction(
     amount: number,
     options: PerformTransactionOptions = { transaction: true },
-  ) {
+  ): Promise<Transaction> {
     if (options.transaction) {
       return getConnection().transaction((entityManager) =>
         this._performTransaction(amount, entityManager),
