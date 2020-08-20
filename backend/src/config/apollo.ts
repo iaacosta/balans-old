@@ -1,12 +1,13 @@
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema, AuthChecker } from 'type-graphql';
+import { GraphQLSchema } from 'graphql';
 import { resolve } from 'path';
 
 import { authenticateUser } from '../services/passport';
 import { Context } from '../@types';
 import formatError from '../errors/apolloErrorFormatter';
 
-export const buildOwnSchema = async () => {
+export const buildOwnSchema = async (): Promise<GraphQLSchema> => {
   const authChecker: AuthChecker<Context> = ({ context }, roles) => {
     if (!context.currentUser) return false;
     if (roles.length === 0) return true;
@@ -23,7 +24,7 @@ export const buildOwnSchema = async () => {
   });
 };
 
-export const mountApollo = async () =>
+export const mountApollo = async (): Promise<ApolloServer> =>
   new ApolloServer({
     schema: await buildOwnSchema(),
     formatError,

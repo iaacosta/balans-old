@@ -14,20 +14,21 @@ import Account from '../models/Account';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   listenTo() {
     return User;
   }
 
-  async hashPassword(password: string) {
+  async hashPassword(password: string): Promise<string> {
     const salt = await genSalt(10);
     return hash(password, salt);
   }
 
-  async beforeInsert({ entity }: InsertEvent<User>) {
+  async beforeInsert({ entity }: InsertEvent<User>): Promise<void> {
     entity.password = await this.hashPassword(entity.password);
   }
 
-  async afterInsert({ entity, manager }: InsertEvent<User>) {
+  async afterInsert({ entity, manager }: InsertEvent<User>): Promise<void> {
     await manager.getRepository(Account).save(
       new Account({
         name: 'Root account',
@@ -38,7 +39,10 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     );
   }
 
-  async beforeUpdate({ entity, databaseEntity }: UpdateEvent<User>) {
+  async beforeUpdate({
+    entity,
+    databaseEntity,
+  }: UpdateEvent<User>): Promise<void> {
     if (entity.password === databaseEntity.password) return;
     entity.password = await this.hashPassword(entity.password);
   }

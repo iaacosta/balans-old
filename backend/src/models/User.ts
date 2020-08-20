@@ -81,7 +81,7 @@ export default class User {
   @DeleteDateColumn()
   deletedAt?: Date;
 
-  async verifyPassword(password: string) {
+  async verifyPassword(password: string): Promise<void> {
     const error = new AuthenticationError('incorrect username or password');
     try {
       if (!(await compare(password, this.password))) throw error;
