@@ -73,7 +73,11 @@ const TransactionsTable: React.FC = ({ children }) => {
         accessor: 'createdAt',
         Cell: ({ value }) => dayjs(value).format('HH:mm DD/MM/YYYY'),
       },
-      { Header: 'Actions', id: 'actions', Cell: TransactionActionCell },
+      {
+        Header: 'Actions',
+        id: 'actions',
+        Cell: TransactionActionCell,
+      },
     ],
     [classes],
   );
