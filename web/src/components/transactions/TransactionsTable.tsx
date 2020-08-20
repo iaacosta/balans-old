@@ -21,7 +21,12 @@ const useStyles = makeStyles((theme) => ({
   income: { color: theme.palette.success.main },
 }));
 
-const TransactionsTable: React.FC = ({ children }) => {
+type Props = {
+  accountsLoading: boolean;
+  noAccountsCreated: boolean;
+};
+
+const TransactionsTable: React.FC<Props> = ({ children, accountsLoading, noAccountsCreated }) => {
   const classes = useStyles();
   const { data, loading } = useRedirectedQuery<MyTransactionsQuery, MyTransactionsQueryVariables>(
     myTransactionsQuery,
@@ -85,9 +90,14 @@ const TransactionsTable: React.FC = ({ children }) => {
   return (
     <EnhancedTable
       className={classes.table}
-      loading={!data || loading}
+      loading={!data || loading || accountsLoading}
       columns={columns}
       data={transactions}
+      noEntriesLabel={
+        noAccountsCreated
+          ? 'You have no accounts yet, so no transactions can be shown or created '
+          : 'No transactions created yet'
+      }
     >
       {children}
     </EnhancedTable>
