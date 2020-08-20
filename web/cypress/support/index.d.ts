@@ -47,7 +47,6 @@ declare namespace Cypress {
     deleteUser(id: Scalars['ID']): Chainable<GQLDeleteUserMutation['deleteUser']>;
 
     /* Accounts */
-
     /**
      * Creates an account
      * @example cy.createAccount(buildAccount())
@@ -55,6 +54,15 @@ declare namespace Cypress {
     createAccount(
       account: GQLCreateDebitAccountMutationVariables['input'],
     ): Chainable<GQLCreateDebitAccountMutation['createAccount']>;
+
+    /* Transactions */
+    /**
+     * Creates a transaction
+     * @example cy.createTransaction(buildTransaction())
+     */
+    createTransaction(
+      transaction: GQLCreateTransactionMutationVariables['input'],
+    ): Chainable<GQLCreateTransactionMutation['createTransaction']>;
 
     /* Database */
     /**
