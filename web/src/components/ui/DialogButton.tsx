@@ -20,7 +20,7 @@ const DialogButton: React.FC<Props & ButtonProps> = ({
       <Button variant="contained" color="secondary" onClick={() => set(true)} {...props}>
         {buttonLabel}
       </Button>
-      {toggled && <DialogComponent open={toggled} onClose={() => set(false)} />}
+      <DialogComponent open={toggled} onClose={() => set(false)} />
     </>
   );
 };
