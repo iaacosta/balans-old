@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CardActions,
-  Box,
-  makeStyles,
-} from '@material-ui/core';
+import { Card, CardContent, Typography, CardActions, Box, makeStyles } from '@material-ui/core';
 import { formatMoney } from 'accounting';
 import { capitalize } from 'lodash';
 import {
@@ -26,6 +18,7 @@ import {
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { deleteDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
 import { myTransactionsQuery } from '../../graphql/transaction';
+import { useBreakpoint } from '../../hooks/useBreakpoint';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
@@ -41,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, balance, type } }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const isMobile = useBreakpoint({ layout: 'xs' });
   const [deleteAccount, { loading: deleteLoading }] = useMutation<
     DeleteDebitAccountMutation,
     DeleteDebitAccountMutationVariables
@@ -57,8 +51,9 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
     }
   };
 
+  const iconFontSize = isMobile ? 'small' : 'default';
   return (
-    <Grid data-testid={`account${id}`} item xs={6}>
+    <>
       <Card>
         <CardContent>
           <Typography variant="body2" color="textSecondary">
@@ -74,10 +69,10 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
           </Typography>
           <Box className={classes.buttons}>
             <EnhancedIconButton contained disabled color="success">
-              <VisibilityIcon />
+              <VisibilityIcon fontSize={iconFontSize} />
             </EnhancedIconButton>
             <EnhancedIconButton contained disabled color="info">
-              <EditIcon />
+              <EditIcon fontSize={iconFontSize} />
             </EnhancedIconButton>
             <EnhancedIconButton
               contained
@@ -86,12 +81,12 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
               onClick={handleDelete}
               color="error"
             >
-              <DeleteIcon />
+              <DeleteIcon fontSize={iconFontSize} />
             </EnhancedIconButton>
           </Box>
         </CardActions>
       </Card>
-    </Grid>
+    </>
   );
 };
 
