@@ -8,9 +8,20 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(3),
+      width: '100%',
+      minHeight: 0,
+    },
   },
   invisibleBox: {
     padding: theme.spacing(10),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(5),
+    },
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(2),
+    },
   },
 }));
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import { makeStyles, Box, Button, Typography, Grid } from '@material-ui/core';
+import { makeStyles, Box, Button, Typography, Grid, Hidden } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
@@ -49,9 +49,11 @@ const SignUp: React.FC = () => {
   return (
     <AuthWrapper>
       <Typography variant="h2">First time around?</Typography>
-      <Typography variant="subtitle1">
-        Fill up your data and become part of the community!
-      </Typography>
+      <Hidden xsDown>
+        <Typography variant="subtitle1">
+          Fill up your data and become part of the community!
+        </Typography>
+      </Hidden>
       <Formik
         initialValues={{
           firstName: '',
@@ -90,10 +92,10 @@ const SignUp: React.FC = () => {
               <Grid item xs={12}>
                 <FormikTextField name="username" label="Username" fullWidth />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <FormikTextField name="password" type="password" label="Password" fullWidth />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <FormikTextField
                   name="confirmPassword"
                   type="password"
@@ -101,21 +103,23 @@ const SignUp: React.FC = () => {
                   fullWidth
                 />
               </Grid>
+              <Grid item xs={12}>
+                <Box className={classes.buttons}>
+                  <Button
+                    component={Link}
+                    to={routing.unauthenticated.login}
+                    type="button"
+                    className={classes.login}
+                    color="secondary"
+                  >
+                    Log in
+                  </Button>
+                  <FormikSubmitButton loading={loading} color="primary">
+                    Sign up
+                  </FormikSubmitButton>
+                </Box>
+              </Grid>
             </Grid>
-            <Box className={classes.buttons}>
-              <Button
-                component={Link}
-                to={routing.unauthenticated.login}
-                type="button"
-                className={classes.login}
-                color="secondary"
-              >
-                Log in
-              </Button>
-              <FormikSubmitButton loading={loading} color="primary">
-                Sign up
-              </FormikSubmitButton>
-            </Box>
           </Form>
         )}
       </Formik>
