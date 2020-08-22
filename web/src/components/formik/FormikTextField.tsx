@@ -9,7 +9,10 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-  root: { minHeight: theme.spacing(10) },
+  root: {
+    minHeight: theme.spacing(10),
+    [theme.breakpoints.down('xs')]: { minHeight: theme.spacing(5) },
+  },
 }));
 
 const FormikTextField: React.FC<Props & TextFieldProps> = ({ name, label, variant, ...props }) => {
