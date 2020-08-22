@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useMemo, useEffect } from 'react';
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -26,6 +25,7 @@ import FormikSelectField from '../formik/FormikSelectField';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { createDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
 import { myTransactionsQuery } from '../../graphql/transaction';
+import ResponsiveDialog from '../ui/ResponsiveDialog';
 
 interface Props {
   open: boolean;
@@ -105,7 +105,7 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ open, onClose }) => {
           }, [values.type, setFieldValue]);
 
           return (
-            <Dialog open={open} onClose={onClose}>
+            <ResponsiveDialog open={open} onClose={onClose}>
               <Form>
                 <DialogTitle>Create account</DialogTitle>
                 <DialogContent>
@@ -158,7 +158,7 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ open, onClose }) => {
                   </FormikSubmitButton>
                 </DialogActions>
               </Form>
-            </Dialog>
+            </ResponsiveDialog>
           );
         }}
       </Formik>

@@ -12,7 +12,12 @@ import CreateDebitAccountDialog from '../components/accounts/CreateDebitAccountD
 const useStyles = makeStyles((theme) => ({
   main: { maxWidth: theme.spacing(130) },
   title: { marginBottom: theme.spacing(2) },
-  accounts: { flex: 1, padding: theme.spacing(4), overflow: 'auto' },
+  accounts: {
+    flex: 1,
+    padding: theme.spacing(4),
+    overflow: 'auto',
+    [theme.breakpoints.down('xs')]: { padding: theme.spacing(2) },
+  },
   buttonWrapper: { display: 'flex', justifyContent: 'flex-end', marginTop: theme.spacing(2) },
 }));
 
@@ -34,7 +39,7 @@ const Accounts: React.FC = () => {
         My accounts
       </Typography>
       <CustomTabs tabs={tabs} selected={selected} change={change} />
-      <Paper className={classes.accounts} elevation={1}>
+      <Paper className={classes.accounts} square elevation={1}>
         {selected === 'debit' && <DebitAccountsGrid />}
       </Paper>
       <Box className={classes.buttonWrapper}>

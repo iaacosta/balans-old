@@ -17,7 +17,9 @@ const DebitAccountsGrid: React.FC = () => {
   return accounts.length > 0 ? (
     <Grid container data-testid="account" spacing={3}>
       {accounts.map((account) => (
-        <DebitAccountCard key={account.id} debitAccount={account} />
+        <Grid key={account.id} data-testid={`account${account.id}`} item xs={12} sm={6}>
+          <DebitAccountCard debitAccount={account} />
+        </Grid>
       ))}
     </Grid>
   ) : (
