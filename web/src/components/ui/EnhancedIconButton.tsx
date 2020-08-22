@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, IconButton, IconButtonProps, Theme } from '@material-ui/core';
+import { useBreakpoint } from '../../hooks/useBreakpoint';
 
 type Color = 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 type Props = {
@@ -38,8 +39,11 @@ const EnhancedIconButton: React.FC<Props & Omit<IconButtonProps, 'color'>> = ({
   ...props
 }) => {
   const classes = useStyles({ contained, color });
+  const isMobile = useBreakpoint({ layout: 'xs' });
+  const iconButtonSize = isMobile ? 'small' : 'medium';
+
   return (
-    <IconButton classes={classes} {...props}>
+    <IconButton classes={classes} size={iconButtonSize} {...props}>
       {children}
     </IconButton>
   );
