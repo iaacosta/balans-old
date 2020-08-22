@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import { makeStyles, Box, Button, Typography, Grid } from '@material-ui/core';
+import { makeStyles, Box, Button, Typography, Grid, Hidden } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
 });
 
 const useStyles = makeStyles((theme) => ({
-  fields: { marginTop: theme.spacing(3), marginBottom: theme.spacing(3) },
+  form: { marginTop: theme.spacing(3) },
   buttons: { display: 'flex', justifyContent: 'flex-end' },
   signUp: { marginRight: theme.spacing(2) },
 }));
@@ -37,7 +37,9 @@ const Login: React.FC = () => {
   return (
     <AuthWrapper>
       <Typography variant="h2">Welcome back!</Typography>
-      <Typography variant="subtitle1">Please log in with your account or social media</Typography>
+      <Hidden xsDown>
+        <Typography variant="subtitle1">Please log in with your account or social media</Typography>
+      </Hidden>
       <Formik
         initialValues={{ username: '', password: '', rememberMe: false }}
         validationSchema={schema}
@@ -56,8 +58,8 @@ const Login: React.FC = () => {
         }}
       >
         {() => (
-          <Form>
-            <Grid container spacing={2} className={classes.fields}>
+          <Form className={classes.form}>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormikTextField name="username" label="Username" fullWidth />
               </Grid>
@@ -67,21 +69,23 @@ const Login: React.FC = () => {
               <Grid item xs={12}>
                 <FormikCheckbox name="rememberMe" label="Remember me?" />
               </Grid>
+              <Grid item xs={12}>
+                <Box className={classes.buttons}>
+                  <Button
+                    component={Link}
+                    to={routing.unauthenticated.signUp}
+                    type="button"
+                    className={classes.signUp}
+                    color="secondary"
+                  >
+                    Sign up
+                  </Button>
+                  <FormikSubmitButton loading={loading} color="primary">
+                    Log in
+                  </FormikSubmitButton>
+                </Box>
+              </Grid>
             </Grid>
-            <Box className={classes.buttons}>
-              <Button
-                component={Link}
-                to={routing.unauthenticated.signUp}
-                type="button"
-                className={classes.signUp}
-                color="secondary"
-              >
-                Sign up
-              </Button>
-              <FormikSubmitButton loading={loading} color="primary">
-                Log in
-              </FormikSubmitButton>
-            </Box>
           </Form>
         )}
       </Formik>
