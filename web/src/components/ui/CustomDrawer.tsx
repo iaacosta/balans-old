@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Drawer,
   List,
   ListItem,
   ListItemIcon,
@@ -11,7 +10,6 @@ import {
   ListItemAvatar,
   Collapse,
   withStyles,
-  Box,
   Divider,
 } from '@material-ui/core';
 import {
@@ -31,7 +29,6 @@ import { Link, useLocation } from 'react-router-dom';
 import routing from '../../constants/routing';
 import { useMe } from '../../hooks/useMe';
 import { useToggleable } from '../../hooks/useToggleable';
-import Logo from './Logo';
 import { actions } from '../../utils/rbac';
 import { useCan } from '../../hooks/useRbac';
 import { useLogout } from '../../hooks/useLogout';
@@ -89,11 +86,6 @@ const navigationItems = [
 ] as const;
 
 const useStyles = makeStyles((theme) => ({
-  drawer: {
-    backgroundColor: theme.palette.primary.main,
-    minWidth: theme.spacing(32),
-    borderRight: 'none',
-  },
   profileAvatar: { backgroundColor: theme.palette.secondary.main },
   profileName: { color: theme.palette.background.default },
   profileUsername: { color: theme.palette.background.default, opacity: 0.6 },
@@ -123,7 +115,11 @@ const initialsFromName = (name: string) =>
     .map((_name) => _name[0])
     .join('');
 
-const CustomDrawer: React.FC = () => {
+type Props = {
+  onClose?: () => void;
+};
+
+const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
   const { canPerform } = useCan();
   const classes = useStyles();
   const logout = useLogout();
@@ -134,10 +130,8 @@ const CustomDrawer: React.FC = () => {
   if (loading) return null;
 
   return (
-    <Drawer classes={{ paper: classes.drawer }} variant="permanent" anchor="left">
-      <Box p={2} alignSelf="center">
-        <Logo />
-      </Box>
+    <>
+      {children}
       <List>
         {user && (
           <ListItem>
@@ -174,7 +168,13 @@ const CustomDrawer: React.FC = () => {
             canPerform(action) && (
               <React.Fragment key={id}>
                 {divides && <Divider className={classes.divider} />}
-                <ListItem component={Link} to={id} selected={id === pathname} button>
+                <ListItem
+                  onClick={() => onClose && onClose()}
+                  component={Link}
+                  to={id}
+                  selected={id === pathname}
+                  button
+                >
                   <WhiteListIcon>{Icon}</WhiteListIcon>
                   <WhiteListItemText primary={label} />
                 </ListItem>
@@ -182,7 +182,7 @@ const CustomDrawer: React.FC = () => {
             ),
         )}
       </List>
-    </Drawer>
+    </>
   );
 };
 

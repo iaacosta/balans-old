@@ -1,9 +1,9 @@
 import React from 'react';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, makeStyles } from '@material-ui/core';
 
 import routing from '../constants/routing';
-import CustomDrawer from '../components/ui/CustomDrawer';
+import ResponsiveDrawer from '../components/ui/ResponsiveDrawer';
 import { useCan } from '../hooks/useRbac';
 import { actions } from '../utils/rbac';
 import ContainerLoader from '../components/ui/ContainerLoader';
@@ -32,22 +32,43 @@ const Placeholder: React.FC = () => {
   );
 };
 
+const useStyles = makeStyles((theme) => ({
+  main: {
+    marginLeft: theme.spacing(32),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: 0,
+      '&::before': {
+        ...theme.mixins.toolbar,
+        content: '""',
+        display: 'block',
+      },
+    },
+  },
+  content: {
+    margin: theme.spacing(6),
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(2),
+    },
+  },
+}));
+
 const AuthenticatedApp: React.FC = () => {
+  const classes = useStyles();
   const { canPerform, loading, error } = useCan();
 
   if (loading || error) {
     return (
-      <Box height="100vh">
+      <ViewportContainer>
         <ContainerLoader color="secondary" />
-      </Box>
+      </ViewportContainer>
     );
   }
 
   return (
     <>
-      <CustomDrawer />
-      <Box ml={32}>
-        <Box m={6}>
+      <ResponsiveDrawer />
+      <Box className={classes.main}>
+        <Box className={classes.content}>
           <Switch>
             {canPerform(actions.routes.dashboard) && (
               <Route path={routing.authenticated.dashboard} component={Placeholder} exact />
