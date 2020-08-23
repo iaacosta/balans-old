@@ -12,7 +12,7 @@ import FormikSubmitButton from '../components/formik/FormikSubmitButton';
 import { loginMutation } from '../graphql/authentication';
 import routing from '../constants/routing';
 import AuthWrapper from '../components/authenticate/AuthWrapper';
-import { addToken } from '../config/redux';
+import { addToken } from '../slices/authSlice';
 import FormikCheckbox from '../components/formik/FormikCheckbox';
 import { LoginMutation, LoginMutationVariables } from '../@types/graphql';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
           try {
             const { data } = await login({ variables: values });
             if (data) {
-              dispatch(addToken(data.token));
+              dispatch(addToken({ token: data.token }));
               if (rememberMe) localStorage.setItem('x-auth', data.token);
             } else {
               enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });

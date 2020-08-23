@@ -4,11 +4,11 @@ import { useSnackbar } from 'notistack';
 
 import UnauthenticatedApp from './routers/UnauthenticatedApp';
 import AuthenticatedApp from './routers/AuthenticatedApp';
-import { initialState } from './config/redux';
+import { AppState } from './config/redux';
 
 const App: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const { token, tokenExpired } = useSelector((state: typeof initialState) => state);
+  const { token, tokenExpired } = useSelector((state: AppState) => state.auth);
 
   useEffect(() => {
     if (tokenExpired) enqueueSnackbar('Session expired', { variant: 'warning' });

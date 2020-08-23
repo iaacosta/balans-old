@@ -3,7 +3,7 @@
 import { useDispatch } from 'react-redux';
 import { useApolloClient, ApolloClient } from '@apollo/client';
 import { Dispatch, Action } from 'redux';
-import { removeToken } from '../../config/redux';
+import { removeToken } from '../../slices/authSlice';
 
 export const logoutHof = <A extends Action<any>, T extends object>(
   action: A,
