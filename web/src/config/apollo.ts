@@ -4,7 +4,8 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/clien
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { capitalize } from 'lodash';
-import { baseStore, expireToken } from './redux';
+import { store } from './redux';
+import { expireToken } from '../slices/authSlice';
 import { logoutHof } from '../hooks/auth/useLogout';
 
 const baseLink = new HttpLink({
@@ -12,7 +13,7 @@ const baseLink = new HttpLink({
 });
 
 const contextLink = setContext((_, { headers }) => {
-  const { token } = baseStore.getState();
+  const { token } = store.getState().auth;
   if (token) return { headers: { ...headers, Authorization: `Bearer ${token}` } };
   return { headers };
 });
@@ -25,7 +26,7 @@ const errorLink = onError(({ graphQLErrors }) => {
     });
 
     if (graphQLErrors[0].message.includes('expired')) {
-      logoutHof(expireToken(), baseStore.dispatch, client)();
+      logoutHof(expireToken(), store.dispatch, client)();
     }
   }
 });
