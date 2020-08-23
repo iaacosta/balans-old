@@ -11,6 +11,7 @@ import './config/accounting';
 import client from './config/apollo';
 import customTheme from './config/materialUi';
 import { baseStore } from './config/redux';
+import { useBreakpoint } from './hooks/utils/useBreakpoint';
 
 const useSnackbarClasses = makeStyles((theme) => ({
   variantInfo: { backgroundColor: theme.palette.info.main },
@@ -27,6 +28,7 @@ const CustomSnackbarProvider: React.FC = ({ children }) => {
   const snackbarClasses = useSnackbarClasses();
   const classes = useStyles();
   const notistackRef = createRef<any>();
+  const isMobile = useBreakpoint({ layout: 'xs' });
 
   const handleDismiss = (key: any) => notistackRef.current.closeSnackbar(key);
 
@@ -36,6 +38,7 @@ const CustomSnackbarProvider: React.FC = ({ children }) => {
       autoHideDuration={4000}
       classes={snackbarClasses}
       ref={notistackRef}
+      dense={isMobile}
       action={(key) => (
         <IconButton className={classes.icon} onClick={() => handleDismiss(key)} size="small">
           <CloseIcon />
