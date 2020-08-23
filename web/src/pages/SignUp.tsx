@@ -12,7 +12,7 @@ import FormikSubmitButton from '../components/formik/FormikSubmitButton';
 import { signUpMutation } from '../graphql/authentication';
 import routing from '../constants/routing';
 import AuthWrapper from '../components/authenticate/AuthWrapper';
-import { addToken } from '../config/redux';
+import { addToken } from '../slices/authSlice';
 import { SignUpMutationVariables, SignUpMutation } from '../@types/graphql';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
 
@@ -68,7 +68,7 @@ const SignUp: React.FC = () => {
           try {
             const { data } = await signUp({ variables: { input: values } });
             if (data) {
-              dispatch(addToken(data.token));
+              dispatch(addToken({ token: data.token }));
             } else {
               enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });
             }

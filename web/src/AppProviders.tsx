@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import './config/accounting';
 import client from './config/apollo';
 import customTheme from './config/materialUi';
-import { baseStore } from './config/redux';
+import { store } from './config/redux';
 import { useBreakpoint } from './hooks/utils/useBreakpoint';
 
 const useSnackbarClasses = makeStyles((theme) => ({
@@ -52,7 +52,7 @@ const CustomSnackbarProvider: React.FC = ({ children }) => {
 
 const AppProviders: React.FC = ({ children }) => (
   <RouterProvider>
-    <Provider store={baseStore}>
+    <Provider store={store}>
       <ApolloProvider client={client}>
         <ThemeProvider theme={customTheme}>
           <CustomSnackbarProvider>
