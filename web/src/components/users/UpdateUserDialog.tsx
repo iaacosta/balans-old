@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useMemo } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Portal,
-  Grid,
-} from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogActions, Button, Portal, Grid } from '@material-ui/core';
 import _values from 'lodash/values';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -27,6 +19,7 @@ import { updateUserMutation } from '../../graphql/users';
 import { filterUnchangedValues } from '../../utils/formik';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { useMe } from '../../hooks/auth/useMe';
+import ResponsiveDialog from '../ui/ResponsiveDialog';
 
 interface Props {
   user: AllUsersQuery['users'][number];
@@ -80,21 +73,21 @@ const UpdateUserDialog: React.FC<Props> = ({ user, open, onClose }) => {
         }}
       >
         {({ dirty }) => (
-          <Dialog open={open} onClose={onClose}>
+          <ResponsiveDialog open={open} onClose={onClose}>
             <Form>
               <DialogTitle>Update user @{user.username}</DialogTitle>
               <DialogContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <FormikTextField name="firstName" label="First name" fullWidth />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <FormikTextField name="lastName" label="Last name" fullWidth />
                   </Grid>
                   <Grid item xs={12}>
                     <FormikTextField name="email" label="Email" fullWidth />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <FormikSelectField
                       name="role"
                       label="Role"
@@ -106,7 +99,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user, open, onClose }) => {
                       ]}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6}>
                     <FormikTextField name="password" type="password" label="Password" fullWidth />
                   </Grid>
                 </Grid>
@@ -120,7 +113,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user, open, onClose }) => {
                 </FormikSubmitButton>
               </DialogActions>
             </Form>
-          </Dialog>
+          </ResponsiveDialog>
         )}
       </Formik>
     </Portal>

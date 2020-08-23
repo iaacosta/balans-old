@@ -1,8 +1,10 @@
 import React from 'react';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, Hidden } from '@material-ui/core';
 import { useTabs } from '../hooks/utils/useTabs';
 import ActiveUsersTable from '../components/users/ActiveUsersTable';
+import ActiveUsersList from '../components/users/ActiveUsersList';
 import DeletedUsersTable from '../components/users/DeletedUsersTable';
+import DeletedUsersList from '../components/users/DeletedUsersList';
 import ViewportContainer from '../components/ui/ViewportContainer';
 import CustomTabs from '../components/ui/CustomTabs';
 
@@ -28,8 +30,14 @@ const Users: React.FC = () => {
         Platform users
       </Typography>
       <CustomTabs tabs={tabs} selected={selected} change={change} />
-      {selected === 'active' && <ActiveUsersTable />}
-      {selected === 'deleted' && <DeletedUsersTable />}
+      <Hidden xsDown implementation="js">
+        {selected === 'active' && <ActiveUsersTable />}
+        {selected === 'deleted' && <DeletedUsersTable />}
+      </Hidden>
+      <Hidden smUp implementation="js">
+        {selected === 'active' && <ActiveUsersList />}
+        {selected === 'deleted' && <DeletedUsersList />}
+      </Hidden>
     </ViewportContainer>
   );
 };
