@@ -6,6 +6,6 @@ import { myAccountsQuery } from '../../graphql/account';
 export const useDeleteTransaction = (): UseIdMutationReturn<DeleteTransactionMutation> => {
   return useIdMutation<DeleteTransactionMutation>(deleteTransactionMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-    resource: 'transaction',
+    snackbarMessage: 'Transaction deleted successfully',
   });
 };
