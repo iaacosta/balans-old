@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  root: { fontSize: theme.typography.h5.fontSize, color: theme.palette.background.default },
+  root: { fontSize: theme.typography.h5.fontSize, color: theme.palette.primary.contrastText },
 }));
 
 const Logo: React.FC = () => {
