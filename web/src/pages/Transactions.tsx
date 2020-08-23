@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Typography, makeStyles, Hidden, Box } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import ViewportContainer from '../components/ui/ViewportContainer';
-import { useRedirectedQuery } from '../hooks/useRedirectedQuery';
+import { useRedirectedQuery } from '../hooks/graphql/useRedirectedQuery';
 import { myAccountsQuery } from '../graphql/account';
 import {
   MyAccountsQuery,

@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { usersQuery, deleteUserMutation, deletedUsersQuery } from '../../graphql/users';
-import { useToggleable } from '../../hooks/useToggleable';
+import { useToggleable } from '../../hooks/utils/useToggleable';
 import {
   AllUsersQuery,
   DeleteUserMutation,

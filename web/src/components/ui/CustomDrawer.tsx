@@ -27,11 +27,11 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 
 import routing from '../../constants/routing';
-import { useMe } from '../../hooks/useMe';
-import { useToggleable } from '../../hooks/useToggleable';
+import { useMe } from '../../hooks/auth/useMe';
+import { useToggleable } from '../../hooks/utils/useToggleable';
 import { actions } from '../../utils/rbac';
-import { useCan } from '../../hooks/useRbac';
-import { useLogout } from '../../hooks/useLogout';
+import { useCan } from '../../hooks/auth/useRbac';
+import { useLogout } from '../../hooks/auth/useLogout';
 
 const navigationItems = [
   {

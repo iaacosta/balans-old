@@ -5,7 +5,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
-import { useDeleteTransaction } from '../../hooks/useDeleteTransaction';
+import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {

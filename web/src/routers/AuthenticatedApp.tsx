@@ -4,7 +4,7 @@ import { Box, Typography, makeStyles } from '@material-ui/core';
 
 import routing from '../constants/routing';
 import ResponsiveDrawer from '../components/ui/ResponsiveDrawer';
-import { useCan } from '../hooks/useRbac';
+import { useCan } from '../hooks/auth/useRbac';
 import { actions } from '../utils/rbac';
 import ContainerLoader from '../components/ui/ContainerLoader';
 import Users from '../pages/Users';
