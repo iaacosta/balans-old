@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useMemo } from 'react';
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -30,6 +29,7 @@ import { createTransactionMutation, myTransactionsQuery } from '../../graphql/tr
 import { myAccountsQuery } from '../../graphql/account';
 import ContainerLoader from '../ui/ContainerLoader';
 import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
+import ResponsiveDialog from '../ui/ResponsiveDialog';
 
 interface Props {
   open: boolean;
@@ -37,7 +37,7 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-  form: { minWidth: theme.spacing(75) },
+  form: { minWidth: theme.spacing(75), [theme.breakpoints.down('sm')]: { minWidth: 0 } },
 }));
 
 const schema = yup.object().shape({
@@ -54,7 +54,7 @@ const FormWrapper: React.FC<Props & { loading: boolean }> = ({
   const classes = useStyles();
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <ResponsiveDialog open={open} onClose={onClose}>
       <Form className={classes.form}>
         <DialogTitle>Create transaction</DialogTitle>
         <DialogContent>{children}</DialogContent>
@@ -67,7 +67,7 @@ const FormWrapper: React.FC<Props & { loading: boolean }> = ({
           </FormikSubmitButton>
         </DialogActions>
       </Form>
-    </Dialog>
+    </ResponsiveDialog>
   );
 };
 
@@ -86,7 +86,7 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
     () => ({
       amount: 0,
       type: 'Expense',
-      accountId: data?.accounts[0].id || '',
+      accountId: (data?.accounts[0] && data?.accounts[0].id) || '',
     }),
     [data],
   );
