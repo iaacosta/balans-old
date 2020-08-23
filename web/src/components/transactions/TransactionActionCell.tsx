@@ -2,17 +2,10 @@ import React from 'react';
 import { CellProps } from 'react-table';
 import { Box, makeStyles } from '@material-ui/core';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
-import { useMutation } from '@apollo/client';
-import { useSnackbar } from 'notistack';
 
-import {
-  MyTransactionsQuery,
-  DeleteTransactionMutation,
-  DeleteTransactionMutationVariables,
-} from '../../@types/graphql';
+import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
-import { deleteTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
-import { myAccountsQuery } from '../../graphql/account';
+import { useDeleteTransaction } from '../../hooks/useDeleteTransaction';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -25,25 +18,9 @@ const useStyles = makeStyles((theme) => ({
 const TransactionActionCell: React.FC<CellProps<MyTransactionsQuery['transactions'][number]>> = ({
   row,
 }) => {
+  const [deleteTransaction, { loading }] = useDeleteTransaction();
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
-  const [deleteTransaction, { loading }] = useMutation<
-    DeleteTransactionMutation,
-    DeleteTransactionMutationVariables
-  >(deleteTransactionMutation, {
-    refetchQueries: [{ query: myTransactionsQuery }, { query: myAccountsQuery }],
-  });
-
   const { id } = row.original;
-
-  const handleDelete = async () => {
-    try {
-      await deleteTransaction({ variables: { id } });
-      enqueueSnackbar('Transaction deleted successfully', { variant: 'success' });
-    } catch (err) {
-      enqueueSnackbar(err.message, { variant: 'error' });
-    }
-  };
 
   return (
     <Box className={classes.wrapper}>
@@ -54,7 +31,7 @@ const TransactionActionCell: React.FC<CellProps<MyTransactionsQuery['transaction
         contained
         disabled={loading}
         data-testid={`deleteTransaction${id}`}
-        onClick={handleDelete}
+        onClick={() => deleteTransaction(id)}
         color="error"
       >
         <DeleteIcon />
