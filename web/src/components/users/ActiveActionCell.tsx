@@ -1,20 +1,14 @@
 import React from 'react';
 import { CellProps } from 'react-table';
 import { Box, makeStyles } from '@material-ui/core';
-import { useMutation } from '@apollo/client';
-import { useSnackbar } from 'notistack';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
-import { usersQuery, deleteUserMutation, deletedUsersQuery } from '../../graphql/users';
 import { useToggleable } from '../../hooks/utils/useToggleable';
-import {
-  AllUsersQuery,
-  DeleteUserMutation,
-  DeleteUserMutationVariables,
-} from '../../@types/graphql';
+import { AllUsersQuery } from '../../@types/graphql';
 import { roles } from '../../utils/rbac';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import UpdateUserDialog from './UpdateUserDialog';
+import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -26,23 +20,10 @@ const useStyles = makeStyles((theme) => ({
 
 const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void>> = ({ row }) => {
   const { toggled, set } = useToggleable();
-  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
-
-  const [deleteUser, { loading: deleteLoading }] = useMutation<
-    DeleteUserMutation,
-    DeleteUserMutationVariables
-  >(deleteUserMutation, { refetchQueries: [{ query: usersQuery }, { query: deletedUsersQuery }] });
+  const [deleteUser, { loading: deleteLoading }] = useDeleteUser();
 
   const { role, id } = row.original;
-  const handleDelete = async () => {
-    try {
-      await deleteUser({ variables: { id } });
-      enqueueSnackbar('User deleted succesfully', { variant: 'success' });
-    } catch (err) {
-      enqueueSnackbar(err.message, { variant: 'error' });
-    }
-  };
 
   return (
     <Box className={classes.wrapper}>
@@ -60,7 +41,7 @@ const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void
         data-testid={`deleteUser${id}`}
         color="error"
         disabled={deleteLoading || role === roles.ADMIN}
-        onClick={() => handleDelete()}
+        onClick={() => deleteUser(id)}
       >
         <DeleteIcon />
       </EnhancedIconButton>
