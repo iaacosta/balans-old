@@ -8,10 +8,7 @@ import {
   ArrowDropUp as ArrowDropUpIcon,
 } from '@material-ui/icons';
 import clsx from 'clsx';
-
-import { MyTransactionsQuery, MyTransactionsQueryVariables } from '../../@types/graphql';
-import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
-import { myTransactionsQuery } from '../../graphql/transaction';
+import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
 
@@ -22,23 +19,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  accountsLoading: boolean;
+  transactions: MyTransactionsQuery['transactions'];
+  loading: boolean;
   noAccountsCreated: boolean;
 };
 
-const TransactionsTable: React.FC<Props> = ({ children, accountsLoading, noAccountsCreated }) => {
+const TransactionsTable: React.FC<Props> = ({
+  children,
+  transactions,
+  loading,
+  noAccountsCreated,
+}) => {
   const classes = useStyles();
-  const { data, loading } = useRedirectedQuery<MyTransactionsQuery, MyTransactionsQueryVariables>(
-    myTransactionsQuery,
-  );
 
-  const transactions: MyTransactionsQuery['transactions'] = useMemo(
-    () => data?.transactions || [],
-    [data],
-  );
-
-  type Row = typeof transactions[number];
-  const columns: Column<Row>[] = useMemo(
+  const columns: Column<typeof transactions[number]>[] = useMemo(
     () => [
       {
         Header: 'Amount',
@@ -90,7 +84,7 @@ const TransactionsTable: React.FC<Props> = ({ children, accountsLoading, noAccou
   return (
     <EnhancedTable
       className={classes.table}
-      loading={!data || loading || accountsLoading}
+      loading={loading}
       columns={columns}
       data={transactions}
       noEntriesLabel={
