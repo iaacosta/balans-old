@@ -5,31 +5,50 @@ import { ThemeProvider, CssBaseline, makeStyles, IconButton } from '@material-ui
 import { Close as CloseIcon } from '@material-ui/icons';
 import { SnackbarProvider } from 'notistack';
 import { BrowserRouter as RouterProvider } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 
 import './config/accounting';
 import client from './config/apollo';
-import customTheme from './config/materialUi';
-import { store } from './config/redux';
+import { lightTheme, darkTheme } from './config/materialUi';
+import { store, AppState } from './config/redux';
 import { useBreakpoint } from './hooks/utils/useBreakpoint';
 
 const useSnackbarClasses = makeStyles((theme) => ({
-  variantInfo: { backgroundColor: theme.palette.info.main },
-  variantWarning: { backgroundColor: theme.palette.warning.main },
-  variantError: { backgroundColor: theme.palette.error.main },
-  variantSuccess: { backgroundColor: theme.palette.success.main },
+  variantInfo: {
+    backgroundColor: theme.palette.info.main,
+    color: theme.palette.info.contrastText,
+  },
+  variantWarning: {
+    backgroundColor: theme.palette.warning.main,
+    color: theme.palette.warning.contrastText,
+  },
+  variantError: {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.error.contrastText,
+  },
+  variantSuccess: {
+    backgroundColor: theme.palette.success.main,
+    color: theme.palette.success.contrastText,
+  },
 }));
 
 const useStyles = makeStyles((theme) => ({
-  icon: { color: theme.palette.background.default, marginRight: theme.spacing(1) },
+  icon: { color: 'inherit', marginRight: theme.spacing(1) },
 }));
+
+const CustomThemeProvider: React.FC = ({ children }) => {
+  const { themeType } = useSelector((state: AppState) => state.theme);
+
+  return (
+    <ThemeProvider theme={themeType === 'light' ? lightTheme : darkTheme}>{children}</ThemeProvider>
+  );
+};
 
 const CustomSnackbarProvider: React.FC = ({ children }) => {
   const snackbarClasses = useSnackbarClasses();
   const classes = useStyles();
   const notistackRef = createRef<any>();
   const isMobile = useBreakpoint({ layout: 'xs' });
-
   const handleDismiss = (key: any) => notistackRef.current.closeSnackbar(key);
 
   return (
@@ -54,12 +73,12 @@ const AppProviders: React.FC = ({ children }) => (
   <RouterProvider>
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <ThemeProvider theme={customTheme}>
+        <CustomThemeProvider>
           <CustomSnackbarProvider>
             <CssBaseline />
             {children}
           </CustomSnackbarProvider>
-        </ThemeProvider>
+        </CustomThemeProvider>
       </ApolloProvider>
     </Provider>
   </RouterProvider>
