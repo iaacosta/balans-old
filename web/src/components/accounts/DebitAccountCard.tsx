@@ -7,18 +7,11 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@material-ui/icons';
-import { useMutation } from '@apollo/client';
-import { useSnackbar } from 'notistack';
 
-import {
-  MyAccountsQuery,
-  DeleteDebitAccountMutation,
-  DeleteDebitAccountMutationVariables,
-} from '../../@types/graphql';
+import { MyAccountsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
-import { deleteDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
-import { myTransactionsQuery } from '../../graphql/transaction';
 import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
+import { useDeleteDebitAccount } from '../../hooks/graphql/useDeleteDebitAccount';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
@@ -33,23 +26,8 @@ const useStyles = makeStyles((theme) => ({
 
 const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, balance, type } }) => {
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   const isMobile = useBreakpoint({ layout: 'xs' });
-  const [deleteAccount, { loading: deleteLoading }] = useMutation<
-    DeleteDebitAccountMutation,
-    DeleteDebitAccountMutationVariables
-  >(deleteDebitAccountMutation, {
-    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-  });
-
-  const handleDelete = async () => {
-    try {
-      await deleteAccount({ variables: { id } });
-      enqueueSnackbar('Account deleted successfully', { variant: 'success' });
-    } catch (err) {
-      enqueueSnackbar(err.message, { variant: 'error' });
-    }
-  };
+  const [deleteDebitAccount, { loading: deleteLoading }] = useDeleteDebitAccount();
 
   const iconFontSize = isMobile ? 'small' : 'default';
   return (
@@ -78,7 +56,7 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
               contained
               data-testid={`deleteAccount${id}`}
               disabled={deleteLoading}
-              onClick={handleDelete}
+              onClick={() => deleteDebitAccount(id)}
               color="error"
             >
               <DeleteIcon fontSize={iconFontSize} />
