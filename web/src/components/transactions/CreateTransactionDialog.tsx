@@ -28,7 +28,7 @@ import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { createTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
 import { myAccountsQuery } from '../../graphql/account';
 import ContainerLoader from '../ui/ContainerLoader';
-import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
+import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import ResponsiveDialog from '../ui/ResponsiveDialog';
 
 interface Props {

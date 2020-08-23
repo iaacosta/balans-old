@@ -5,7 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { capitalize } from 'lodash';
 import { baseStore, expireToken } from './redux';
-import { logoutHof } from '../hooks/useLogout';
+import { logoutHof } from '../hooks/auth/useLogout';
 
 const baseLink = new HttpLink({
   uri: process.env.REACT_APP_API_URL || 'http://localhost:5000/graphql',

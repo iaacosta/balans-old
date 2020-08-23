@@ -26,7 +26,7 @@ import { roles } from '../../utils/rbac';
 import { updateUserMutation } from '../../graphql/users';
 import { filterUnchangedValues } from '../../utils/formik';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
-import { useMe } from '../../hooks/useMe';
+import { useMe } from '../../hooks/auth/useMe';
 
 interface Props {
   user: AllUsersQuery['users'][number];

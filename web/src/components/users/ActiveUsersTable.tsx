@@ -6,9 +6,10 @@ import { usersQuery } from '../../graphql/users';
 import { AllUsersQuery } from '../../@types/graphql';
 import ActiveActionsCell from './ActiveActionCell';
 import EnhancedTable from '../ui/EnhancedTable';
-import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
+import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 
 const useStyles = makeStyles(() => ({ table: { flex: 1 } }));
+
 const ActiveUsersTable: React.FC = () => {
   const classes = useStyles();
   const { data, loading } = useRedirectedQuery<AllUsersQuery>(usersQuery);

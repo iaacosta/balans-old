@@ -14,7 +14,7 @@ import { formatMoney } from 'accounting';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
-import { useDeleteTransaction } from '../../hooks/useDeleteTransaction';
+import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
 import VirtualizedList from '../ui/VirtualizedList';
 
 type Props = {

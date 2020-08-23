@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, makeStyles } from '@material-ui/core';
-import { useTabs } from '../hooks/useTabs';
+import { useTabs } from '../hooks/utils/useTabs';
 import ActiveUsersTable from '../components/users/ActiveUsersTable';
 import DeletedUsersTable from '../components/users/DeletedUsersTable';
 import ViewportContainer from '../components/ui/ViewportContainer';

@@ -3,7 +3,7 @@ import { useQuery, DocumentNode, QueryHookOptions, QueryResult } from '@apollo/c
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import routing from '../constants/routing';
+import routing from '../../constants/routing';
 
 export const useRedirectedQuery = <TData = any, TVariables = any>(
   query: DocumentNode,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, IconButton, IconButtonProps, Theme } from '@material-ui/core';
-import { useBreakpoint } from '../../hooks/useBreakpoint';
+import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 
 type Color = 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 type Props = {

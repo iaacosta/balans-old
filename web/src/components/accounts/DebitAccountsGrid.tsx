@@ -3,7 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 import { myAccountsQuery } from '../../graphql/account';
 import { MyAccountsQueryVariables, MyAccountsQuery } from '../../@types/graphql';
 import ContainerLoader from '../ui/ContainerLoader';
-import { useRedirectedQuery } from '../../hooks/useRedirectedQuery';
+import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import DebitAccountCard from './DebitAccountCard';
 
 const DebitAccountsGrid: React.FC = () => {

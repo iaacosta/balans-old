@@ -18,7 +18,7 @@ import {
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { deleteDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
 import { myTransactionsQuery } from '../../graphql/transaction';
-import { useBreakpoint } from '../../hooks/useBreakpoint';
+import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
