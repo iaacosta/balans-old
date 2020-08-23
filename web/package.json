@@ -7,6 +7,7 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
+    "@reduxjs/toolkit": "^1.4.0",
     "@types/accounting": "^0.4.1",
     "@types/jest": "^26.0.10",
     "@types/lodash": "^4.14.159",
@@ -34,7 +35,6 @@
     "react-table": "^7.5.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
-    "redux": "^4.0.5",
     "typescript": "^3.9.7",
     "yup": "^0.29.3"
   },
