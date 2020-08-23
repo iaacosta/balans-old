@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ElementOf } from '../@types/helpers';
+import { ElementOf } from '../../@types/helpers';
 
 type Props<T extends ReadonlyArray<string>> = {
   tabs: T;

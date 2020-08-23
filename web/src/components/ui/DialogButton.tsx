@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, ButtonProps } from '@material-ui/core';
 
-import { useToggleable } from '../../hooks/useToggleable';
+import { useToggleable } from '../../hooks/utils/useToggleable';
 
 type Props = {
   buttonLabel: string;

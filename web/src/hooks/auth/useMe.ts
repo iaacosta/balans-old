@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
-import { meQuery } from '../graphql/authentication';
-import { MeQueryVariables, MeQuery } from '../@types/graphql';
+import { meQuery } from '../../graphql/authentication';
+import { MeQueryVariables, MeQuery } from '../../@types/graphql';
 import { useLogout } from './useLogout';
 
 export const useMe = () => {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ApolloError } from '@apollo/client';
-import { Action, canPerform } from '../utils/rbac';
+import { Action, canPerform } from '../../utils/rbac';
 import { useMe } from './useMe';
 
 type Props = {

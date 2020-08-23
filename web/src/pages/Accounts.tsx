@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, makeStyles, Paper, Box } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 
-import { useTabs } from '../hooks/useTabs';
+import { useTabs } from '../hooks/utils/useTabs';
 import ViewportContainer from '../components/ui/ViewportContainer';
 import CustomTabs from '../components/ui/CustomTabs';
 import DebitAccountsGrid from '../components/accounts/DebitAccountsGrid';
