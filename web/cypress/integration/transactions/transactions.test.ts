@@ -31,6 +31,12 @@ describe('transactions table', () => {
       cy.get('input').clear().type(`${newTransaction.amount}`),
     );
     cy.changeSelectOption('typeInput', 'Income');
+    cy.findByTestId('memoInput').within(() =>
+      cy
+        .get('input')
+        .clear()
+        .type(newTransaction.memo || ''),
+    );
     cy.changeSelectOption('accountIdInput', 0);
     cy.submitForm();
 
