@@ -1,5 +1,5 @@
 type Maybe<T> = T | null;
-type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 type Scalars = {
   ID: string;
@@ -31,6 +31,7 @@ type GQLTransaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
   amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
   resultantBalance: Scalars['Int'];
   account: GQLAccount;
   createdAt: Scalars['DateTime'];
@@ -96,11 +97,13 @@ type GQLCreateAccountInput = {
 type GQLCreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
 };
 
 type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
+  myTransactions: Array<GQLTransaction>;
   users: Array<GQLUser>;
   deletedUsers: Array<GQLUser>;
   user: GQLUser;
@@ -120,6 +123,7 @@ type GQLMutation = {
   signUp: Scalars['String'];
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
+  deleteTransaction: Scalars['ID'];
   createUser: GQLUser;
   updateUser: GQLUser;
   updateMe: GQLUser;
@@ -155,6 +159,11 @@ type GQLMutationSetupDatabaseArgs = {
 
 type GQLMutationCreateTransactionArgs = {
   input: GQLCreateTransactionInput;
+};
+
+
+type GQLMutationDeleteTransactionArgs = {
+  id: Scalars['ID'];
 };
 
 
