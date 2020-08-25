@@ -26,7 +26,7 @@ export default class Transaction {
   @Column()
   accountId: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   memo?: string;
 
@@ -53,11 +53,13 @@ export default class Transaction {
   constructor(transaction: {
     amount: number;
     accountId: number;
+    memo?: string;
     resultantBalance: number;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
+      this.memo = transaction.memo;
       this.resultantBalance = transaction.resultantBalance;
     }
   }

@@ -7,4 +7,7 @@ export class CreateTransactionInput {
 
   @Field(() => ID)
   accountId: number;
+
+  @Field({ nullable: true })
+  memo?: string;
 }
