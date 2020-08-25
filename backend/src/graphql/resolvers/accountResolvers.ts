@@ -50,10 +50,10 @@ export default class AccountResolvers {
         });
 
       if (initialBalance !== 0) {
-        await createdAccount.performTransaction(initialBalance, {
-          transaction: false,
-          entityManager,
-        });
+        await createdAccount.performTransaction(
+          { amount: initialBalance, memo: 'Initial balance' },
+          { transaction: false, entityManager },
+        );
       }
 
       return createdAccount;
