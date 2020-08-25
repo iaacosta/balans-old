@@ -67,10 +67,8 @@ describe('transaction creation tests', () => {
 
   describe('performTransaction', () => {
     const staticArray = Array.from(Array(5).keys());
-
+    const testTransactions: Transaction[] = [];
     let testAmounts: number[];
-    let testTransactions: Transaction[] = [];
-
     let testTransaction: Transaction;
     let rootTransaction: Transaction;
 
