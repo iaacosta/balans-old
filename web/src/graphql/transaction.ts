@@ -5,6 +5,7 @@ export const myTransactionsQuery = gql`
     transactions: myTransactions {
       id
       amount
+      memo
       resultantBalance
       account {
         id
