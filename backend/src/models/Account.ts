@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { IsNotEmpty, IsIn } from 'class-validator';
+import { v4 as uuid } from 'uuid';
 
 import { IsValidBalance } from '../utils';
 import { AccountType } from '../graphql/helpers';
@@ -99,6 +100,7 @@ export default class Account {
     manager: EntityManager,
   ) {
     const rootAccount = await this._findRootAccount(manager);
+    const operationId = uuid();
 
     this.balance += amount;
     rootAccount.balance -= amount;
@@ -110,12 +112,14 @@ export default class Account {
       new Transaction({
         amount,
         memo,
+        operationId,
         accountId: this.id,
         resultantBalance: this.balance,
       }),
       new Transaction({
         amount: -amount,
         memo,
+        operationId,
         accountId: rootAccount.id,
         resultantBalance: rootAccount.balance,
       }),
@@ -129,20 +133,22 @@ export default class Account {
     manager: EntityManager,
   ) {
     const rootAccount = await this._findRootAccount(manager);
+    const siblingTransaction = await manager
+      .getRepository(Transaction)
+      .findOneOrFail({
+        accountId: rootAccount.id,
+        operationId: transaction.operationId,
+      });
 
     this.balance -= transaction.amount;
     rootAccount.balance += transaction.amount;
 
-    await manager.getRepository(Transaction).save(
-      new Transaction({
-        amount: transaction.amount,
-        accountId: rootAccount.id,
-        resultantBalance: rootAccount.balance,
-      }),
-    );
-
     await manager.getRepository(Account).save([this, rootAccount]);
-    return manager.getRepository(Transaction).remove(transaction);
+    const [deletedTransaction] = await manager
+      .getRepository(Transaction)
+      .remove([transaction, siblingTransaction]);
+
+    return deletedTransaction;
   }
 
   async performTransaction(
