@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const schema = yup.object().shape({
   amount: yup.number().min(1).required(),
+  memo: yup.string(),
   accountId: yup.string().required(),
 });
 
@@ -86,6 +87,7 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
     () => ({
       amount: 0,
       type: 'Expense',
+      memo: '',
       accountId: (data?.accounts[0] && data?.accounts[0].id) || '',
     }),
     [data],
@@ -155,6 +157,9 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
                   displayEmpty
                   options={['Expense', 'Income']}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <FormikTextField name="memo" label="Memo" fullWidth />
               </Grid>
               <Grid item xs={12}>
                 <FormikSelectField

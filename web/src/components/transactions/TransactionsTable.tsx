@@ -45,6 +45,11 @@ const TransactionsTable: React.FC<Props> = ({
         Cell: ({ value }) => `${value.name} (${value.bank})`,
       },
       {
+        Header: 'Memo',
+        accessor: 'memo',
+        Cell: ({ value }) => value || '-',
+      },
+      {
         Header: 'Resultant balance',
         accessor: 'resultantBalance',
         Cell: ({ value, row }) => {
