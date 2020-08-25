@@ -102,13 +102,13 @@ describe('transaction deletion tests', () => {
         await testAccount.revertTransaction(toDeleteTransaction);
       });
 
-      it('should create a counter-transaction on root account', async () => {
+      it('should delete the sibling transaction on root account', async () => {
         const counterTransaction = await getRepository(Transaction).findOne({
-          amount: toDeleteTransaction.amount,
+          operationId: toDeleteTransaction.operationId,
           accountId: testRootAccount.id,
         });
 
-        expect(counterTransaction).toBeDefined();
+        expect(counterTransaction).toBeUndefined();
       });
 
       it('should change account balances', async () => {

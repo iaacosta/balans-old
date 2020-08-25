@@ -2,6 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { build, fake } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
@@ -28,6 +29,7 @@ export const transactionModelFactory = (
   const factoryTransaction = transactionFactory(overrides);
   const transaction = new Transaction({
     ...factoryTransaction,
+    operationId: uuid(),
     accountId,
     resultantBalance,
   });
@@ -52,7 +54,8 @@ export const createTransaction = async (
     databaseTransaction,
     factoryTransaction,
     transaction: new Transaction({
-      amount: factoryTransaction.amount,
+      ...factoryTransaction,
+      operationId: databaseTransaction.operationId,
       accountId: account.id,
       resultantBalance: account.balance,
     }),
