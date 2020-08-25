@@ -8,7 +8,6 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
 import Account from '../models/Account';
 import Transaction from '../models/Transaction';
@@ -46,12 +45,28 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
   async beforeRemove(event: RemoveEvent<Account>): Promise<void> {
     const { databaseEntity, manager } = event;
 
+    const operations = await manager
+      .getRepository(Transaction)
+      .createQueryBuilder('transaction')
+      .select('transaction.operationId')
+      .where('transaction.accountId = :id', { id: databaseEntity.id })
+      .getMany();
+
     const { sum } = await manager
       .getRepository(Transaction)
       .createQueryBuilder()
       .select('SUM("amount")')
       .where('"accountId" = :id', { id: databaseEntity.id })
       .getRawOne();
+
+    await manager
+      .getRepository(Transaction)
+      .createQueryBuilder('transaction')
+      .delete()
+      .where('"transaction"."operationId" IN (:...operations)', {
+        operations: operations.map(({ operationId }) => `${operationId}`),
+      })
+      .execute();
 
     const rootAccount = await manager.getRepository(Account).findOneOrFail({
       type: 'root',
@@ -64,13 +79,5 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     rootAccount.balance += amount;
 
     await manager.getRepository(Account).save(rootAccount);
-    await manager.getRepository(Transaction).save(
-      new Transaction({
-        amount,
-        operationId: uuid(),
-        accountId: rootAccount.id,
-        resultantBalance: rootAccount.balance,
-      }),
-    );
   }
 }
