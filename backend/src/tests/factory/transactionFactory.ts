@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable import/no-extraneous-dependencies */
 import { build, fake } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
@@ -5,11 +6,12 @@ import { Connection } from 'typeorm';
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
 
-export type BuildType = Pick<Transaction, 'amount'>;
+export type BuildType = Pick<Transaction, 'amount' | 'memo'>;
 
 export const transactionBuilder = build<BuildType>('transaction', {
   fields: {
     amount: fake((faker) => faker.random.number(15000)),
+    memo: fake((faker) => faker.lorem.words(3)),
   },
 });
 
@@ -42,7 +44,7 @@ export const createTransaction = async (
   const factoryTransaction = transactionFactory(overrides);
 
   const databaseTransaction = await account.performTransaction(
-    factoryTransaction.amount,
+    { amount: factoryTransaction.amount, memo: factoryTransaction.memo },
     { transaction: false, entityManager },
   );
 
