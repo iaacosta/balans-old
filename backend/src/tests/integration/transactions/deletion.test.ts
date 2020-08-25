@@ -46,7 +46,7 @@ describe('transaction deletion tests', () => {
       for (const { amount } of Array.from(Array(5).keys()).map(() =>
         transactionFactory(),
       )) {
-        await testAccount.performTransaction(amount);
+        await testAccount.performTransaction({ amount });
       }
 
       await getRepository(Account).remove(testAccount);
@@ -90,7 +90,7 @@ describe('transaction deletion tests', () => {
       testAmounts = factoryTransactions.map(({ amount }) => amount);
 
       for (const { amount } of factoryTransactions) {
-        testTransactions.push(await testAccount.performTransaction(amount));
+        testTransactions.push(await testAccount.performTransaction({ amount }));
       }
     });
 

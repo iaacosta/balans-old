@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable import/no-extraneous-dependencies */
 import { build, fake, oneOf } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
@@ -43,10 +44,10 @@ export const createAccount = async (
     .save(account);
 
   if (factoryAccount.initialBalance !== 0) {
-    await databaseAccount.performTransaction(factoryAccount.initialBalance, {
-      transaction: false,
-      entityManager,
-    });
+    await databaseAccount.performTransaction(
+      { amount: factoryAccount.initialBalance, memo: 'Initial balance' },
+      { transaction: false, entityManager },
+    );
   }
 
   return {
