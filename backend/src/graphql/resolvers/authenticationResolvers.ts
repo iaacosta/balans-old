@@ -14,7 +14,7 @@ export default class AuthenticationResolvers {
     this.repository = getRepository(User);
   }
 
-  static generateToken(user: User) {
+  static generateToken(user: User): string {
     return jwt.sign({ user }, process.env.SECRET!, {
       expiresIn: 3600 * 24 * 14, // two weeks
     });
