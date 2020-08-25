@@ -94,7 +94,10 @@ export default class Account {
     });
   }
 
-  private async _performTransaction(amount: number, manager: EntityManager) {
+  private async _performTransaction(
+    { amount, memo }: TransactionMetadata,
+    manager: EntityManager,
+  ) {
     const rootAccount = await this._findRootAccount(manager);
 
     this.balance += amount;
@@ -106,11 +109,13 @@ export default class Account {
     const [transaction] = await manager.getRepository(Transaction).save([
       new Transaction({
         amount,
+        memo,
         accountId: this.id,
         resultantBalance: this.balance,
       }),
       new Transaction({
         amount: -amount,
+        memo,
         accountId: rootAccount.id,
         resultantBalance: rootAccount.balance,
       }),
@@ -141,16 +146,16 @@ export default class Account {
   }
 
   async performTransaction(
-    amount: number,
+    meta: TransactionMetadata,
     options: DatabaseTransactionOptions = { transaction: true },
   ): Promise<Transaction> {
     if (options.transaction) {
       return getConnection().transaction((entityManager) =>
-        this._performTransaction(amount, entityManager),
+        this._performTransaction(meta, entityManager),
       );
     }
 
-    return this._performTransaction(amount, options.entityManager);
+    return this._performTransaction(meta, options.entityManager);
   }
 
   async revertTransaction(
@@ -166,6 +171,11 @@ export default class Account {
     return this._revertTransaction(transaction, options.entityManager);
   }
 }
+
+type TransactionMetadata = {
+  amount: number;
+  memo?: string;
+};
 
 type DatabaseTransactionOptions =
   | { transaction: false; entityManager: EntityManager }

@@ -26,6 +26,10 @@ export default class Transaction {
   @Column()
   accountId: number;
 
+  @Field()
+  @Column({ nullable: true })
+  memo?: string;
+
   @Field(() => Int)
   @Column()
   resultantBalance: number;
