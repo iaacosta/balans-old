@@ -44,16 +44,16 @@ export default class TransactionResolvers {
   @Mutation(() => Transaction)
   @Authorized()
   async createTransaction(
-    @Arg('input') transaction: CreateTransactionInput,
+    @Arg('input') { accountId, ...transactionInput }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
     /* Check if account doesn't belong to user */
     const account = await this.accountRepository.findOneOrFail({
-      id: transaction.accountId,
+      id: accountId,
       userId: currentUser!.id,
     });
 
-    return account.performTransaction(transaction.amount);
+    return account.performTransaction(transactionInput);
   }
 
   @Mutation(() => ID)
