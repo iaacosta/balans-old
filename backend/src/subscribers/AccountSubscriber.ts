@@ -8,6 +8,7 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import Account from '../models/Account';
 import Transaction from '../models/Transaction';
@@ -66,6 +67,7 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     await manager.getRepository(Transaction).save(
       new Transaction({
         amount,
+        operationId: uuid(),
         accountId: rootAccount.id,
         resultantBalance: rootAccount.balance,
       }),

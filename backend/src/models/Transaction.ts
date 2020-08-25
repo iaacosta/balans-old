@@ -30,6 +30,9 @@ export default class Transaction {
   @Column({ nullable: true })
   memo?: string;
 
+  @Column('uuid', { generated: 'uuid' })
+  operationId: string;
+
   @Field(() => Int)
   @Column()
   resultantBalance: number;
@@ -54,12 +57,14 @@ export default class Transaction {
     amount: number;
     accountId: number;
     memo?: string;
+    operationId: string;
     resultantBalance: number;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
       this.memo = transaction.memo;
+      this.operationId = transaction.operationId;
       this.resultantBalance = transaction.resultantBalance;
     }
   }
