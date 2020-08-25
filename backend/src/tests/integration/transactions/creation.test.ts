@@ -11,10 +11,6 @@ import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
 import { transactionFactory } from '../../factory/transactionFactory';
 
-/*
-  NOTE: all amounts should be unique, because I still don't handle
-  two transactions that belong to the same operation
-*/
 describe('transaction creation tests', () => {
   const testInitialBalance = 1000;
 
@@ -25,13 +21,8 @@ describe('transaction creation tests', () => {
 
   const pgClient = createPgClient();
 
-  const getTransactionPair = (targetAmount: number) =>
-    getRepository(Transaction).find({
-      where: [
-        { amount: targetAmount, accountId: testAccount.id },
-        { amount: -targetAmount, accountId: testRootAccount.id },
-      ],
-    });
+  const getTransactionPair = (operationId: string) =>
+    getRepository(Transaction).find({ operationId });
 
   beforeAll(async () => {
     connection = await createConnection();
@@ -58,9 +49,14 @@ describe('transaction creation tests', () => {
 
   describe('initial balance', () => {
     it('should create two transactions on initial balance', async () => {
-      const [transaction, rootTransaction] = await getTransactionPair(
-        testInitialBalance,
-      );
+      const [transaction, rootTransaction] = await getRepository(
+        Transaction,
+      ).find({
+        where: [
+          { amount: testInitialBalance, accountId: testAccount.id },
+          { amount: -testInitialBalance, accountId: testRootAccount.id },
+        ],
+      });
 
       expect(transaction).toBeDefined();
       expect(transaction.resultantBalance).toBe(testInitialBalance);
@@ -73,32 +69,30 @@ describe('transaction creation tests', () => {
     const staticArray = Array.from(Array(5).keys());
 
     let testAmounts: number[];
-    let testTransactions: ReturnType<typeof transactionFactory>[];
+    let testTransactions: Transaction[] = [];
 
-    let testTransaction: ReturnType<typeof transactionFactory>;
-    let transaction: Transaction;
+    let testTransaction: Transaction;
     let rootTransaction: Transaction;
 
     beforeAll(async () => {
-      testTransactions = staticArray.map(() => transactionFactory());
-      testAmounts = testTransactions.map(({ amount }) => amount);
+      const factoryTransactions = staticArray.map(() => transactionFactory());
+      testAmounts = factoryTransactions.map(({ amount }) => amount);
 
-      for (const { amount } of testTransactions) {
-        await testAccount.performTransaction({ amount });
+      for (const { amount } of factoryTransactions) {
+        testTransactions.push(await testAccount.performTransaction({ amount }));
       }
     });
 
     staticArray.forEach((_, idx) => {
       describe(`transaction ${idx}`, () => {
         beforeAll(async () => {
-          testTransaction = testTransactions[idx];
-          [transaction, rootTransaction] = await getTransactionPair(
-            testTransaction.amount,
+          [testTransaction, rootTransaction] = await getTransactionPair(
+            testTransactions[idx].operationId,
           );
         });
 
         it('should create transaction pairs', async () => {
-          expect(transaction).toBeDefined();
+          expect(testTransaction).toBeDefined();
           expect(rootTransaction).toBeDefined();
         });
 
@@ -109,7 +103,7 @@ describe('transaction creation tests', () => {
               .slice(0, idx + 1)
               .reduce((accum, curr) => accum + curr, 0);
 
-          expect(transaction.resultantBalance).toBe(expectedBalance);
+          expect(testTransaction.resultantBalance).toBe(expectedBalance);
           expect(rootTransaction.resultantBalance).toBe(-expectedBalance);
         });
       });
