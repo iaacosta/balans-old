@@ -31,6 +31,7 @@ export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
   amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
   resultantBalance: Scalars['Int'];
   account: Account;
   createdAt: Scalars['DateTime'];
@@ -97,6 +98,7 @@ export type CreateAccountInput = {
 export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -263,7 +265,7 @@ export type MyTransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: Array<(
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'resultantBalance' | 'createdAt'>
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'resultantBalance' | 'createdAt'>
     & { account: (
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank'>
