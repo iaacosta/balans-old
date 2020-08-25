@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable prefer-destructuring */
-import { createConnection, Connection, getRepository } from 'typeorm';
+import { createConnection, Connection, getRepository, In } from 'typeorm';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import User from '../../../models/User';
@@ -37,6 +37,7 @@ describe('transaction deletion tests', () => {
   });
 
   describe('delete account', () => {
+    const operations: string[] = [];
     let testAccount: Account;
 
     beforeAll(async () => {
@@ -46,19 +47,22 @@ describe('transaction deletion tests', () => {
       for (const { amount } of Array.from(Array(5).keys()).map(() =>
         transactionFactory(),
       )) {
-        await testAccount.performTransaction({ amount });
+        const { operationId } = await testAccount.performTransaction({
+          amount,
+        });
+        operations.push(operationId);
       }
 
       await getRepository(Account).remove(testAccount);
     });
 
-    it('should create a transaction to make up root account with many transactions', async () => {
-      const transaction = await getRepository(Transaction).findOne({
-        amount: testAccount.balance,
+    it('should delete all related root account transactions', async () => {
+      const transactions = await getRepository(Transaction).find({
+        operationId: In(operations),
         accountId: testRootAccount.id,
       });
 
-      expect(transaction).toBeDefined();
+      expect(transactions).toHaveLength(0);
     });
 
     it('should have correct balance after deletion', async () => {
