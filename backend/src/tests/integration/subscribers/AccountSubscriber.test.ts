@@ -68,27 +68,25 @@ describe('account ORM tests', () => {
     });
 
     describe('remove', () => {
-      it('should call create a closure transaction for root account', async () => {
+      it('should create a closure transaction for root account', async () => {
         const testAmount = 1000;
         const { databaseAccount } = await createAccount(connection, user.id, {
           initialBalance: testAmount,
         });
 
-        await createTransaction(connection, databaseAccount, {
-          amount: testAmount,
-        });
+        const { databaseTransaction } = await createTransaction(
+          connection,
+          databaseAccount,
+          { amount: testAmount },
+        );
 
         await expect(repo.remove(databaseAccount)).resolves.toBeDefined();
 
-        const rootAccount = await connection
-          .getRepository(Account)
-          .findOneOrFail({ type: 'root', userId: user.id });
-
-        const closureTransaction = await connection
+        const transactions = await connection
           .getRepository(Transaction)
-          .findOneOrFail({ amount: 2000, accountId: rootAccount.id });
+          .find({ operationId: databaseTransaction.operationId });
 
-        expect(closureTransaction).toBeDefined();
+        expect(transactions).toHaveLength(0);
       });
     });
   });
