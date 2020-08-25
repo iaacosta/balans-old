@@ -84,7 +84,7 @@ describe('transaction creation tests', () => {
       testAmounts = testTransactions.map(({ amount }) => amount);
 
       for (const { amount } of testTransactions) {
-        await testAccount.performTransaction(amount);
+        await testAccount.performTransaction({ amount });
       }
     });
 
