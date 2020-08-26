@@ -36,6 +36,7 @@ type WrapperProps = {
   onClose: () => void;
   loading: boolean;
   ButtonProps?: TButtonProps;
+  mode: 'update' | 'create';
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -48,20 +49,22 @@ const TransactionDialogWrapper: React.FC<WrapperProps> = ({
   children,
   loading,
   ButtonProps,
+  mode,
 }) => {
   const classes = useStyles();
+  const label = mode === 'create' ? 'Create' : 'Update';
 
   return (
     <ResponsiveDialog open={open} onClose={onClose}>
       <Form className={classes.form}>
-        <DialogTitle>Create transaction</DialogTitle>
+        <DialogTitle>{label} transaction</DialogTitle>
         <DialogContent>{children}</DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="secondary">
             Cancel
           </Button>
           <FormikSubmitButton color="primary" loading={loading} {...ButtonProps}>
-            Create
+            {label}
           </FormikSubmitButton>
         </DialogActions>
       </Form>
@@ -82,7 +85,12 @@ const TransactionFormView = <T extends Record<string, unknown>>({
   if (initialLoading || !accounts) {
     return (
       <Portal>
-        <TransactionDialogWrapper open={open} onClose={onClose} loading={initialLoading}>
+        <TransactionDialogWrapper
+          mode={mode}
+          open={open}
+          onClose={onClose}
+          loading={initialLoading}
+        >
           <ContainerLoader />
         </TransactionDialogWrapper>
       </Portal>
@@ -102,6 +110,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
       >
         {({ dirty }) => (
           <TransactionDialogWrapper
+            mode={mode}
             open={open}
             onClose={onClose}
             loading={submitLoading}
