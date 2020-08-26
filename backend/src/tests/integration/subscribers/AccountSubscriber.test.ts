@@ -86,49 +86,82 @@ describe('account ORM tests', () => {
     });
 
     describe('remove', () => {
-      const operations: string[] = [];
-      let testAccount: Account;
+      describe('with transactions', () => {
+        const operations: string[] = [];
+        let testAccount: Account;
 
-      beforeAll(async () => {
-        testUser = (await createUser(connection)).databaseUser;
+        beforeAll(async () => {
+          testUser = (await createUser(connection)).databaseUser;
 
-        testRootAccount = await connection
-          .getRepository(Account)
-          .findOneOrFail({
-            userId: testUser.id,
-            type: 'root',
-          });
+          testRootAccount = await connection
+            .getRepository(Account)
+            .findOneOrFail({
+              userId: testUser.id,
+              type: 'root',
+            });
 
-        testAccount = (await createAccount(connection, testUser.id))
-          .databaseAccount;
+          testAccount = (await createAccount(connection, testUser.id))
+            .databaseAccount;
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        for (const _ of Array.from(Array(5).keys())) {
-          const { operationId } = await (
-            await createTransaction(connection, testAccount)
-          ).databaseTransaction;
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          for (const _ of Array.from(Array(5).keys())) {
+            const { operationId } = await (
+              await createTransaction(connection, testAccount)
+            ).databaseTransaction;
 
-          operations.push(operationId);
-        }
+            operations.push(operationId);
+          }
 
-        await connection.getRepository(Account).remove(testAccount);
-      });
-
-      it('should delete all related root account transactions', async () => {
-        const transactions = await connection.getRepository(Transaction).find({
-          operationId: In(operations),
-          accountId: testRootAccount.id,
+          await connection.getRepository(Account).remove(testAccount);
         });
 
-        expect(transactions).toHaveLength(0);
+        it('should delete all related root account transactions', async () => {
+          const transactions = await connection
+            .getRepository(Transaction)
+            .find({
+              operationId: In(operations),
+              accountId: testRootAccount.id,
+            });
+
+          expect(transactions).toHaveLength(0);
+        });
+
+        it('should have correct balance after deletion', async () => {
+          const refreshedRootAccount = await connection
+            .getRepository(Account)
+            .findOneOrFail(testRootAccount.id);
+
+          expect(refreshedRootAccount.balance).toBe(0);
+        });
       });
 
-      it('should have correct balance after deletion', async () => {
-        const refreshedRootAccount = await connection
-          .getRepository(Account)
-          .findOneOrFail(testRootAccount.id);
+      describe('without transactions', () => {
+        let testAccount: Account;
 
-        expect(refreshedRootAccount.balance).toBe(0);
+        beforeAll(async () => {
+          testUser = (await createUser(connection)).databaseUser;
+
+          testRootAccount = await connection
+            .getRepository(Account)
+            .findOneOrFail({
+              userId: testUser.id,
+              type: 'root',
+            });
+
+          testAccount = (
+            await createAccount(connection, testUser.id, { initialBalance: 0 })
+          ).databaseAccount;
+
+          await connection.getRepository(Account).remove(testAccount);
+        });
+
+        it('should have correct balance after deletion', async () => {
+          const refreshedRootAccount = await connection
+            .getRepository(Account)
+            .findOneOrFail(testRootAccount.id);
+
+          expect(refreshedRootAccount.balance).toBe(0);
+        });
       });
     });
   });
