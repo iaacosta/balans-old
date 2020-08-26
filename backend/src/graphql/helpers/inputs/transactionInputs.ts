@@ -11,3 +11,18 @@ export class CreateTransactionInput {
   @Field({ nullable: true })
   memo?: string;
 }
+
+@InputType()
+export class UpdateTransactionInput {
+  @Field(() => ID)
+  id: number;
+
+  @Field(() => Int, { nullable: true })
+  amount?: number;
+
+  @Field({ nullable: true })
+  memo?: string;
+
+  @Field(() => ID, { nullable: true })
+  accountId?: number;
+}
