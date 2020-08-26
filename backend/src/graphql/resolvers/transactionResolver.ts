@@ -16,6 +16,7 @@ import { CreateTransactionInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
+import TransactionHelper from '../../helpers/TransactionHelper';
 
 @Resolver(Transaction)
 export default class TransactionResolvers {
@@ -44,22 +45,22 @@ export default class TransactionResolvers {
   @Mutation(() => Transaction)
   @Authorized()
   async createTransaction(
-    @Arg('input') { accountId, memo, amount }: CreateTransactionInput,
+    @Arg('input') { accountId, ...transactionInput }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
-    /* Check if account doesn't belong to user */
+    const transactionHelper = new TransactionHelper(currentUser!);
+
     const account = await this.accountRepository.findOneOrFail({
       id: accountId,
       userId: currentUser!.id,
     });
 
-    return this.repository.save(
-      new Transaction({
-        memo: memo !== '' ? memo : undefined,
-        amount,
-        accountId: account.id,
-      }),
+    const [transaction] = await transactionHelper.performTransaction(
+      transactionInput,
+      account,
     );
+
+    return transaction;
   }
 
   @Mutation(() => ID)
@@ -68,6 +69,7 @@ export default class TransactionResolvers {
     @Arg('id', () => ID) id: string,
     @Ctx() { currentUser }: Context,
   ): Promise<string> {
+    const transactionHelper = new TransactionHelper(currentUser!);
     const transaction = await this.repository
       .createQueryBuilder('transaction')
       .select()
@@ -77,7 +79,7 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    await this.repository.remove(transaction);
+    await transactionHelper.revertTransaction(transaction);
     return id;
   }
 
