@@ -7,6 +7,7 @@ import Account from '../../../models/Account';
 import { createAccount, accountFactory } from '../../factory/accountFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
+import Transaction from '../../../models/Transaction';
 
 const MY_ACCOUNTS = gql`
   query MyAccounts {
@@ -147,6 +148,39 @@ describe('account API calls', () => {
         response.data!.createAccount.id,
       );
       expect(createdAccount.name).toBe(testAccount.name);
+    });
+
+    it('should create two transactions with initial balance', async () => {
+      const initialBalance = 1000;
+      const testAccount = accountFactory({ initialBalance });
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: CREATE_ACCOUNT,
+        variables: { input: testAccount },
+      });
+
+      expect(response).toBeSuccessful();
+
+      const rootAccount = await getRepository(Account).findOneOrFail({
+        type: 'root',
+        userId: testUser.id,
+      });
+
+      const transaction = await getRepository(Transaction).findOne({
+        amount: initialBalance,
+        accountId: response.data!.createAccount.id,
+      });
+
+      expect(transaction).toBeDefined();
+      expect(transaction!.resultantBalance).toBe(initialBalance);
+
+      const rootTransaction = await getRepository(Transaction).findOne({
+        amount: -initialBalance,
+        operationId: transaction!.operationId,
+        accountId: rootAccount.id,
+      });
+
+      expect(rootTransaction).toBeDefined();
     });
   });
 
