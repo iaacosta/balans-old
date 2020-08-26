@@ -69,9 +69,13 @@ describe('transaction helper tests', () => {
       const transactionHelper = new TransactionHelper(testUser);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      for (const _ of staticArray) {
+      for (let i = 0; i < staticArray.length; i += 1) {
+        const factoryTransaction = transactionFactory();
+
+        if (i === 0) factoryTransaction.memo = undefined;
+
         const [transaction] = await transactionHelper.performTransaction(
-          transactionFactory(),
+          factoryTransaction,
           testAccount,
         );
 
@@ -164,63 +168,108 @@ describe('transaction helper tests', () => {
     });
 
     describe('same account', () => {
-      let changed: ReturnType<typeof transactionFactory>;
+      describe('amount changes', () => {
+        let toChange: { amount: number };
 
-      beforeAll(async () => {
-        changed = transactionFactory();
-        const sampleTransaction = testTransactions[testTransactions.length - 1];
+        beforeAll(async () => {
+          toChange = { amount: transactionFactory().amount };
+          const sampleTransaction =
+            testTransactions[testTransactions.length - 1];
 
-        toUpdateTransaction = await connection
-          .getRepository(Transaction)
-          .findOneOrFail({
-            where: { id: sampleTransaction.id },
-            relations: ['account'],
-          });
+          toUpdateTransaction = await connection
+            .getRepository(Transaction)
+            .findOneOrFail({
+              where: { id: sampleTransaction.id },
+              relations: ['account'],
+            });
 
-        await transactionHelper.updateTransaction(toUpdateTransaction, changed);
-      });
-
-      it('should update transactions', async () => {
-        const transaction = await getRepository(Transaction).findOne(
-          toUpdateTransaction.id,
-        );
-
-        const siblingTransaction = await getRepository(Transaction).findOne({
-          operationId: toUpdateTransaction.operationId,
-          accountId: testRootAccount.id,
+          await transactionHelper.updateTransaction(
+            toUpdateTransaction,
+            toChange,
+          );
         });
 
-        expect(transaction).toBeDefined();
-        expect(transaction!.amount).toBe(changed.amount);
-        expect(transaction!.memo).toBe(changed.memo);
+        it('should update transactions', async () => {
+          const transaction = await getRepository(Transaction).findOne(
+            toUpdateTransaction.id,
+          );
 
-        expect(siblingTransaction).toBeDefined();
-        expect(siblingTransaction!.amount).toBe(-changed.amount);
-        expect(siblingTransaction!.memo).toBe(changed.memo?.concat(' (root)'));
+          const siblingTransaction = await getRepository(Transaction).findOne({
+            operationId: toUpdateTransaction.operationId,
+            accountId: testRootAccount.id,
+          });
+
+          expect(transaction).toBeDefined();
+          expect(transaction!.amount).toBe(toChange.amount);
+
+          expect(siblingTransaction).toBeDefined();
+          expect(siblingTransaction!.amount).toBe(-toChange.amount);
+        });
+
+        it('should update account balances', async () => {
+          const refreshedAccount = await getRepository(Account).findOneOrFail(
+            testAccount.id,
+          );
+
+          const refreshedRootAccount = await getRepository(
+            Account,
+          ).findOneOrFail(testRootAccount.id);
+
+          const expectedBalance =
+            testInitialBalance +
+            testAmounts.reduce((accum, curr) => accum + curr, 0) +
+            (toChange.amount - testAmounts[testAmounts.length - 1]);
+
+          expect(refreshedAccount.balance).toBe(expectedBalance);
+          expect(refreshedRootAccount.balance).toBe(-expectedBalance);
+        });
       });
 
-      it('should update account balances', async () => {
-        const refreshedAccount = await getRepository(Account).findOneOrFail(
-          testAccount.id,
-        );
+      describe('memo changes', () => {
+        let toChange: { memo: string };
 
-        const refreshedRootAccount = await getRepository(Account).findOneOrFail(
-          testRootAccount.id,
-        );
+        beforeAll(async () => {
+          toChange = { memo: 'changed' };
+          const sampleTransaction =
+            testTransactions[testTransactions.length - 1];
 
-        const expectedBalance =
-          testInitialBalance +
-          testAmounts.reduce((accum, curr) => accum + curr, 0) +
-          (changed.amount - testAmounts[testAmounts.length - 1]);
+          toUpdateTransaction = await connection
+            .getRepository(Transaction)
+            .findOneOrFail({
+              where: { id: sampleTransaction.id },
+              relations: ['account'],
+            });
 
-        expect(refreshedAccount.balance).toBe(expectedBalance);
-        expect(refreshedRootAccount.balance).toBe(-expectedBalance);
+          await transactionHelper.updateTransaction(
+            toUpdateTransaction,
+            toChange,
+          );
+        });
+
+        it('should update transactions', async () => {
+          const transaction = await getRepository(Transaction).findOne(
+            toUpdateTransaction.id,
+          );
+
+          const siblingTransaction = await getRepository(Transaction).findOne({
+            operationId: toUpdateTransaction.operationId,
+            accountId: testRootAccount.id,
+          });
+
+          expect(transaction).toBeDefined();
+          expect(transaction!.memo).toBe(toChange.memo);
+
+          expect(siblingTransaction).toBeDefined();
+          expect(siblingTransaction!.memo).toBe(
+            toChange.memo?.concat(' (root)'),
+          );
+        });
       });
     });
 
-    describe('other account', () => {
+    describe('different account', () => {
       let otherAccount: Account;
-      let changed: ReturnType<typeof transactionFactory> & {
+      let toChange: ReturnType<typeof transactionFactory> & {
         accountId: number;
       };
 
@@ -232,7 +281,7 @@ describe('transaction helper tests', () => {
           })
         ).databaseAccount;
 
-        changed = { ...transactionFactory(), accountId: otherAccount.id };
+        toChange = { ...transactionFactory(), accountId: otherAccount.id };
 
         const sampleTransaction = testTransactions[testTransactions.length - 1];
         toUpdateTransaction = await connection
@@ -242,7 +291,10 @@ describe('transaction helper tests', () => {
             relations: ['account'],
           });
 
-        await transactionHelper.updateTransaction(toUpdateTransaction, changed);
+        await transactionHelper.updateTransaction(
+          toUpdateTransaction,
+          toChange,
+        );
       });
 
       it('should update transactions', async () => {
@@ -256,13 +308,13 @@ describe('transaction helper tests', () => {
         });
 
         expect(transaction).toBeDefined();
-        expect(transaction!.amount).toBe(changed.amount);
-        expect(transaction!.accountId).toBe(changed.accountId);
-        expect(transaction!.memo).toBe(changed.memo);
+        expect(transaction!.amount).toBe(toChange.amount);
+        expect(transaction!.accountId).toBe(toChange.accountId);
+        expect(transaction!.memo).toBe(toChange.memo);
 
         expect(siblingTransaction).toBeDefined();
-        expect(siblingTransaction!.amount).toBe(-changed.amount);
-        expect(siblingTransaction!.memo).toBe(changed.memo?.concat(' (root)'));
+        expect(siblingTransaction!.amount).toBe(-toChange.amount);
+        expect(siblingTransaction!.memo).toBe(toChange.memo?.concat(' (root)'));
       });
 
       it('should update account balances', async () => {
@@ -277,7 +329,7 @@ describe('transaction helper tests', () => {
         );
 
         const transactionAmount = testAmounts[testAmounts.length - 1];
-        const updateEffect = changed.amount - transactionAmount;
+        const updateEffect = toChange.amount - transactionAmount;
         const transactionEffect = testAmounts.reduce(
           (accum, curr) => accum + curr,
           0,
