@@ -2,10 +2,17 @@ import React from 'react';
 import { makeStyles, IconButton, IconButtonProps, Theme } from '@material-ui/core';
 import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 
-type Color = 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+export type EnhancedIconButtonColor =
+  | 'primary'
+  | 'secondary'
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning';
+
 type Props = {
   contained?: boolean;
-  color?: Color;
+  color?: EnhancedIconButtonColor;
 };
 
 const useStyles = makeStyles<Theme, Props>((theme) => {
