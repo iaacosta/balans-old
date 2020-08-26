@@ -47,6 +47,22 @@ const CREATE_TRANSACTION = gql`
   }
 `;
 
+const UPDATE_TRANSACTION = gql`
+  mutation UpdateTransaction($input: UpdateTransactionInput!) {
+    updateTransaction(input: $input) {
+      id
+      amount
+      memo
+      account {
+        id
+      }
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
 const DELETE_TRANSACTION = gql`
   mutation DeleteTransaction($id: ID!) {
     deleteTransaction(id: $id)
@@ -127,6 +143,59 @@ describe('transaction API calls', () => {
         variables: { input: { ...testTransaction, accountId: testAccount.id } },
       });
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('updateTransaction', () => {
+    let createdTransaction: Transaction;
+
+    beforeAll(async () => {
+      createdTransaction = (await createTransaction(connection, testAccount))
+        .databaseTransaction;
+    });
+
+    it('should update transaction if mine', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const { amount, memo } = transactionFactory();
+      const response = await mutate({
+        mutation: UPDATE_TRANSACTION,
+        variables: { input: { id: createdTransaction.id, amount, memo } },
+      });
+
+      expect(response).toBeSuccessful();
+      const updatedTransaction = await getRepository(Transaction).findOneOrFail(
+        response.data!.updateTransaction.id,
+      );
+      expect(updatedTransaction.amount).toBe(amount);
+      expect(updatedTransaction.memo).toBe(memo);
+    });
+
+    it('should reject if no changes given', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: UPDATE_TRANSACTION,
+        variables: { input: { id: createdTransaction.id } },
+      });
+
+      expect(response).toBeRejected();
+    });
+
+    it('should not authorize if account is not mine', async () => {
+      const otherUser = (await createUser(connection)).databaseUser;
+      const otherAccount = (await createAccount(connection, otherUser.id))
+        .databaseAccount;
+      const othersTransaction = (
+        await createTransaction(connection, otherAccount)
+      ).databaseTransaction;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const { amount, memo } = transactionFactory();
+      const response = await mutate({
+        mutation: UPDATE_TRANSACTION,
+        variables: { input: { id: othersTransaction.id, amount, memo } },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 
