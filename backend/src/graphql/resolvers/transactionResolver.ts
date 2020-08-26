@@ -10,13 +10,15 @@ import {
   ID,
 } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
+import { size } from 'lodash';
 
 import Transaction from '../../models/Transaction';
-import { CreateTransactionInput } from '../helpers';
+import { CreateTransactionInput, UpdateTransactionInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
 import TransactionHelper from '../../helpers/TransactionHelper';
+import NoChangesError from '../errors/NoChangesError';
 
 @Resolver(Transaction)
 export default class TransactionResolvers {
@@ -61,6 +63,33 @@ export default class TransactionResolvers {
     );
 
     return transaction;
+  }
+
+  @Mutation(() => Transaction)
+  @Authorized()
+  async updateTransaction(
+    @Arg('input')
+    { id, ...toChange }: UpdateTransactionInput,
+    @Ctx() { currentUser }: Context,
+  ): Promise<Transaction> {
+    if (!size(toChange)) throw new NoChangesError();
+    const transactionHelper = new TransactionHelper(currentUser!);
+
+    const transaction = await this.repository
+      .createQueryBuilder('transaction')
+      .select()
+      .leftJoinAndSelect('transaction.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('transaction.id = :id', { id })
+      .getOne();
+
+    if (!transaction) throw new NotFoundError('transaction');
+    const [updatedTransaction] = await transactionHelper.updateTransaction(
+      transaction,
+      toChange,
+    );
+
+    return updatedTransaction;
   }
 
   @Mutation(() => ID)
