@@ -1,32 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import {
-  createConnection,
-  Connection,
-  Repository,
-  getRepository,
-} from 'typeorm';
-import { UserInputError } from 'apollo-server-express';
+import { createConnection, Connection, getRepository } from 'typeorm';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import Transaction from '../../../models/Transaction';
 import User from '../../../models/User';
 import Account from '../../../models/Account';
-import {
-  transactionModelFactory,
-  createTransaction,
-  transactionFactory,
-} from '../../factory/transactionFactory';
+import { transactionFactory } from '../../factory/transactionFactory';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import { AccountType } from '../../../graphql/helpers';
 import TransactionHelper from '../../../helpers/TransactionHelper';
 
-describe('transaction helper tests', () => {
-  const testInitialBalance = 1000;
+const testInitialBalance = 1000;
 
+describe('transaction helper tests', () => {
   let connection: Connection;
   let testUser: User;
   let testAccount: Account;
@@ -44,8 +33,8 @@ describe('transaction helper tests', () => {
 
     testAccount = (
       await createAccount(connection, testUser.id, {
-        type: AccountType.cash,
         initialBalance: testInitialBalance,
+        type: AccountType.checking,
       })
     ).databaseAccount;
 
@@ -79,6 +68,7 @@ describe('transaction helper tests', () => {
     beforeAll(async () => {
       const transactionHelper = new TransactionHelper(testUser);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const _ of staticArray) {
         const [transaction] = await transactionHelper.performTransaction(
           transactionFactory(),
@@ -137,11 +127,12 @@ describe('transaction helper tests', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('updateTransaction', () => {
     const staticArray = Array.from(Array(5).keys());
     const testTransactions: Transaction[] = [];
     const testAmounts: number[] = [];
     let transactionHelper: TransactionHelper;
+    let toUpdateTransaction: Transaction;
 
     beforeAll(async () => {
       testUser = (await createUser(connection)).databaseUser;
@@ -156,9 +147,11 @@ describe('transaction helper tests', () => {
       testAccount = (
         await createAccount(connection, testUser.id, {
           initialBalance: testInitialBalance,
+          type: AccountType.checking,
         })
       ).databaseAccount;
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const _ of staticArray) {
         const [transaction] = await transactionHelper.performTransaction(
           transactionFactory(),
@@ -170,32 +163,43 @@ describe('transaction helper tests', () => {
       }
     });
 
-    describe('delete transaction', () => {
-      let toDeleteTransaction: Transaction;
+    describe('same account', () => {
+      let changed: ReturnType<typeof transactionFactory>;
 
       beforeAll(async () => {
+        changed = transactionFactory();
         const sampleTransaction = testTransactions[testTransactions.length - 1];
 
-        toDeleteTransaction = await connection
+        toUpdateTransaction = await connection
           .getRepository(Transaction)
           .findOneOrFail({
             where: { id: sampleTransaction.id },
             relations: ['account'],
           });
 
-        await transactionHelper.revertTransaction(toDeleteTransaction);
+        await transactionHelper.updateTransaction(toUpdateTransaction, changed);
       });
 
-      it('should delete the sibling transaction on root account', async () => {
-        const counterTransaction = await getRepository(Transaction).findOne({
-          operationId: toDeleteTransaction.operationId,
+      it('should update transactions', async () => {
+        const transaction = await getRepository(Transaction).findOne(
+          toUpdateTransaction.id,
+        );
+
+        const siblingTransaction = await getRepository(Transaction).findOne({
+          operationId: toUpdateTransaction.operationId,
           accountId: testRootAccount.id,
         });
 
-        expect(counterTransaction).toBeUndefined();
+        expect(transaction).toBeDefined();
+        expect(transaction!.amount).toBe(changed.amount);
+        expect(transaction!.memo).toBe(changed.memo);
+
+        expect(siblingTransaction).toBeDefined();
+        expect(siblingTransaction!.amount).toBe(-changed.amount);
+        expect(siblingTransaction!.memo).toBe(changed.memo?.concat(' (root)'));
       });
 
-      it('should change account balances', async () => {
+      it('should update account balances', async () => {
         const refreshedAccount = await getRepository(Account).findOneOrFail(
           testAccount.id,
         );
@@ -206,13 +210,168 @@ describe('transaction helper tests', () => {
 
         const expectedBalance =
           testInitialBalance +
-          testAmounts
-            .slice(0, testTransactions.length - 1)
-            .reduce((accum, curr) => accum + curr, 0);
+          testAmounts.reduce((accum, curr) => accum + curr, 0) +
+          (changed.amount - testAmounts[testAmounts.length - 1]);
 
         expect(refreshedAccount.balance).toBe(expectedBalance);
         expect(refreshedRootAccount.balance).toBe(-expectedBalance);
       });
+    });
+
+    describe('other account', () => {
+      let otherAccount: Account;
+      let changed: ReturnType<typeof transactionFactory> & {
+        accountId: number;
+      };
+
+      beforeAll(async () => {
+        otherAccount = (
+          await createAccount(connection, testUser.id, {
+            initialBalance: testInitialBalance,
+            type: AccountType.checking,
+          })
+        ).databaseAccount;
+
+        changed = { ...transactionFactory(), accountId: otherAccount.id };
+
+        const sampleTransaction = testTransactions[testTransactions.length - 1];
+        toUpdateTransaction = await connection
+          .getRepository(Transaction)
+          .findOneOrFail({
+            where: { id: sampleTransaction.id },
+            relations: ['account'],
+          });
+
+        await transactionHelper.updateTransaction(toUpdateTransaction, changed);
+      });
+
+      it('should update transactions', async () => {
+        const transaction = await getRepository(Transaction).findOne(
+          toUpdateTransaction.id,
+        );
+
+        const siblingTransaction = await getRepository(Transaction).findOne({
+          operationId: toUpdateTransaction.operationId,
+          accountId: testRootAccount.id,
+        });
+
+        expect(transaction).toBeDefined();
+        expect(transaction!.amount).toBe(changed.amount);
+        expect(transaction!.accountId).toBe(changed.accountId);
+        expect(transaction!.memo).toBe(changed.memo);
+
+        expect(siblingTransaction).toBeDefined();
+        expect(siblingTransaction!.amount).toBe(-changed.amount);
+        expect(siblingTransaction!.memo).toBe(changed.memo?.concat(' (root)'));
+      });
+
+      it('should update account balances', async () => {
+        const otherRefreshedAccount = await getRepository(
+          Account,
+        ).findOneOrFail(otherAccount.id);
+        const refreshedAccount = await getRepository(Account).findOneOrFail(
+          testAccount.id,
+        );
+        const refreshedRootAccount = await getRepository(Account).findOneOrFail(
+          testRootAccount.id,
+        );
+
+        const transactionAmount = testAmounts[testAmounts.length - 1];
+        const updateEffect = changed.amount - transactionAmount;
+        const transactionEffect = testAmounts.reduce(
+          (accum, curr) => accum + curr,
+          0,
+        );
+
+        expect(refreshedAccount.balance).toBe(
+          testInitialBalance + transactionEffect - transactionAmount,
+        );
+
+        expect(otherRefreshedAccount.balance).toBe(
+          testInitialBalance + transactionAmount + updateEffect,
+        );
+
+        expect(refreshedRootAccount.balance).toBe(
+          /* Two times the initial balance because we have two accounts */
+          -(2 * testInitialBalance + transactionEffect + updateEffect),
+        );
+      });
+    });
+  });
+
+  describe('revertTransaction', () => {
+    const staticArray = Array.from(Array(5).keys());
+    const testTransactions: Transaction[] = [];
+    const testAmounts: number[] = [];
+    let transactionHelper: TransactionHelper;
+    let toDeleteTransaction: Transaction;
+
+    beforeAll(async () => {
+      testUser = (await createUser(connection)).databaseUser;
+
+      transactionHelper = new TransactionHelper(testUser);
+
+      testRootAccount = await getRepository(Account).findOneOrFail({
+        userId: testUser.id,
+        type: 'root',
+      });
+
+      testAccount = (
+        await createAccount(connection, testUser.id, {
+          initialBalance: testInitialBalance,
+          type: AccountType.checking,
+        })
+      ).databaseAccount;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (const _ of staticArray) {
+        const [transaction] = await transactionHelper.performTransaction(
+          transactionFactory(),
+          testAccount,
+        );
+
+        testTransactions.push(transaction);
+        testAmounts.push(transaction.amount);
+      }
+
+      const sampleTransaction = testTransactions[testTransactions.length - 1];
+
+      toDeleteTransaction = await connection
+        .getRepository(Transaction)
+        .findOneOrFail({
+          where: { id: sampleTransaction.id },
+          relations: ['account'],
+        });
+
+      await transactionHelper.revertTransaction(toDeleteTransaction);
+    });
+
+    it('should delete the sibling transaction on root account', async () => {
+      const counterTransaction = await getRepository(Transaction).findOne({
+        operationId: toDeleteTransaction.operationId,
+        accountId: testRootAccount.id,
+      });
+
+      expect(counterTransaction).toBeUndefined();
+    });
+
+    it('should change account balances', async () => {
+      const refreshedAccount = await getRepository(Account).findOneOrFail(
+        testAccount.id,
+      );
+
+      const refreshedRootAccount = await getRepository(Account).findOneOrFail(
+        testRootAccount.id,
+      );
+
+      const expectedBalance =
+        testInitialBalance +
+        testAmounts
+          .slice(0, testTransactions.length - 1)
+          .reduce((accum, curr) => accum + curr, 0);
+
+      expect(refreshedAccount.balance).toBe(expectedBalance);
+      expect(refreshedRootAccount.balance).toBe(-expectedBalance);
     });
   });
 });
