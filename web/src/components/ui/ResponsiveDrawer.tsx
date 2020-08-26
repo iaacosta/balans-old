@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: theme.spacing(32),
     borderRight: 'none',
   },
-  whiteIcon: { color: theme.palette.background.default },
+  whiteIcon: { color: theme.palette.primary.contrastText },
   clearfix: theme.mixins.toolbar,
   mobileToolbar: {
     padding: theme.spacing(0, 1),
