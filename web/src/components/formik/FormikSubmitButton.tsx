@@ -1,9 +1,15 @@
 import React from 'react';
-import { ButtonProps, Button, makeStyles, Box, CircularProgress } from '@material-ui/core';
+import {
+  ButtonProps,
+  Button,
+  makeStyles,
+  Box,
+  CircularProgress,
+  useTheme,
+} from '@material-ui/core';
 
 interface Props {
   loading: boolean;
-  size?: number;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -20,11 +26,11 @@ const useStyles = makeStyles((theme) => ({
 
 const FormikSubmitButton: React.FC<Props & ButtonProps> = ({
   loading,
-  size = 24,
   children,
   disabled,
   ...props
 }) => {
+  const theme = useTheme();
   const classes = useStyles();
 
   return (
@@ -32,7 +38,7 @@ const FormikSubmitButton: React.FC<Props & ButtonProps> = ({
       <Button type="submit" variant="contained" disabled={loading || disabled} fullWidth {...props}>
         {children}
       </Button>
-      {loading && <CircularProgress size={size} className={classes.buttonProgress} />}
+      {loading && <CircularProgress size={theme.spacing(3)} className={classes.buttonProgress} />}
     </Box>
   );
 };
