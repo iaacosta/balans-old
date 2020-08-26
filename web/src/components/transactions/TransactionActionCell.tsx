@@ -6,6 +6,8 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
+import DialogIconButton from '../ui/DialogIconButton';
+import UpdateTransactionDialog from './UpdateTransactionDialog';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -24,9 +26,15 @@ const TransactionActionCell: React.FC<CellProps<MyTransactionsQuery['transaction
 
   return (
     <Box className={classes.wrapper}>
-      <EnhancedIconButton data-testid={`updateTransaction${id}`} disabled contained color="info">
+      <DialogIconButton
+        data-testid={`updateTransaction${id}`}
+        DialogProps={{ transaction: row.original }}
+        DialogComponent={UpdateTransactionDialog}
+        contained
+        color="info"
+      >
         <EditIcon />
-      </EnhancedIconButton>
+      </DialogIconButton>
       <EnhancedIconButton
         contained
         disabled={loading}
