@@ -2,7 +2,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { build, fake } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
@@ -22,17 +21,15 @@ export const transactionFactory = (overrides?: Partial<BuildType>) =>
   });
 
 export const transactionModelFactory = (
-  accountId: number,
-  resultantBalance: number,
+  account: Account,
   overrides?: Partial<BuildType>,
 ) => {
   const factoryTransaction = transactionFactory(overrides);
   const transaction = new Transaction({
     ...factoryTransaction,
-    operationId: uuid(),
-    accountId,
-    resultantBalance,
+    accountId: account.id,
   });
+  transaction.resultantBalance = account.balance + factoryTransaction.amount;
 
   return { factoryTransaction, transaction };
 };
@@ -43,21 +40,14 @@ export const createTransaction = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
-  const factoryTransaction = transactionFactory(overrides);
-
-  const databaseTransaction = await account.performTransaction(
-    { amount: factoryTransaction.amount, memo: factoryTransaction.memo },
-    { transaction: false, entityManager },
+  const { transaction, factoryTransaction } = transactionModelFactory(
+    account,
+    overrides,
   );
 
-  return {
-    databaseTransaction,
-    factoryTransaction,
-    transaction: new Transaction({
-      ...factoryTransaction,
-      operationId: databaseTransaction.operationId,
-      accountId: account.id,
-      resultantBalance: account.balance,
-    }),
-  };
+  const databaseTransaction = await entityManager
+    .getRepository(Transaction)
+    .save(transaction);
+
+  return { databaseTransaction, factoryTransaction, transaction };
 };
