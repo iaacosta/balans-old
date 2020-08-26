@@ -5,6 +5,7 @@ import { Connection } from 'typeorm';
 
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
+import TransactionHelper from '../../helpers/TransactionHelper';
 
 export type BuildType = Pick<Transaction, 'amount' | 'memo'>;
 
@@ -28,8 +29,8 @@ export const transactionModelFactory = (
   const transaction = new Transaction({
     ...factoryTransaction,
     accountId: account.id,
+    resultantBalance: account.balance + factoryTransaction.amount,
   });
-  transaction.resultantBalance = account.balance + factoryTransaction.amount;
 
   return { factoryTransaction, transaction };
 };
@@ -40,14 +41,20 @@ export const createTransaction = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
+  const transactionHelper = new TransactionHelper(
+    { id: account.userId! },
+    entityManager,
+  );
+
   const { transaction, factoryTransaction } = transactionModelFactory(
     account,
     overrides,
   );
 
-  const databaseTransaction = await entityManager
-    .getRepository(Transaction)
-    .save(transaction);
+  const [databaseTransaction] = await transactionHelper.performTransaction(
+    factoryTransaction,
+    account,
+  );
 
   return { databaseTransaction, factoryTransaction, transaction };
 };
