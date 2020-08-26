@@ -54,9 +54,9 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
 
     const { sum } = await manager
       .getRepository(Transaction)
-      .createQueryBuilder()
-      .select('SUM("amount")')
-      .where('"accountId" = :id', { id: databaseEntity.id })
+      .createQueryBuilder('transaction')
+      .select('SUM(transaction.amount)')
+      .where('transaction.accountId = :id', { id: databaseEntity.id })
       .getRawOne();
 
     await manager
@@ -77,7 +77,6 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     if (Number.isNaN(amount)) return;
 
     rootAccount.balance += amount;
-
     await manager.getRepository(Account).save(rootAccount);
   }
 }

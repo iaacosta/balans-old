@@ -44,7 +44,7 @@ export default class TransactionResolvers {
   @Mutation(() => Transaction)
   @Authorized()
   async createTransaction(
-    @Arg('input') { accountId, ...transactionInput }: CreateTransactionInput,
+    @Arg('input') { accountId, memo, amount }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
     /* Check if account doesn't belong to user */
@@ -53,7 +53,13 @@ export default class TransactionResolvers {
       userId: currentUser!.id,
     });
 
-    return account.performTransaction(transactionInput);
+    return this.repository.save(
+      new Transaction({
+        memo: memo !== '' ? memo : undefined,
+        amount,
+        accountId: account.id,
+      }),
+    );
   }
 
   @Mutation(() => ID)
@@ -71,7 +77,7 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    await transaction.account.revertTransaction(transaction);
+    await this.repository.remove(transaction);
     return id;
   }
 

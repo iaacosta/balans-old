@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { NotEquals } from 'class-validator';
+import { v4 as uuid } from 'uuid';
 import Account from './Account';
 
 @ObjectType()
@@ -57,15 +58,12 @@ export default class Transaction {
     amount: number;
     accountId: number;
     memo?: string;
-    operationId: string;
-    resultantBalance: number;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
       this.memo = transaction.memo;
-      this.operationId = transaction.operationId;
-      this.resultantBalance = transaction.resultantBalance;
+      this.operationId = uuid();
     }
   }
 }
