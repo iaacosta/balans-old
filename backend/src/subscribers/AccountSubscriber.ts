@@ -59,14 +59,16 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
       .where('transaction.accountId = :id', { id: databaseEntity.id })
       .getRawOne();
 
-    await manager
-      .getRepository(Transaction)
-      .createQueryBuilder('transaction')
-      .delete()
-      .where('"transaction"."operationId" IN (:...operations)', {
-        operations: operations.map(({ operationId }) => `${operationId}`),
-      })
-      .execute();
+    if (operations.length > 0) {
+      await manager
+        .getRepository(Transaction)
+        .createQueryBuilder('transaction')
+        .delete()
+        .where('"transaction"."operationId" IN (:...operations)', {
+          operations: operations.map(({ operationId }) => `${operationId}`),
+        })
+        .execute();
+    }
 
     const rootAccount = await manager.getRepository(Account).findOneOrFail({
       type: 'root',
