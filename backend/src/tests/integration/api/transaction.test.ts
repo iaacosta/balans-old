@@ -18,7 +18,7 @@ const MY_TRANSACTIONS = gql`
     transactions: myTransactions {
       id
       amount
-      resultantBalance
+      memo
       account {
         id
         name
@@ -36,6 +36,7 @@ const CREATE_TRANSACTION = gql`
     createTransaction(input: $input) {
       id
       amount
+      memo
       account {
         id
       }
