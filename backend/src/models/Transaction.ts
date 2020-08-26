@@ -58,12 +58,15 @@ export default class Transaction {
     amount: number;
     accountId: number;
     memo?: string;
+    operationId?: string;
+    resultantBalance: number;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
-      this.memo = transaction.memo;
-      this.operationId = uuid();
+      this.memo = transaction.memo === '' ? undefined : transaction.memo;
+      this.operationId = transaction.operationId || uuid();
+      this.resultantBalance = transaction.resultantBalance;
     }
   }
 }
