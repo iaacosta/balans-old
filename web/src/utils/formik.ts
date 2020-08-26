@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 import mapValues from 'lodash/mapValues';
 
-export const filterUnchangedValues = <TValues extends Record<string, unknown>>(
-  values: TValues,
-  initialValues: TValues,
-): { [key in keyof TValues]: TValues[keyof TValues] | null } =>
-  mapValues(values, (value, key) => (value !== initialValues[key as keyof TValues] ? value : null));
+/* TODO: check if there is a way to do this properly, the first approach didn't work */
+export const filterUnchangedValues = <T extends object>(values: T, initialValues: T): T =>
+  mapValues(
+    values,
+    (value, key) => (value !== initialValues[key as keyof T] ? value : null) as any,
+  );

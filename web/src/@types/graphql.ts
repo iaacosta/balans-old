@@ -101,6 +101,13 @@ export type CreateTransactionInput = {
   memo?: Maybe<Scalars['String']>;
 };
 
+export type UpdateTransactionInput = {
+  id: Scalars['ID'];
+  amount?: Maybe<Scalars['Int']>;
+  memo?: Maybe<Scalars['String']>;
+  accountId?: Maybe<Scalars['ID']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
@@ -124,6 +131,7 @@ export type Mutation = {
   signUp: Scalars['String'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
+  updateTransaction: Transaction;
   deleteTransaction: Scalars['ID'];
   createUser: User;
   updateUser: User;
@@ -160,6 +168,11 @@ export type MutationSetupDatabaseArgs = {
 
 export type MutationCreateTransactionArgs = {
   input: CreateTransactionInput;
+};
+
+
+export type MutationUpdateTransactionArgs = {
+  input: UpdateTransactionInput;
 };
 
 
@@ -283,6 +296,23 @@ export type CreateTransactionMutation = (
   & { createTransaction: (
     { __typename?: 'Transaction' }
     & Pick<Transaction, 'id'>
+  ) }
+);
+
+export type UpdateTransactionMutationVariables = Exact<{
+  input: UpdateTransactionInput;
+}>;
+
+
+export type UpdateTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTransaction: (
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'resultantBalance' | 'createdAt'>
+    & { account: (
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    ) }
   ) }
 );
 

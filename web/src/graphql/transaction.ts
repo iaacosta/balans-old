@@ -25,6 +25,23 @@ export const createTransactionMutation = gql`
   }
 `;
 
+export const updateTransactionMutation = gql`
+  mutation UpdateTransaction($input: UpdateTransactionInput!) {
+    updateTransaction(input: $input) {
+      id
+      amount
+      memo
+      resultantBalance
+      account {
+        id
+        name
+        bank
+      }
+      createdAt
+    }
+  }
+`;
+
 export const deleteTransactionMutation = gql`
   mutation DeleteTransaction($id: ID!) {
     deleteTransaction(id: $id)

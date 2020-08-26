@@ -9,13 +9,15 @@ import {
   Box,
   Paper,
 } from '@material-ui/core';
-import { Delete as DeleteIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 import { formatMoney } from 'accounting';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
 import VirtualizedList from '../ui/VirtualizedList';
+import DialogIconButton from '../ui/DialogIconButton';
+import UpdateTransactionDialog from './UpdateTransactionDialog';
 
 type Props = {
   transactions: MyTransactionsQuery['transactions'];
@@ -28,6 +30,10 @@ const useStyles = makeStyles((theme) => ({
   container: { listStyle: 'none' },
   expense: { color: theme.palette.error.main },
   income: { color: theme.palette.success.main },
+  secondaryActions: {
+    display: 'flex',
+    '& > *:not(:last-child)': { marginRight: theme.spacing(1) },
+  },
 }));
 
 const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCreated }) => {
@@ -56,7 +62,16 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
                   primary={formatMoney(amount)}
                   secondary={`${account.name} (${account.bank})`}
                 />
-                <ListItemSecondaryAction>
+                <ListItemSecondaryAction className={classes.secondaryActions}>
+                  <DialogIconButton
+                    data-testid={`updateTransaction${id}`}
+                    DialogProps={{ transaction: data[index] }}
+                    DialogComponent={UpdateTransactionDialog}
+                    contained
+                    color="info"
+                  >
+                    <EditIcon />
+                  </DialogIconButton>
                   <EnhancedIconButton
                     onClick={() => deleteTransaction(id)}
                     contained
