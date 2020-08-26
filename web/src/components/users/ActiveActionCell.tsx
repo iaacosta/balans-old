@@ -3,12 +3,12 @@ import { CellProps } from 'react-table';
 import { Box, makeStyles } from '@material-ui/core';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
-import { useToggleable } from '../../hooks/utils/useToggleable';
 import { AllUsersQuery } from '../../@types/graphql';
 import { roles } from '../../utils/rbac';
 import EnhancedIconButton from '../ui/EnhancedIconButton';
 import UpdateUserDialog from './UpdateUserDialog';
 import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
+import DialogIconButton from '../ui/DialogIconButton';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void>> = ({ row }) => {
-  const { toggled, set } = useToggleable();
   const classes = useStyles();
   const [deleteUser, { loading: deleteLoading }] = useDeleteUser();
 
@@ -27,15 +26,15 @@ const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void
 
   return (
     <Box className={classes.wrapper}>
-      <EnhancedIconButton
+      <DialogIconButton
         data-testid={`updateUser${id}`}
-        onClick={() => set(true)}
+        DialogProps={{ user: row.original }}
+        DialogComponent={UpdateUserDialog}
         contained
         color="info"
       >
         <EditIcon />
-      </EnhancedIconButton>
-      <UpdateUserDialog open={toggled} onClose={() => set(false)} user={row.original} />
+      </DialogIconButton>
       <EnhancedIconButton
         contained
         data-testid={`deleteUser${id}`}
