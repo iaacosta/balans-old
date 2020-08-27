@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import { myAccountsQuery } from '../../graphql/account';
 import { MyAccountsQueryVariables, MyAccountsQuery } from '../../@types/graphql';
-import ContainerLoader from '../ui/ContainerLoader';
+import ContainerLoader from '../ui/misc/ContainerLoader';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import DebitAccountCard from './DebitAccountCard';
 

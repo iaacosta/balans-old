@@ -3,7 +3,7 @@ import React from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useTheme, Typography, Box } from '@material-ui/core';
-import ContainerLoader from './ContainerLoader';
+import ContainerLoader from '../misc/ContainerLoader';
 
 interface Props<T> {
   data: T[];

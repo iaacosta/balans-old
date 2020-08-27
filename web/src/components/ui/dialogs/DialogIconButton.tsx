@@ -1,8 +1,8 @@
 import React from 'react';
 import { IconButtonProps, Portal } from '@material-ui/core';
 
-import { useToggleable } from '../../hooks/utils/useToggleable';
-import EnhancedIconButton, { EnhancedIconButtonColor } from './EnhancedIconButton';
+import { useToggleable } from '../../../hooks/utils/useToggleable';
+import EnhancedIconButton, { EnhancedIconButtonColor } from '../misc/EnhancedIconButton';
 import ResponsiveDialog from './ResponsiveDialog';
 
 type Props<TProps> = {

@@ -15,12 +15,12 @@ import { capitalize } from 'lodash';
 import { usersQuery } from '../../graphql/users';
 import { AllUsersQuery } from '../../@types/graphql';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
-import VirtualizedList from '../ui/VirtualizedList';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
 import { roles } from '../../utils/rbac';
 import UpdateUserDialog from './UpdateUserDialog';
-import DialogIconButton from '../ui/DialogIconButton';
+import DialogIconButton from '../ui/dialogs/DialogIconButton';
 
 const useStyles = makeStyles((theme) => ({
   list: { flex: 1 },

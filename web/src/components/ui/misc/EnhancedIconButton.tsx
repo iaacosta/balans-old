@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, IconButton, IconButtonProps, Theme } from '@material-ui/core';
-import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
+import { useBreakpoint } from '../../../hooks/utils/useBreakpoint';
 
 export type EnhancedIconButtonColor =
   | 'primary'

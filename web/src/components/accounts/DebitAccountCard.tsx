@@ -9,7 +9,7 @@ import {
 } from '@material-ui/icons';
 
 import { MyAccountsQuery } from '../../@types/graphql';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 import { useDeleteDebitAccount } from '../../hooks/graphql/useDeleteDebitAccount';
 

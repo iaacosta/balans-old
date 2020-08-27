@@ -3,10 +3,10 @@ import { Typography, makeStyles, Paper, Box } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 
 import { useTabs } from '../hooks/utils/useTabs';
-import ViewportContainer from '../components/ui/ViewportContainer';
-import CustomTabs from '../components/ui/CustomTabs';
+import ViewportContainer from '../components/ui/misc/ViewportContainer';
+import CustomTabs from '../components/ui/navigation/CustomTabs';
 import DebitAccountsGrid from '../components/accounts/DebitAccountsGrid';
-import DialogButton from '../components/ui/DialogButton';
+import DialogButton from '../components/ui/dialogs/DialogButton';
 import CreateDebitAccountDialog from '../components/accounts/CreateDebitAccountDialog';
 
 const useStyles = makeStyles((theme) => ({
