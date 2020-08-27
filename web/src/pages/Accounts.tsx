@@ -46,10 +46,11 @@ const Accounts: React.FC = () => {
         {selected === 'debit' && (
           <DialogButton
             buttonLabel="Create new debit account"
-            DialogComponent={CreateDebitAccountDialog}
             data-testid="createAccountButton"
             startIcon={<AddIcon />}
-          />
+          >
+            <CreateDebitAccountDialog />
+          </DialogButton>
         )}
       </Box>
     </ViewportContainer>

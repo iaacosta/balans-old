@@ -48,10 +48,11 @@ const Transactions: React.FC = () => {
     <DialogButton
       disabled={errored || loading || noAccounts}
       buttonLabel="Add new transaction"
-      DialogComponent={CreateTransactionDialog}
       data-testid="createTransactionButton"
       startIcon={<AddIcon />}
-    />
+    >
+      <CreateTransactionDialog />
+    </DialogButton>
   );
 
   return (

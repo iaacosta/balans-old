@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo } from 'react';
-import { DialogTitle, DialogContent, DialogActions, Button, Grid } from '@material-ui/core';
+import React, { useMemo, useContext } from 'react';
+import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import _values from 'lodash/values';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -17,12 +17,12 @@ import FormikSelectField from '../formik/FormikSelectField';
 import { roles } from '../../utils/rbac';
 import { updateUserMutation } from '../../graphql/users';
 import { filterUnchangedValues } from '../../utils/formik';
-import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { useMe } from '../../hooks/auth/useMe';
+import DialogFormContext from '../../contexts/DialogFormContext';
+import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 
 interface Props {
   user: AllUsersQuery['users'][number];
-  onClose: () => void;
 }
 
 const schema = yup.object().shape({
@@ -33,9 +33,10 @@ const schema = yup.object().shape({
   password: yup.string().min(6),
 });
 
-const UpdateUserDialog: React.FC<Props> = ({ user, onClose }) => {
+const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   const { user: me } = useMe();
   const { enqueueSnackbar } = useSnackbar();
+  const { onClose } = useContext(DialogFormContext);
   const [updateUser, { loading }] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
     updateUserMutation,
   );
@@ -100,14 +101,9 @@ const UpdateUserDialog: React.FC<Props> = ({ user, onClose }) => {
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={onClose} color="secondary">
-              Cancel
-            </Button>
-            <FormikSubmitButton color="primary" disabled={!dirty} loading={loading}>
-              Update
-            </FormikSubmitButton>
-          </DialogActions>
+          <DialogFormButtons disabled={!dirty} loading={loading}>
+            Update
+          </DialogFormButtons>
         </Form>
       )}
     </Formik>

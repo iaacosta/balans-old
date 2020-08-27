@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
@@ -16,14 +16,15 @@ import { myAccountsQuery } from '../../graphql/account';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import TransactionFormView from './TransactionFormView';
 import { filterUnchangedValues } from '../../utils/formik';
+import DialogFormContext from '../../contexts/DialogFormContext';
 
 interface Props {
   transaction: MyTransactionsQuery['transactions'][number];
-  onClose: () => void;
 }
 
-const UpdateTransactionDialog: React.FC<Props> = ({ transaction, onClose }) => {
+const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { onClose } = useContext(DialogFormContext);
   const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
 
   const [updateTransaction, { loading: updateLoading }] = useMutation<
@@ -47,7 +48,6 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction, onClose }) => {
     <TransactionFormView
       mode="update"
       accounts={data?.accounts}
-      onClose={onClose}
       submitLoading={updateLoading}
       initialLoading={loading || !data}
       initialValues={initialValues}
