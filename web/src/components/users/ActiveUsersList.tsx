@@ -52,12 +52,11 @@ const ActiveUsersList: React.FC = () => {
                 <ListItemSecondaryAction className={classes.secondaryActions}>
                   <DialogIconButton
                     data-testid={`updateUser${id}`}
-                    DialogProps={{ user: userData[index] }}
-                    DialogComponent={UpdateUserDialog}
+                    icon={<EditIcon fontSize="small" />}
                     contained
                     color="info"
                   >
-                    <EditIcon fontSize="small" />
+                    <UpdateUserDialog user={userData[index]} />
                   </DialogIconButton>
                   <EnhancedIconButton
                     contained

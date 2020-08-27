@@ -1,37 +1,20 @@
 import React from 'react';
 import { Formik, FormikConfig, Form } from 'formik';
 import * as yup from 'yup';
-import {
-  InputAdornment,
-  Grid,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  ButtonProps as TButtonProps,
-  makeStyles,
-} from '@material-ui/core';
+import { InputAdornment, Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
 
 import { MyAccountsQuery } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import ContainerLoader from '../ui/misc/ContainerLoader';
-import FormikSubmitButton from '../formik/FormikSubmitButton';
+import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 
 type Props<T> = {
   initialValues: T;
   onSubmit: FormikConfig<T>['onSubmit'];
   accounts?: MyAccountsQuery['accounts'];
-  onClose: () => void;
   initialLoading: boolean;
   submitLoading: boolean;
-  mode: 'update' | 'create';
-};
-
-type WrapperProps = {
-  onClose: () => void;
-  loading: boolean;
-  ButtonProps?: TButtonProps;
   mode: 'update' | 'create';
 };
 
@@ -43,7 +26,6 @@ const TransactionFormView = <T extends Record<string, unknown>>({
   initialValues,
   onSubmit,
   accounts,
-  onClose,
   initialLoading,
   submitLoading,
   mode,
@@ -110,18 +92,9 @@ const TransactionFormView = <T extends Record<string, unknown>>({
         <Form className={classes.form}>
           <DialogTitle>{label} transaction</DialogTitle>
           <DialogContent>{Node}</DialogContent>
-          <DialogActions>
-            <Button onClick={onClose} color="secondary">
-              Cancel
-            </Button>
-            <FormikSubmitButton
-              color="primary"
-              loading={submitLoading}
-              disabled={mode === 'update' ? !dirty : false}
-            >
-              {label}
-            </FormikSubmitButton>
-          </DialogActions>
+          <DialogFormButtons loading={submitLoading} disabled={mode === 'update' ? !dirty : false}>
+            {label}
+          </DialogFormButtons>
         </Form>
       )}
     </Formik>

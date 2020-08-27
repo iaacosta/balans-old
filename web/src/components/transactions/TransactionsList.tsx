@@ -65,12 +65,11 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
                 <ListItemSecondaryAction className={classes.secondaryActions}>
                   <DialogIconButton
                     data-testid={`updateTransaction${id}`}
-                    DialogProps={{ transaction: data[index] }}
-                    DialogComponent={UpdateTransactionDialog}
+                    icon={<EditIcon />}
                     contained
                     color="info"
                   >
-                    <EditIcon />
+                    <UpdateTransactionDialog transaction={data[index]} />
                   </DialogIconButton>
                   <EnhancedIconButton
                     onClick={() => deleteTransaction(id)}

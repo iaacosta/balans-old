@@ -1,14 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo, useEffect } from 'react';
-import {
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Grid,
-  InputAdornment,
-} from '@material-ui/core';
+import React, { useMemo, useEffect, useContext } from 'react';
+import { DialogTitle, DialogContent, Grid, InputAdornment } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
@@ -21,13 +14,10 @@ import {
 } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
-import FormikSubmitButton from '../formik/FormikSubmitButton';
 import { createDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
 import { myTransactionsQuery } from '../../graphql/transaction';
-
-interface Props {
-  onClose: () => void;
-}
+import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
+import DialogFormContext from '../../contexts/DialogFormContext';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -62,8 +52,9 @@ const defaultBanks = [
   'Coopeuch',
 ];
 
-const CreateDebitAccountDialog: React.FC<Props> = ({ onClose }) => {
+const CreateDebitAccountDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const { onClose } = useContext(DialogFormContext);
   const [createDebitAccount, { loading }] = useMutation<
     CreateDebitAccountMutation,
     CreateDebitAccountMutationVariables
@@ -139,14 +130,7 @@ const CreateDebitAccountDialog: React.FC<Props> = ({ onClose }) => {
                 )}
               </Grid>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={onClose} color="secondary">
-                Cancel
-              </Button>
-              <FormikSubmitButton color="primary" loading={loading}>
-                Create
-              </FormikSubmitButton>
-            </DialogActions>
+            <DialogFormButtons loading={loading}>Create</DialogFormButtons>
           </Form>
         );
       }}
