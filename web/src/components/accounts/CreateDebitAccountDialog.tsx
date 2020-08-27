@@ -4,20 +4,14 @@ import React, { useMemo, useEffect, useContext } from 'react';
 import { DialogTitle, DialogContent, Grid, InputAdornment } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
-import { useMutation } from '@apollo/client';
 import * as yup from 'yup';
 
-import {
-  CreateDebitAccountMutation,
-  CreateDebitAccountMutationVariables,
-  AccountType,
-} from '../../@types/graphql';
+import { AccountType } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
-import { createDebitAccountMutation, myAccountsQuery } from '../../graphql/account';
-import { myTransactionsQuery } from '../../graphql/transaction';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import DialogFormContext from '../../contexts/DialogFormContext';
+import { useCreateDebitAccount } from '../../hooks/graphql';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -55,12 +49,7 @@ const defaultBanks = [
 const CreateDebitAccountDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
-  const [createDebitAccount, { loading }] = useMutation<
-    CreateDebitAccountMutation,
-    CreateDebitAccountMutationVariables
-  >(createDebitAccountMutation, {
-    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-  });
+  const [createDebitAccount, { loading }] = useCreateDebitAccount();
 
   const initialValues = useMemo(
     () => ({
@@ -78,7 +67,7 @@ const CreateDebitAccountDialog: React.FC = () => {
       validationSchema={schema}
       onSubmit={async (values) => {
         try {
-          await createDebitAccount({ variables: { input: values } });
+          await createDebitAccount(values);
           enqueueSnackbar('Account created successfully', { variant: 'success' });
           onClose();
         } catch (err) {

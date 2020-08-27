@@ -240,8 +240,7 @@ export type DeleteDebitAccountMutation = (
 );
 
 export type LoginMutationVariables = Exact<{
-  username: Scalars['String'];
-  password: Scalars['String'];
+  input: LoginInput;
 }>;
 
 

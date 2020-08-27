@@ -1,13 +1,23 @@
 import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
-import { useIdMutation, UseIdMutationReturn, useRedirectedQuery } from './utils';
+import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteTransactionMutation,
   MyTransactionsQuery,
   MyTransactionsQueryVariables,
+  CreateTransactionMutation,
+  CreateTransactionMutationVariables,
+  UpdateTransactionMutation,
+  UpdateTransactionMutationVariables,
 } from '../../@types/graphql';
-import { deleteTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
+import {
+  deleteTransactionMutation,
+  myTransactionsQuery,
+  createTransactionMutation,
+  updateTransactionMutation,
+} from '../../graphql/transaction';
 import { myAccountsQuery } from '../../graphql/account';
+import { InputMutationTuple } from '../../@types/helpers';
 
 export const useMyTransactions = (): Omit<
   QueryResult<MyTransactionsQuery, MyTransactionsQueryVariables>,
@@ -17,6 +27,19 @@ export const useMyTransactions = (): Omit<
   const transactions = useMemo(() => data?.transactions || [], [data]);
   return { transactions, loading: loading || !data, ...meta };
 };
+
+export const useCreateTransaction = (): InputMutationTuple<
+  CreateTransactionMutation,
+  CreateTransactionMutationVariables
+> =>
+  useInputMutation(createTransactionMutation, {
+    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
+  });
+
+export const useUpdateTransaction = (): InputMutationTuple<
+  UpdateTransactionMutation,
+  UpdateTransactionMutationVariables
+> => useInputMutation(updateTransactionMutation, { refetchQueries: [{ query: myAccountsQuery }] });
 
 export const useDeleteTransaction = (): UseIdMutationReturn<DeleteTransactionMutation> => {
   return useIdMutation<DeleteTransactionMutation>(deleteTransactionMutation, {
