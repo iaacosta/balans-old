@@ -2,20 +2,18 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { makeStyles, Box, Button, Typography, Grid, Hidden } from '@material-ui/core';
-import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import FormikTextField from '../components/formik/FormikTextField';
 import FormikSubmitButton from '../components/formik/FormikSubmitButton';
-import { loginMutation } from '../graphql/authentication';
 import routing from '../constants/routing';
 import AuthWrapper from '../components/authenticate/AuthWrapper';
 import { addToken } from '../slices/authSlice';
 import FormikCheckbox from '../components/formik/FormikCheckbox';
-import { LoginMutation, LoginMutationVariables } from '../@types/graphql';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
+import { useLogin } from '../hooks/graphql/authentication';
 
 const schema = yup.object().shape({
   username: yup.string().required(),
@@ -32,7 +30,7 @@ const Login: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const [login, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(loginMutation);
+  const [login, { loading }] = useLogin();
 
   return (
     <AuthWrapper>
@@ -45,7 +43,7 @@ const Login: React.FC = () => {
         validationSchema={schema}
         onSubmit={async ({ rememberMe, ...values }) => {
           try {
-            const { data } = await login({ variables: values });
+            const { data } = await login(values);
             if (data) {
               dispatch(addToken({ token: data.token }));
               if (rememberMe) localStorage.setItem('x-auth', data.token);

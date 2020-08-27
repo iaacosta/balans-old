@@ -4,22 +4,17 @@ import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import _values from 'lodash/values';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
-import { useMutation } from '@apollo/client';
 import * as yup from 'yup';
 
-import {
-  UpdateUserMutation,
-  UpdateUserMutationVariables,
-  AllUsersQuery,
-} from '../../@types/graphql';
+import { AllUsersQuery } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import { roles } from '../../utils/rbac';
-import { updateUserMutation } from '../../graphql/users';
 import { filterUnchangedValues } from '../../utils/formik';
 import { useMe } from '../../hooks/auth/useMe';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
+import { useUpdateUser } from '../../hooks/graphql';
 
 interface Props {
   user: AllUsersQuery['users'][number];
@@ -37,9 +32,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   const { user: me } = useMe();
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
-  const [updateUser, { loading }] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
-    updateUserMutation,
-  );
+  const [updateUser, { loading }] = useUpdateUser();
 
   const initialValues = useMemo(
     () => ({
@@ -58,11 +51,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
       validationSchema={schema}
       onSubmit={async (values) => {
         try {
-          await updateUser({
-            variables: {
-              input: { id: user.id, ...filterUnchangedValues(values, initialValues) },
-            },
-          });
+          await updateUser({ id: user.id, ...filterUnchangedValues(values, initialValues) });
           enqueueSnackbar('User updated successfully', { variant: 'success' });
           onClose();
         } catch (err) {

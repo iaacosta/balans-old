@@ -1,19 +1,23 @@
 import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
-import { useIdMutation, UseIdMutationReturn, useRedirectedQuery } from './utils';
+import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteUserMutation,
   RestoreUserMutation,
   AllUsersQuery,
   AllUsersQueryVariables,
   AllDeletedUsersQuery,
+  UpdateUserMutation,
+  UpdateUserMutationVariables,
 } from '../../@types/graphql';
 import {
   deleteUserMutation,
   usersQuery,
   deletedUsersQuery,
   restoreUserMutation,
+  updateUserMutation,
 } from '../../graphql/users';
+import { InputMutationTuple } from '../../@types/helpers';
 
 export const useAllActiveUsers = (): Omit<
   QueryResult<AllUsersQuery, AllUsersQueryVariables>,
@@ -32,10 +36,15 @@ export const useAllDeletedUsers = (): Omit<
 > & {
   users: AllDeletedUsersQuery['users'];
 } => {
-  const { data, loading, ...meta } = useRedirectedQuery(usersQuery);
+  const { data, loading, ...meta } = useRedirectedQuery(deletedUsersQuery);
   const users = useMemo(() => data?.users || [], [data]);
   return { users, loading: loading || !data, ...meta };
 };
+
+export const useUpdateUser = (): InputMutationTuple<
+  UpdateUserMutation,
+  UpdateUserMutationVariables
+> => useInputMutation(updateUserMutation);
 
 export const useRestoreUser = (): UseIdMutationReturn<RestoreUserMutation> => {
   return useIdMutation<RestoreUserMutation>(restoreUserMutation, {

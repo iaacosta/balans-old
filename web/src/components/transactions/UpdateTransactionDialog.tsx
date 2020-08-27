@@ -2,17 +2,10 @@
 import React, { useMemo, useContext } from 'react';
 import { Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { useMutation } from '@apollo/client';
 import { map, capitalize } from 'lodash';
 
-import {
-  UpdateTransactionMutation,
-  UpdateTransactionMutationVariables,
-  MyTransactionsQuery,
-} from '../../@types/graphql';
-import { updateTransactionMutation } from '../../graphql/transaction';
-import { myAccountsQuery } from '../../graphql/account';
-import { useMyDebitAccounts } from '../../hooks/graphql';
+import { MyTransactionsQuery } from '../../@types/graphql';
+import { useMyDebitAccounts, useUpdateTransaction } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import { filterUnchangedValues } from '../../utils/formik';
 import DialogFormContext from '../../contexts/DialogFormContext';
@@ -25,13 +18,7 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
   const { accounts, loading } = useMyDebitAccounts();
-
-  const [updateTransaction, { loading: updateLoading }] = useMutation<
-    UpdateTransactionMutation,
-    UpdateTransactionMutationVariables
-  >(updateTransactionMutation, {
-    refetchQueries: [{ query: myAccountsQuery }],
-  });
+  const [updateTransaction, { loading: updateLoading }] = useUpdateTransaction();
 
   const initialValues = useMemo(
     () => ({
@@ -56,12 +43,8 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
 
         try {
           await updateTransaction({
-            variables: {
-              input: {
-                id: transaction.id,
-                ...filterUnchangedValues(toChange, original),
-              },
-            },
+            id: transaction.id,
+            ...filterUnchangedValues(toChange, original),
           });
           enqueueSnackbar('Transaction updated successfully', { variant: 'success' });
           onClose();

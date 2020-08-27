@@ -24,11 +24,10 @@ const Transactions: React.FC = () => {
 
   const noAccounts = accounts.length === 0;
   const loading = transactionsLoading || accountsLoading;
-  const errored = !loading;
 
   const Button = (
     <DialogButton
-      disabled={errored || loading || noAccounts}
+      disabled={loading || noAccounts}
       buttonLabel="Add new transaction"
       data-testid="createTransactionButton"
       startIcon={<AddIcon />}
@@ -45,7 +44,7 @@ const Transactions: React.FC = () => {
       <Hidden smDown>
         <TransactionsTable
           transactions={transactions}
-          loading={errored || loading}
+          loading={loading}
           noAccountsCreated={noAccounts}
         >
           {Button}
