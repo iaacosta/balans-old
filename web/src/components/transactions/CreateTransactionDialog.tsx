@@ -16,11 +16,10 @@ import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import TransactionFormView from './TransactionFormView';
 
 interface Props {
-  open: boolean;
   onClose: () => void;
 }
 
-const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
+const CreateTransactionDialog: React.FC<Props> = ({ onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
 
@@ -43,13 +42,12 @@ const CreateTransactionDialog: React.FC<Props> = ({ open, onClose }) => {
 
   return (
     <TransactionFormView
-      accounts={data?.accounts}
       mode="create"
-      open={open}
+      accounts={data?.accounts}
       onClose={onClose}
+      initialValues={initialValues}
       initialLoading={loading || !data}
       submitLoading={createLoading}
-      initialValues={initialValues}
       onSubmit={async ({ type, amount, ...values }) => {
         try {
           await createTransaction({

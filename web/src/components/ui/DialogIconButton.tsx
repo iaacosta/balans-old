@@ -1,12 +1,13 @@
 import React from 'react';
-import { IconButtonProps } from '@material-ui/core';
+import { IconButtonProps, Portal } from '@material-ui/core';
 
 import { useToggleable } from '../../hooks/utils/useToggleable';
 import EnhancedIconButton, { EnhancedIconButtonColor } from './EnhancedIconButton';
+import ResponsiveDialog from './ResponsiveDialog';
 
 type Props<TProps> = {
   DialogProps: TProps;
-  DialogComponent: React.FC<TProps & { open: boolean; onClose: () => void }>;
+  DialogComponent: React.FC<TProps & { onClose: () => void }>;
   color?: EnhancedIconButtonColor;
   contained?: boolean;
 };
@@ -31,7 +32,11 @@ const DialogIconButton = <T extends Record<string, unknown>>({
       >
         {children}
       </EnhancedIconButton>
-      <DialogComponent {...DialogProps} open={toggled} onClose={() => set(false)} />
+      <Portal>
+        <ResponsiveDialog open={toggled} onClose={() => set(false)}>
+          <DialogComponent {...DialogProps} onClose={() => set(false)} />
+        </ResponsiveDialog>
+      </Portal>
     </>
   );
 };
