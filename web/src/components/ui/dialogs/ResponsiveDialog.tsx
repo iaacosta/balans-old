@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogProps, makeStyles } from '@material-ui/core';
-import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
+import { useBreakpoint } from '../../../hooks/utils/useBreakpoint';
 
 const useStyles = makeStyles(() => ({
   paperFullScreen: { justifyContent: 'center' },

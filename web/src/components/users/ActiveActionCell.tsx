@@ -5,10 +5,10 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { AllUsersQuery } from '../../@types/graphql';
 import { roles } from '../../utils/rbac';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import UpdateUserDialog from './UpdateUserDialog';
 import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
-import DialogIconButton from '../ui/DialogIconButton';
+import DialogIconButton from '../ui/dialogs/DialogIconButton';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {

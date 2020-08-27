@@ -5,8 +5,8 @@ import ActiveUsersTable from '../components/users/ActiveUsersTable';
 import ActiveUsersList from '../components/users/ActiveUsersList';
 import DeletedUsersTable from '../components/users/DeletedUsersTable';
 import DeletedUsersList from '../components/users/DeletedUsersList';
-import ViewportContainer from '../components/ui/ViewportContainer';
-import CustomTabs from '../components/ui/CustomTabs';
+import ViewportContainer from '../components/ui/misc/ViewportContainer';
+import CustomTabs from '../components/ui/navigation/CustomTabs';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },

@@ -4,7 +4,7 @@ import { capitalize, makeStyles } from '@material-ui/core';
 
 import { deletedUsersQuery } from '../../graphql/users';
 import { AllDeletedUsersQuery } from '../../@types/graphql';
-import EnhancedTable from '../ui/EnhancedTable';
+import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import DeletedActionsCell from './DeletedActionCell';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 

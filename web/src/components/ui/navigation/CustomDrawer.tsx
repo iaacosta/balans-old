@@ -29,15 +29,15 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import routing from '../../constants/routing';
-import { useMe } from '../../hooks/auth/useMe';
-import { useToggleable } from '../../hooks/utils/useToggleable';
-import { actions } from '../../utils/rbac';
-import { useCan } from '../../hooks/auth/useRbac';
-import { useLogout } from '../../hooks/auth/useLogout';
-import { AppState } from '../../config/redux';
-import { toggleTheme } from '../../slices/themeSlice';
-import ContainerLoader from './ContainerLoader';
+import routing from '../../../constants/routing';
+import { useMe } from '../../../hooks/auth/useMe';
+import { useToggleable } from '../../../hooks/utils/useToggleable';
+import { actions } from '../../../utils/rbac';
+import { useCan } from '../../../hooks/auth/useRbac';
+import { useLogout } from '../../../hooks/auth/useLogout';
+import { AppState } from '../../../config/redux';
+import { toggleTheme } from '../../../slices/themeSlice';
+import ContainerLoader from '../misc/ContainerLoader';
 
 const navigationItems = [
   {

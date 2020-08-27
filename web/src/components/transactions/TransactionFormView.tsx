@@ -15,7 +15,7 @@ import {
 import { MyAccountsQuery } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
-import ContainerLoader from '../ui/ContainerLoader';
+import ContainerLoader from '../ui/misc/ContainerLoader';
 import FormikSubmitButton from '../formik/FormikSubmitButton';
 
 type Props<T> = {

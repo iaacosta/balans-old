@@ -4,9 +4,9 @@ import { Box, makeStyles } from '@material-ui/core';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { MyTransactionsQuery } from '../../@types/graphql';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
-import DialogIconButton from '../ui/DialogIconButton';
+import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import UpdateTransactionDialog from './UpdateTransactionDialog';
 
 const useStyles = makeStyles((theme) => ({
