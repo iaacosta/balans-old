@@ -2,16 +2,9 @@
 import React, { useMemo, useContext } from 'react';
 import { Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { useMutation } from '@apollo/client';
 import { map, capitalize } from 'lodash';
 
-import {
-  CreateTransactionMutation,
-  CreateTransactionMutationVariables,
-} from '../../@types/graphql';
-import { createTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
-import { myAccountsQuery } from '../../graphql/account';
-import { useMyDebitAccounts } from '../../hooks/graphql';
+import { useMyDebitAccounts, useCreateTransaction } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 
@@ -19,13 +12,7 @@ const CreateTransactionDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
   const { accounts, loading } = useMyDebitAccounts();
-
-  const [createTransaction, { loading: createLoading }] = useMutation<
-    CreateTransactionMutation,
-    CreateTransactionMutationVariables
-  >(createTransactionMutation, {
-    refetchQueries: [{ query: myTransactionsQuery }, { query: myAccountsQuery }],
-  });
+  const [createTransaction, { loading: createLoading }] = useCreateTransaction();
 
   const initialValues = useMemo(
     () => ({
@@ -46,14 +33,7 @@ const CreateTransactionDialog: React.FC = () => {
       submitLoading={createLoading}
       onSubmit={async ({ type, amount, ...values }) => {
         try {
-          await createTransaction({
-            variables: {
-              input: {
-                ...values,
-                amount: type === 'Expense' ? -amount : amount,
-              },
-            },
-          });
+          await createTransaction({ ...values, amount: type === 'Expense' ? -amount : amount });
           enqueueSnackbar('Transaction created successfully', { variant: 'success' });
           onClose();
         } catch (err) {

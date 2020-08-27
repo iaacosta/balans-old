@@ -2,19 +2,17 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { makeStyles, Box, Button, Typography, Grid, Hidden } from '@material-ui/core';
-import { useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import FormikTextField from '../components/formik/FormikTextField';
 import FormikSubmitButton from '../components/formik/FormikSubmitButton';
-import { signUpMutation } from '../graphql/authentication';
 import routing from '../constants/routing';
 import AuthWrapper from '../components/authenticate/AuthWrapper';
 import { addToken } from '../slices/authSlice';
-import { SignUpMutationVariables, SignUpMutation } from '../@types/graphql';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
+import { useSignUp } from '../hooks/graphql/authentication';
 
 const schema = yup.object().shape({
   firstName: yup.string().required(),
@@ -42,9 +40,7 @@ const SignUp: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const [signUp, { loading }] = useMutation<SignUpMutation, SignUpMutationVariables>(
-    signUpMutation,
-  );
+  const [signUp, { loading }] = useSignUp();
 
   return (
     <AuthWrapper>
@@ -66,7 +62,7 @@ const SignUp: React.FC = () => {
         validationSchema={schema}
         onSubmit={async ({ confirmPassword, ...values }) => {
           try {
-            const { data } = await signUp({ variables: { input: values } });
+            const { data } = await signUp(values);
             if (data) {
               dispatch(addToken({ token: data.token }));
             } else {
