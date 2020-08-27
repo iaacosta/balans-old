@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import routing from '../../constants/routing';
 import { Scalars, Exact } from '../../@types/graphql';
+import { InputMutationTuple } from '../../@types/helpers';
 
 export type IdMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -61,4 +62,12 @@ export const useRedirectedQuery = <TData = any, TVariables = any>(
   }, [queryData.error, history, enqueueSnackbar]);
 
   return queryData;
+};
+
+export const useInputMutation = <TData, TVariables extends { input: any }>(
+  mutation: DocumentNode,
+  options?: MutationHookOptions<TData, TVariables>,
+): InputMutationTuple<TData, TVariables> => {
+  const [mutate, meta] = useMutation<TData, TVariables>(mutation, options);
+  return [(input) => mutate({ variables: { input } as any }), meta];
 };
