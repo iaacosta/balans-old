@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
@@ -14,13 +14,11 @@ import { createTransactionMutation, myTransactionsQuery } from '../../graphql/tr
 import { myAccountsQuery } from '../../graphql/account';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import TransactionFormView from './TransactionFormView';
+import DialogFormContext from '../../contexts/DialogFormContext';
 
-interface Props {
-  onClose: () => void;
-}
-
-const CreateTransactionDialog: React.FC<Props> = ({ onClose }) => {
+const CreateTransactionDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const { onClose } = useContext(DialogFormContext);
   const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
 
   const [createTransaction, { loading: createLoading }] = useMutation<
@@ -44,7 +42,6 @@ const CreateTransactionDialog: React.FC<Props> = ({ onClose }) => {
     <TransactionFormView
       mode="create"
       accounts={data?.accounts}
-      onClose={onClose}
       initialValues={initialValues}
       initialLoading={loading || !data}
       submitLoading={createLoading}

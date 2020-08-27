@@ -28,12 +28,11 @@ const TransactionActionCell: React.FC<CellProps<MyTransactionsQuery['transaction
     <Box className={classes.wrapper}>
       <DialogIconButton
         data-testid={`updateTransaction${id}`}
-        DialogProps={{ transaction: row.original }}
-        DialogComponent={UpdateTransactionDialog}
+        icon={<EditIcon />}
         contained
         color="info"
       >
-        <EditIcon />
+        <UpdateTransactionDialog transaction={row.original} />
       </DialogIconButton>
       <EnhancedIconButton
         contained

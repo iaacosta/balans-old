@@ -26,14 +26,8 @@ const ActiveActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void
 
   return (
     <Box className={classes.wrapper}>
-      <DialogIconButton
-        data-testid={`updateUser${id}`}
-        DialogProps={{ user: row.original }}
-        DialogComponent={UpdateUserDialog}
-        contained
-        color="info"
-      >
-        <EditIcon />
+      <DialogIconButton data-testid={`updateUser${id}`} icon={<EditIcon />} contained color="info">
+        <UpdateUserDialog user={row.original} />
       </DialogIconButton>
       <EnhancedIconButton
         contained
