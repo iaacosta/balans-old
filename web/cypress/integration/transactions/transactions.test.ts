@@ -6,6 +6,7 @@ const { requiredField } = validationMatchers;
 
 describe('transactions table', () => {
   let testAccount: GQLCreateDebitAccountMutation['createAccount'];
+  let testTransaction: GQLCreateTransactionMutation['createTransaction'];
 
   beforeEach(() => {
     cy.fixture('adminUser')
@@ -15,12 +16,16 @@ describe('transactions table', () => {
       )
       .then((createdAccount) => {
         testAccount = createdAccount;
+        return cy.createTransaction({ ...buildTransaction(), accountId: testAccount.id });
+      })
+      .then((createdTransaction) => {
+        testTransaction = createdTransaction;
       });
 
     cy.visit('/transactions');
   });
 
-  it('should be able to create an transaction', () => {
+  it('should be able to create a transaction', () => {
     const newTransaction = buildTransaction();
 
     /* open dialog and verify */
@@ -45,6 +50,36 @@ describe('transactions table', () => {
 
     /* should show created transaction */
     cy.get('tbody tr').should('have.length', 1);
+  });
+
+  it('should be able to update a transaction', () => {
+    const rowId = `row${testTransaction.id}`;
+    const updateId = `updateTransaction${testTransaction.id}`;
+    const newTransaction = buildTransaction({ map: (t) => ({ ...t, amount: 10000 }) });
+
+    /* open dialog and verify */
+    cy.findByTestId(updateId).should('exist').should('not.be.disabled').click();
+
+    /* change fields and submit */
+    cy.findByTestId(`amountInput`).within(() =>
+      cy.get('input').clear().type(`${newTransaction.amount}`),
+    );
+    cy.changeSelectOption('typeInput', 'Income');
+    cy.findByTestId('memoInput').within(() =>
+      cy
+        .get('input')
+        .clear()
+        .type(newTransaction.memo || ''),
+    );
+
+    cy.submitForm();
+
+    /* expect changes to be there */
+    cy.findByTestId(rowId)
+      .children()
+      .should('contain', `$ 10.000`)
+      .and('contain', `${testAccount.name} (${testAccount.bank})`)
+      .and('contain', newTransaction.memo);
   });
 
   /* TODO: should not allow transaction that makes vista/cash account negative */
