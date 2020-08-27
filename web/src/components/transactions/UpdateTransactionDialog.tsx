@@ -19,11 +19,10 @@ import { filterUnchangedValues } from '../../utils/formik';
 
 interface Props {
   transaction: MyTransactionsQuery['transactions'][number];
-  open: boolean;
   onClose: () => void;
 }
 
-const UpdateTransactionDialog: React.FC<Props> = ({ transaction, open, onClose }) => {
+const UpdateTransactionDialog: React.FC<Props> = ({ transaction, onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
 
@@ -46,12 +45,11 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction, open, onClose }
 
   return (
     <TransactionFormView
-      accounts={data?.accounts}
       mode="update"
-      open={open}
+      accounts={data?.accounts}
       onClose={onClose}
-      initialLoading={loading || !data}
       submitLoading={updateLoading}
+      initialLoading={loading || !data}
       initialValues={initialValues}
       onSubmit={async ({ type, amount, ...values }) => {
         const toChange = { ...values, amount: type === 'Expense' ? -amount : amount };
