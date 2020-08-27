@@ -6,14 +6,13 @@ import { useMutation } from '@apollo/client';
 import { map, capitalize } from 'lodash';
 
 import {
-  MyAccountsQuery,
   UpdateTransactionMutation,
   UpdateTransactionMutationVariables,
   MyTransactionsQuery,
 } from '../../@types/graphql';
 import { updateTransactionMutation } from '../../graphql/transaction';
 import { myAccountsQuery } from '../../graphql/account';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useMyDebitAccounts } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import { filterUnchangedValues } from '../../utils/formik';
 import DialogFormContext from '../../contexts/DialogFormContext';
@@ -25,7 +24,7 @@ interface Props {
 const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
-  const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
+  const { accounts, loading } = useMyDebitAccounts();
 
   const [updateTransaction, { loading: updateLoading }] = useMutation<
     UpdateTransactionMutation,
@@ -47,9 +46,9 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
   return (
     <TransactionFormView
       mode="update"
-      accounts={data?.accounts}
+      accounts={accounts}
       submitLoading={updateLoading}
-      initialLoading={loading || !data}
+      initialLoading={loading}
       initialValues={initialValues}
       onSubmit={async ({ type, amount, ...values }) => {
         const toChange = { ...values, amount: type === 'Expense' ? -amount : amount };

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   makeStyles,
   Paper,
@@ -12,12 +12,9 @@ import {
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 import { capitalize } from 'lodash';
 
-import { usersQuery } from '../../graphql/users';
-import { AllUsersQuery } from '../../@types/graphql';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useDeleteUser, useAllActiveUsers } from '../../hooks/graphql';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
 import { roles } from '../../utils/rbac';
 import UpdateUserDialog from './UpdateUserDialog';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
@@ -33,12 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 const ActiveUsersList: React.FC = () => {
   const classes = useStyles();
-  const { data, loading } = useRedirectedQuery<AllUsersQuery>(usersQuery);
-  const users: AllUsersQuery['users'] = useMemo(() => data?.users || [], [data]);
+  const { users, loading } = useAllActiveUsers();
 
   return (
     <Paper elevation={1} className={classes.list} square>
-      <VirtualizedList data={users} loading={loading || !data}>
+      <VirtualizedList data={users} loading={loading}>
         {({ index, style, data: userData }) => {
           const { id, name, username, role } = userData[index];
           const [deleteUser, { loading: deleteLoading }] = useDeleteUser();
