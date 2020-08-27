@@ -2,19 +2,16 @@ import React, { useMemo } from 'react';
 import { Column } from 'react-table';
 import { capitalize, makeStyles } from '@material-ui/core';
 
-import { deletedUsersQuery } from '../../graphql/users';
-import { AllDeletedUsersQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import DeletedActionsCell from './DeletedActionCell';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useAllDeletedUsers } from '../../hooks/graphql';
 
 const useStyles = makeStyles(() => ({ table: { flex: 1 } }));
 
 const DeletedUsersTable: React.FC = () => {
   const classes = useStyles();
-  const { data, loading } = useRedirectedQuery<AllDeletedUsersQuery>(deletedUsersQuery);
+  const { users, loading } = useAllDeletedUsers();
 
-  const users: AllDeletedUsersQuery['users'] = useMemo(() => data?.users || [], [data]);
   const columns: Column<typeof users[number]>[] = useMemo(
     () => [
       { Header: 'Name', accessor: 'name' },

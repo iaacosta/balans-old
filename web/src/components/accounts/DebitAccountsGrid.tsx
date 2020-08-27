@@ -1,19 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
-import { myAccountsQuery } from '../../graphql/account';
-import { MyAccountsQueryVariables, MyAccountsQuery } from '../../@types/graphql';
 import ContainerLoader from '../ui/misc/ContainerLoader';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 import DebitAccountCard from './DebitAccountCard';
+import { useMyDebitAccounts } from '../../hooks/graphql';
 
 const DebitAccountsGrid: React.FC = () => {
-  const { data, loading } = useRedirectedQuery<MyAccountsQuery, MyAccountsQueryVariables>(
-    myAccountsQuery,
-  );
+  const { accounts, loading } = useMyDebitAccounts();
 
-  if (loading || !data) return <ContainerLoader />;
+  if (loading) return <ContainerLoader />;
 
-  const { accounts } = data;
   return accounts.length > 0 ? (
     <Grid container data-testid="account" spacing={3}>
       {accounts.map((account) => (

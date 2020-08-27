@@ -1,17 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Typography, makeStyles, Hidden, Box } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import ViewportContainer from '../components/ui/misc/ViewportContainer';
-import { useRedirectedQuery } from '../hooks/graphql/useRedirectedQuery';
-import { myAccountsQuery } from '../graphql/account';
-import {
-  MyAccountsQuery,
-  MyTransactionsQuery,
-  MyTransactionsQueryVariables,
-} from '../@types/graphql';
+import { useMyDebitAccounts, useMyTransactions } from '../hooks/graphql';
 import TransactionsTable from '../components/transactions/TransactionsTable';
 import TransactionsList from '../components/transactions/TransactionsList';
-import { myTransactionsQuery } from '../graphql/transaction';
 import CreateTransactionDialog from '../components/transactions/CreateTransactionDialog';
 import DialogButton from '../components/ui/dialogs/DialogButton';
 
@@ -26,23 +19,12 @@ const useStyles = makeStyles((theme) => ({
 
 const Transactions: React.FC = () => {
   const classes = useStyles();
-  const { data: transactionsData, loading: transactionsLoading } = useRedirectedQuery<
-    MyTransactionsQuery,
-    MyTransactionsQueryVariables
-  >(myTransactionsQuery);
+  const { transactions, loading: transactionsLoading } = useMyTransactions();
+  const { accounts, loading: accountsLoading } = useMyDebitAccounts();
 
-  const { data: accountsData, loading: accountsLoading } = useRedirectedQuery<MyAccountsQuery>(
-    myAccountsQuery,
-  );
-
-  const transactions: MyTransactionsQuery['transactions'] = useMemo(
-    () => transactionsData?.transactions || [],
-    [transactionsData],
-  );
-
-  const noAccounts = accountsData?.accounts.length === 0;
+  const noAccounts = accounts.length === 0;
   const loading = transactionsLoading || accountsLoading;
-  const errored = (!accountsData || !transactionsData) && !loading;
+  const errored = !loading;
 
   const Button = (
     <DialogButton

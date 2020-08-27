@@ -8,18 +8,17 @@ import { map, capitalize } from 'lodash';
 import {
   CreateTransactionMutation,
   CreateTransactionMutationVariables,
-  MyAccountsQuery,
 } from '../../@types/graphql';
 import { createTransactionMutation, myTransactionsQuery } from '../../graphql/transaction';
 import { myAccountsQuery } from '../../graphql/account';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useMyDebitAccounts } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 
 const CreateTransactionDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
-  const { data, loading } = useRedirectedQuery<MyAccountsQuery>(myAccountsQuery);
+  const { accounts, loading } = useMyDebitAccounts();
 
   const [createTransaction, { loading: createLoading }] = useMutation<
     CreateTransactionMutation,
@@ -33,17 +32,17 @@ const CreateTransactionDialog: React.FC = () => {
       amount: 0,
       type: 'Expense',
       memo: '',
-      accountId: (data?.accounts[0] && data?.accounts[0].id) || '',
+      accountId: (accounts && accounts[0].id) || '',
     }),
-    [data],
+    [accounts],
   );
 
   return (
     <TransactionFormView
       mode="create"
-      accounts={data?.accounts}
+      accounts={accounts}
       initialValues={initialValues}
-      initialLoading={loading || !data}
+      initialLoading={loading}
       submitLoading={createLoading}
       onSubmit={async ({ type, amount, ...values }) => {
         try {
