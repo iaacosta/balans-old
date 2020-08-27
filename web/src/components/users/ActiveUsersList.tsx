@@ -20,7 +20,7 @@ import EnhancedIconButton from '../ui/EnhancedIconButton';
 import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
 import { roles } from '../../utils/rbac';
 import UpdateUserDialog from './UpdateUserDialog';
-import { useToggleable } from '../../hooks/utils/useToggleable';
+import DialogIconButton from '../ui/DialogIconButton';
 
 const useStyles = makeStyles((theme) => ({
   list: { flex: 1 },
@@ -40,7 +40,6 @@ const ActiveUsersList: React.FC = () => {
     <Paper elevation={1} className={classes.list} square>
       <VirtualizedList data={users} loading={loading || !data}>
         {({ index, style, data: userData }) => {
-          const { toggled, set } = useToggleable();
           const { id, name, username, role } = userData[index];
           const [deleteUser, { loading: deleteLoading }] = useDeleteUser();
           return (
@@ -51,14 +50,15 @@ const ActiveUsersList: React.FC = () => {
                   secondary={`@${username} / ${capitalize(role)}`}
                 />
                 <ListItemSecondaryAction className={classes.secondaryActions}>
-                  <EnhancedIconButton onClick={() => set(true)} contained color="info">
+                  <DialogIconButton
+                    data-testid={`updateUser${id}`}
+                    DialogProps={{ user: userData[index] }}
+                    DialogComponent={UpdateUserDialog}
+                    contained
+                    color="info"
+                  >
                     <EditIcon fontSize="small" />
-                  </EnhancedIconButton>
-                  <UpdateUserDialog
-                    open={toggled}
-                    onClose={() => set(false)}
-                    user={userData[index]}
-                  />
+                  </DialogIconButton>
                   <EnhancedIconButton
                     contained
                     disabled={deleteLoading || role === roles.ADMIN}

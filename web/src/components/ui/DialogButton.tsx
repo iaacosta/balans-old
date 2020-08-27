@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, ButtonProps } from '@material-ui/core';
+import { Button, ButtonProps, Portal } from '@material-ui/core';
 
 import { useToggleable } from '../../hooks/utils/useToggleable';
+import ResponsiveDialog from './ResponsiveDialog';
 
 type Props = {
   buttonLabel: string;
-  DialogComponent: React.FC<{ open: boolean; onClose: () => void }>;
+  DialogComponent: React.FC<{ onClose: () => void }>;
 };
 
 const DialogButton: React.FC<Props & ButtonProps> = ({
@@ -20,7 +21,11 @@ const DialogButton: React.FC<Props & ButtonProps> = ({
       <Button variant="contained" color="secondary" onClick={() => set(true)} {...props}>
         {buttonLabel}
       </Button>
-      <DialogComponent open={toggled} onClose={() => set(false)} />
+      <Portal>
+        <ResponsiveDialog open={toggled} onClose={() => set(false)}>
+          <DialogComponent onClose={() => set(false)} />
+        </ResponsiveDialog>
+      </Portal>
     </>
   );
 };
