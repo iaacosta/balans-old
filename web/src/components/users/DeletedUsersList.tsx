@@ -15,8 +15,8 @@ import { capitalize } from 'lodash';
 import { deletedUsersQuery } from '../../graphql/users';
 import { AllDeletedUsersQuery } from '../../@types/graphql';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
-import VirtualizedList from '../ui/VirtualizedList';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useRestoreUser } from '../../hooks/graphql/useRestoreUser';
 
 const useStyles = makeStyles((theme) => ({

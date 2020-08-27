@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, ButtonProps, Portal } from '@material-ui/core';
 
-import { useToggleable } from '../../hooks/utils/useToggleable';
+import { useToggleable } from '../../../hooks/utils/useToggleable';
 import ResponsiveDialog from './ResponsiveDialog';
 
 type Props = {

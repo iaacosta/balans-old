@@ -9,7 +9,7 @@ import {
 } from '@material-ui/icons';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
-import EnhancedTable from '../ui/EnhancedTable';
+import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
 
 const useStyles = makeStyles((theme) => ({

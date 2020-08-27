@@ -5,7 +5,7 @@ import { capitalize, makeStyles } from '@material-ui/core';
 import { usersQuery } from '../../graphql/users';
 import { AllUsersQuery } from '../../@types/graphql';
 import ActiveActionsCell from './ActiveActionCell';
-import EnhancedTable from '../ui/EnhancedTable';
+import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
 
 const useStyles = makeStyles(() => ({ table: { flex: 1 } }));

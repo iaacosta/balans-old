@@ -14,7 +14,7 @@ import {
   Box,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
-import ContainerLoader from './ContainerLoader';
+import ContainerLoader from '../misc/ContainerLoader';
 
 type Props<T extends Record<string, unknown>> = {
   data: T[];

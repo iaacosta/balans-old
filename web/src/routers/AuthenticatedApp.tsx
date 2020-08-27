@@ -3,13 +3,13 @@ import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { Box, Typography, makeStyles } from '@material-ui/core';
 
 import routing from '../constants/routing';
-import ResponsiveDrawer from '../components/ui/ResponsiveDrawer';
+import ResponsiveDrawer from '../components/ui/navigation/ResponsiveDrawer';
 import { useCan } from '../hooks/auth/useRbac';
 import { actions } from '../utils/rbac';
-import ContainerLoader from '../components/ui/ContainerLoader';
+import ContainerLoader from '../components/ui/misc/ContainerLoader';
 import Users from '../pages/Users';
 import Accounts from '../pages/Accounts';
-import ViewportContainer from '../components/ui/ViewportContainer';
+import ViewportContainer from '../components/ui/misc/ViewportContainer';
 import Transactions from '../pages/Transactions';
 
 const Placeholder: React.FC = () => {

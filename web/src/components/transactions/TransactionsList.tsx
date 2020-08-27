@@ -13,10 +13,10 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 import { formatMoney } from 'accounting';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
-import EnhancedIconButton from '../ui/EnhancedIconButton';
+import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
-import VirtualizedList from '../ui/VirtualizedList';
-import DialogIconButton from '../ui/DialogIconButton';
+import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
+import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import UpdateTransactionDialog from './UpdateTransactionDialog';
 
 type Props = {

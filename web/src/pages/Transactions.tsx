@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Typography, makeStyles, Hidden, Box } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
-import ViewportContainer from '../components/ui/ViewportContainer';
+import ViewportContainer from '../components/ui/misc/ViewportContainer';
 import { useRedirectedQuery } from '../hooks/graphql/useRedirectedQuery';
 import { myAccountsQuery } from '../graphql/account';
 import {
@@ -13,7 +13,7 @@ import TransactionsTable from '../components/transactions/TransactionsTable';
 import TransactionsList from '../components/transactions/TransactionsList';
 import { myTransactionsQuery } from '../graphql/transaction';
 import CreateTransactionDialog from '../components/transactions/CreateTransactionDialog';
-import DialogButton from '../components/ui/DialogButton';
+import DialogButton from '../components/ui/dialogs/DialogButton';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
