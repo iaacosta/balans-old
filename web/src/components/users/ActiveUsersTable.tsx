@@ -2,19 +2,16 @@ import React, { useMemo } from 'react';
 import { Column } from 'react-table';
 import { capitalize, makeStyles } from '@material-ui/core';
 
-import { usersQuery } from '../../graphql/users';
-import { AllUsersQuery } from '../../@types/graphql';
 import ActiveActionsCell from './ActiveActionCell';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useAllActiveUsers } from '../../hooks/graphql';
 
 const useStyles = makeStyles(() => ({ table: { flex: 1 } }));
 
 const ActiveUsersTable: React.FC = () => {
   const classes = useStyles();
-  const { data, loading } = useRedirectedQuery<AllUsersQuery>(usersQuery);
+  const { users, loading } = useAllActiveUsers();
 
-  const users: AllUsersQuery['users'] = useMemo(() => data?.users || [], [data]);
   const columns: Column<typeof users[number]>[] = useMemo(
     () => [
       { Header: 'Name', accessor: 'name' },

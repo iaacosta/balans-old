@@ -5,7 +5,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
+import { useDeleteTransaction } from '../../hooks/graphql';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import UpdateTransactionDialog from './UpdateTransactionDialog';
 

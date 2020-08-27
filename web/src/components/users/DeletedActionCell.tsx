@@ -4,7 +4,7 @@ import { Restore as RestoreIcon } from '@material-ui/icons';
 
 import { AllUsersQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useRestoreUser } from '../../hooks/graphql/useRestoreUser';
+import { useRestoreUser } from '../../hooks/graphql';
 
 const DeletedActionsCell: React.FC<CellProps<AllUsersQuery['users'][number], void>> = ({ row }) => {
   const { id } = row.original;

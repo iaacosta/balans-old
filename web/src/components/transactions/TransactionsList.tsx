@@ -14,7 +14,7 @@ import { formatMoney } from 'accounting';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useDeleteTransaction } from '../../hooks/graphql/useDeleteTransaction';
+import { useDeleteTransaction } from '../../hooks/graphql';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import UpdateTransactionDialog from './UpdateTransactionDialog';

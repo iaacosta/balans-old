@@ -7,7 +7,7 @@ import { AllUsersQuery } from '../../@types/graphql';
 import { roles } from '../../utils/rbac';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import UpdateUserDialog from './UpdateUserDialog';
-import { useDeleteUser } from '../../hooks/graphql/useDeleteUser';
+import { useDeleteUser } from '../../hooks/graphql';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 
 const useStyles = makeStyles((theme) => ({

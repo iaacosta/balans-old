@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   makeStyles,
   Paper,
@@ -12,12 +12,9 @@ import {
 import { Restore as RestoreIcon } from '@material-ui/icons';
 import { capitalize } from 'lodash';
 
-import { deletedUsersQuery } from '../../graphql/users';
-import { AllDeletedUsersQuery } from '../../@types/graphql';
-import { useRedirectedQuery } from '../../hooks/graphql/useRedirectedQuery';
+import { useRestoreUser, useAllDeletedUsers } from '../../hooks/graphql';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useRestoreUser } from '../../hooks/graphql/useRestoreUser';
 
 const useStyles = makeStyles((theme) => ({
   list: { flex: 1 },
@@ -30,12 +27,11 @@ const useStyles = makeStyles((theme) => ({
 
 const DeletedUsersList: React.FC = () => {
   const classes = useStyles();
-  const { data, loading } = useRedirectedQuery<AllDeletedUsersQuery>(deletedUsersQuery);
-  const users: AllDeletedUsersQuery['users'] = useMemo(() => data?.users || [], [data]);
+  const { users, loading } = useAllDeletedUsers();
 
   return (
     <Paper elevation={1} className={classes.list} square>
-      <VirtualizedList data={users} loading={loading || !data}>
+      <VirtualizedList data={users} loading={loading}>
         {({ index, style, data: userData }) => {
           const { id, name, username, role } = userData[index];
           const [restoreUser, { loading: restoreLoading }] = useRestoreUser();
