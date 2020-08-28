@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable no-console */
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
+import { ApolloClient, HttpLink, ApolloLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { capitalize } from 'lodash';
 import { store } from './redux';
 import { expireToken } from '../slices/authSlice';
 import { logoutHof } from '../hooks/auth/useLogout';
+import cache from '../graphql/cache';
 
 const baseLink = new HttpLink({
   uri: process.env.REACT_APP_API_URL || 'http://localhost:5000/graphql',
@@ -33,7 +33,7 @@ const errorLink = onError(({ graphQLErrors }) => {
 
 const client = new ApolloClient({
   link: ApolloLink.from([contextLink, errorLink, baseLink]),
-  cache: new InMemoryCache(),
+  cache,
 });
 
 export default client;
