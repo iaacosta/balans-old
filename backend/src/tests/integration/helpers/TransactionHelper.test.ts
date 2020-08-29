@@ -7,11 +7,16 @@ import { seedTestDatabase, createPgClient } from '../../utils';
 import Transaction from '../../../models/Transaction';
 import User from '../../../models/User';
 import Account from '../../../models/Account';
-import { transactionFactory } from '../../factory/transactionFactory';
+import {
+  transactionFactory,
+  CategoryPair,
+  transactionModelFactory,
+} from '../../factory/transactionFactory';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import { AccountType } from '../../../graphql/helpers';
 import TransactionHelper from '../../../helpers/TransactionHelper';
+import { createCategoryPair } from '../../factory/categoryFactory';
 
 const testInitialBalance = 1000;
 
@@ -20,6 +25,7 @@ describe('transaction helper tests', () => {
   let testUser: User;
   let testAccount: Account;
   let testRootAccount: Account;
+  let testCategories: CategoryPair;
 
   const pgClient = createPgClient();
 
@@ -38,6 +44,7 @@ describe('transaction helper tests', () => {
       })
     ).databaseAccount;
 
+    testCategories = await createCategoryPair(connection, testUser.id);
     testRootAccount = await getRepository(Account).findOneOrFail({
       userId: testUser.id,
       type: 'root',
@@ -70,13 +77,19 @@ describe('transaction helper tests', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (let i = 0; i < staticArray.length; i += 1) {
-        const factoryTransaction = transactionFactory();
+        const { factoryTransaction, category } = transactionModelFactory({
+          account: testAccount,
+          categories: testCategories,
+        });
 
         if (i === 0) factoryTransaction.memo = undefined;
 
         const [transaction] = await transactionHelper.performTransaction(
           factoryTransaction,
-          testAccount,
+          {
+            account: testAccount,
+            category,
+          },
         );
 
         testTransactions.push(transaction);
@@ -153,9 +166,17 @@ describe('transaction helper tests', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const _ of staticArray) {
+        const { factoryTransaction, category } = transactionModelFactory({
+          account: testAccount,
+          categories: testCategories,
+        });
+
         const [transaction] = await transactionHelper.performTransaction(
-          transactionFactory(),
-          testAccount,
+          factoryTransaction,
+          {
+            account: testAccount,
+            category,
+          },
         );
 
         testTransactions.push(transaction);
@@ -373,9 +394,17 @@ describe('transaction helper tests', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const _ of staticArray) {
+        const { factoryTransaction, category } = transactionModelFactory({
+          account: testAccount,
+          categories: testCategories,
+        });
+
         const [transaction] = await transactionHelper.performTransaction(
-          transactionFactory(),
-          testAccount,
+          factoryTransaction,
+          {
+            account: testAccount,
+            category,
+          },
         );
 
         testTransactions.push(transaction);

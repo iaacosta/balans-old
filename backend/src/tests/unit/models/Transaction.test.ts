@@ -11,7 +11,8 @@ import Transaction from '../../../models/Transaction';
 describe('Transaction model test', () => {
   it('should create Transaction object', () =>
     expect(
-      transactionModelFactory(accountModelFactory(1).account).transaction,
+      transactionModelFactory({ account: accountModelFactory(1).account })
+        .transaction,
     ).not.toBeFalsy());
 
   it('should have undefined memo if one empty given', () => {
@@ -28,9 +29,9 @@ describe('Transaction model test', () => {
     const { account } = accountModelFactory(1);
     account.id = 1;
 
-    const { transaction, factoryTransaction } = transactionModelFactory(
+    const { transaction, factoryTransaction } = transactionModelFactory({
       account,
-    );
+    });
 
     expect(transaction.amount).toBe(factoryTransaction.amount);
     expect(transaction.accountId).toBe(1);
@@ -40,14 +41,14 @@ describe('Transaction model test', () => {
     it('should pass validation if everything is correct', async () => {
       await expect(
         validateOrReject(
-          transactionModelFactory(accountModelFactory(1).account),
+          transactionModelFactory({ account: accountModelFactory(1).account }),
         ),
       ).resolves.toBeUndefined();
     });
 
     it('should not pass validation if amount is 0', async () => {
       const { transaction } = transactionModelFactory(
-        accountModelFactory(1).account,
+        { account: accountModelFactory(1).account },
         { amount: 0 },
       );
       await expect(validateOrReject(transaction)).rejects.toBeTruthy();

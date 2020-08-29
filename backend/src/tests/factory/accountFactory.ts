@@ -52,7 +52,7 @@ export const createAccount = async (
 
     await transactionHelper.performTransaction(
       { memo: 'Initial balance', amount: factoryAccount.initialBalance },
-      databaseAccount,
+      { account: databaseAccount },
     );
   }
 
