@@ -11,6 +11,33 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type Transaction = {
+  __typename?: 'Transaction';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  account: Account;
+  category?: Maybe<Category>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+export type Category = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: CategoryType;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum CategoryType {
+  Income = 'income',
+  Expense = 'expense'
+}
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -21,18 +48,7 @@ export type User = {
   username: Scalars['String'];
   role: Scalars['String'];
   accounts: Array<Account>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-};
-
-
-export type Transaction = {
-  __typename?: 'Transaction';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  account: Account;
+  categories: Array<Category>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
@@ -98,6 +114,7 @@ export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
+  categoryId: Scalars['ID'];
 };
 
 export type UpdateTransactionInput = {
@@ -105,16 +122,23 @@ export type UpdateTransactionInput = {
   amount?: Maybe<Scalars['Int']>;
   memo?: Maybe<Scalars['String']>;
   accountId?: Maybe<Scalars['ID']>;
+  categoryId?: Maybe<Scalars['ID']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
+  myCategories: Array<Category>;
   myTransactions: Array<Transaction>;
   users: Array<User>;
   deletedUsers: Array<User>;
   user: User;
   me: User;
+};
+
+
+export type QueryMyCategoriesArgs = {
+  type: CategoryType;
 };
 
 
@@ -269,6 +293,20 @@ export type MeQuery = (
   ) }
 );
 
+export type MyCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyCategoriesQuery = (
+  { __typename?: 'Query' }
+  & { income: Array<(
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name'>
+  )>, expense: Array<(
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name'>
+  )> }
+);
+
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -280,7 +318,10 @@ export type MyTransactionsQuery = (
     & { account: (
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
-    ) }
+    ), category?: Maybe<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name'>
+    )> }
   )> }
 );
 

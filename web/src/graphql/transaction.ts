@@ -12,6 +12,10 @@ export const myTransactionsQuery = gql`
         bank
         balance
       }
+      category {
+        id
+        name
+      }
       createdAt
     }
   }
@@ -36,6 +40,10 @@ export const updateTransactionMutation = gql`
         name
         bank
         balance
+      }
+      category {
+        id
+        name
       }
       createdAt
     }
