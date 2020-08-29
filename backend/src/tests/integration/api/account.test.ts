@@ -172,7 +172,7 @@ describe('account API calls', () => {
       });
 
       expect(transaction).toBeDefined();
-      expect(transaction!.resultantBalance).toBe(initialBalance);
+      expect(transaction!.amount).toBe(initialBalance);
 
       const rootTransaction = await getRepository(Transaction).findOne({
         amount: -initialBalance,
