@@ -32,7 +32,6 @@ export type Transaction = {
   id: Scalars['ID'];
   amount: Scalars['Int'];
   memo?: Maybe<Scalars['String']>;
-  resultantBalance: Scalars['Int'];
   account: Account;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -277,10 +276,10 @@ export type MyTransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: Array<(
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'resultantBalance' | 'createdAt'>
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'createdAt'>
     & { account: (
       { __typename?: 'Account' }
-      & Pick<Account, 'id' | 'name' | 'bank'>
+      & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
     ) }
   )> }
 );
@@ -307,10 +306,10 @@ export type UpdateTransactionMutation = (
   { __typename?: 'Mutation' }
   & { updateTransaction: (
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'resultantBalance' | 'createdAt'>
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'createdAt'>
     & { account: (
       { __typename?: 'Account' }
-      & Pick<Account, 'id' | 'name' | 'bank'>
+      & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
     ) }
   ) }
 );
