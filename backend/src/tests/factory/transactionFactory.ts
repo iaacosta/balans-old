@@ -6,6 +6,7 @@ import { Connection } from 'typeorm';
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
 import TransactionHelper from '../../helpers/TransactionHelper';
+import Category from '../../models/Category';
 
 export type BuildType = Pick<Transaction, 'amount' | 'memo'>;
 
@@ -21,22 +22,38 @@ export const transactionFactory = (overrides?: Partial<BuildType>) =>
     map: (transaction) => ({ ...transaction, ...overrides }),
   });
 
+export type CategoryPair = { income: Category; expense: Category };
+
+export type TransactionDependencies = {
+  account: Account;
+  categories?: CategoryPair;
+};
+
+export const getCategoryForTransaction = (
+  transaction: Pick<Transaction, 'amount'>,
+  categories: CategoryPair,
+) => (transaction.amount > 0 ? categories.income : categories.expense);
+
 export const transactionModelFactory = (
-  account: Account,
+  { account, categories }: TransactionDependencies,
   overrides?: Partial<BuildType>,
 ) => {
   const factoryTransaction = transactionFactory(overrides);
+  const category =
+    categories && getCategoryForTransaction(factoryTransaction, categories);
+
   const transaction = new Transaction({
     ...factoryTransaction,
     accountId: account.id,
+    category,
   });
 
-  return { factoryTransaction, transaction };
+  return { factoryTransaction, transaction, category };
 };
 
 export const createTransaction = async (
   connection: Connection,
-  account: Account,
+  { account, categories }: TransactionDependencies,
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
@@ -45,14 +62,17 @@ export const createTransaction = async (
     entityManager,
   );
 
-  const { transaction, factoryTransaction } = transactionModelFactory(
-    account,
+  const { transaction, category, factoryTransaction } = transactionModelFactory(
+    { account, categories },
     overrides,
   );
 
   const [databaseTransaction] = await transactionHelper.performTransaction(
     factoryTransaction,
-    account,
+    {
+      account,
+      category,
+    },
   );
 
   return { databaseTransaction, factoryTransaction, transaction };

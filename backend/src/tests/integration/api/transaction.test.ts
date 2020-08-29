@@ -7,11 +7,14 @@ import Transaction from '../../../models/Transaction';
 import {
   transactionFactory,
   createTransaction,
+  CategoryPair,
+  getCategoryForTransaction,
 } from '../../factory/transactionFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
+import { createCategoryPair } from '../../factory/categoryFactory';
 
 const MY_TRANSACTIONS = gql`
   query MyTransactions {
@@ -73,6 +76,7 @@ describe('transaction API calls', () => {
   let connection: Connection;
   let testUser: User;
   let testAccount: Account;
+  let testCategories: CategoryPair;
   let transactions: Transaction[];
 
   const pgClient = createPgClient();
@@ -85,11 +89,14 @@ describe('transaction API calls', () => {
     testAccount = (await createAccount(connection, testUser.id))
       .databaseAccount;
 
+    testCategories = await createCategoryPair(connection, testUser.id);
+
     transactions = await Promise.all(
       Array.from(Array(5).keys()).map(() =>
-        createTransaction(connection, testAccount).then(
-          ({ databaseTransaction }) => databaseTransaction,
-        ),
+        createTransaction(connection, {
+          account: testAccount,
+          categories: testCategories,
+        }).then(({ databaseTransaction }) => databaseTransaction),
       ),
     );
   });
@@ -122,10 +129,21 @@ describe('transaction API calls', () => {
   describe('createTransaction', () => {
     it('should create transaction', async () => {
       const testTransaction = transactionFactory();
+      const testCategory = getCategoryForTransaction(
+        testTransaction,
+        testCategories,
+      );
+
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
         mutation: CREATE_TRANSACTION,
-        variables: { input: { ...testTransaction, accountId: testAccount.id } },
+        variables: {
+          input: {
+            ...testTransaction,
+            accountId: testAccount.id,
+            categoryId: testCategory.id,
+          },
+        },
       });
 
       expect(response).toBeSuccessful();
@@ -137,10 +155,21 @@ describe('transaction API calls', () => {
 
     it('should not authorize unauthenticated users', async () => {
       const testTransaction = transactionFactory();
+      const testCategory = getCategoryForTransaction(
+        testTransaction,
+        testCategories,
+      );
+
       const { mutate } = await mountTestClient();
       const response = await mutate({
         mutation: CREATE_TRANSACTION,
-        variables: { input: { ...testTransaction, accountId: testAccount.id } },
+        variables: {
+          input: {
+            ...testTransaction,
+            accountId: testAccount.id,
+            categoryId: testCategory.id,
+          },
+        },
       });
       expect(response).toBeRejectedByAuth();
     });
@@ -150,8 +179,12 @@ describe('transaction API calls', () => {
     let createdTransaction: Transaction;
 
     beforeAll(async () => {
-      createdTransaction = (await createTransaction(connection, testAccount))
-        .databaseTransaction;
+      createdTransaction = (
+        await createTransaction(connection, {
+          account: testAccount,
+          categories: testCategories,
+        })
+      ).databaseTransaction;
     });
 
     it('should update transaction if mine', async () => {
@@ -185,7 +218,10 @@ describe('transaction API calls', () => {
       const otherAccount = (await createAccount(connection, otherUser.id))
         .databaseAccount;
       const othersTransaction = (
-        await createTransaction(connection, otherAccount)
+        await createTransaction(connection, {
+          account: otherAccount,
+          categories: testCategories,
+        })
       ).databaseTransaction;
 
       const { mutate } = await mountTestClient({ currentUser: testUser });
@@ -202,7 +238,10 @@ describe('transaction API calls', () => {
   describe('deleteTransaction', () => {
     it('should delete an transaction if mine', async () => {
       const createdTransaction = (
-        await createTransaction(connection, testAccount)
+        await createTransaction(connection, {
+          account: testAccount,
+          categories: testCategories,
+        })
       ).databaseTransaction;
 
       const { mutate } = await mountTestClient({ currentUser: testUser });
@@ -225,7 +264,10 @@ describe('transaction API calls', () => {
       const othersAccount = (await createAccount(connection, otherUser.id))
         .databaseAccount;
       const othersTransaction = (
-        await createTransaction(connection, othersAccount)
+        await createTransaction(connection, {
+          account: othersAccount,
+          categories: testCategories,
+        })
       ).databaseTransaction;
 
       const { mutate } = await mountTestClient({ currentUser: testUser });

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-await-in-loop */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 import { createConnection, Connection, Repository, In } from 'typeorm';
 import { UserInputError } from 'apollo-server-express';
@@ -13,10 +13,8 @@ import {
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import Transaction from '../../../models/Transaction';
-import {
-  transactionFactory,
-  createTransaction,
-} from '../../factory/transactionFactory';
+import { createTransaction } from '../../factory/transactionFactory';
+import { createCategoryPair } from '../../factory/categoryFactory';
 
 describe('account ORM tests', () => {
   let connection: Connection;
@@ -103,10 +101,13 @@ describe('account ORM tests', () => {
           testAccount = (await createAccount(connection, testUser.id))
             .databaseAccount;
 
-          // eslint-disable-next-line @typescript-eslint/naming-convention
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           for (const _ of Array.from(Array(5).keys())) {
             const { operationId } = await (
-              await createTransaction(connection, testAccount)
+              await createTransaction(connection, {
+                account: testAccount,
+                categories: await createCategoryPair(connection, testUser.id),
+              })
             ).databaseTransaction;
 
             operations.push(operationId);
