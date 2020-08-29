@@ -10,6 +10,7 @@ import Transaction from '../models/Transaction';
 import Account from '../models/Account';
 import User from '../models/User';
 import { updateEntity } from '../utils';
+import Category from '../models/Category';
 
 export default class TransactionHelper {
   manager: EntityManager;
@@ -29,7 +30,7 @@ export default class TransactionHelper {
 
   async performTransaction(
     { memo, amount }: Pick<CreateTransactionInput, 'memo' | 'amount'>,
-    account: Account,
+    { account, category }: { account: Account; category?: Category },
   ): Promise<Transaction[]> {
     const rootAccount = await this.getRootAccount();
 
@@ -42,6 +43,7 @@ export default class TransactionHelper {
       memo,
       accountId: account.id,
       operationId,
+      category,
     });
 
     const rootTransaction = new Transaction({
@@ -60,7 +62,7 @@ export default class TransactionHelper {
 
   async updateTransaction(
     transaction: Transaction,
-    toChange: Omit<UpdateTransactionInput, 'id'>,
+    { categoryId, ...toChange }: Omit<UpdateTransactionInput, 'id'>,
   ): Promise<Transaction[]> {
     const rootAccount = await this.getRootAccount();
     const accountChanged = !!toChange.accountId;
@@ -70,7 +72,7 @@ export default class TransactionHelper {
     if (accountChanged) {
       account = await this.manager
         .getRepository(Account)
-        .findOneOrFail({ id: toChange.accountId });
+        .findOneOrFail({ id: toChange.accountId, userId: this.user.id });
 
       /* We inmediately pass the effect, so that either
       there is a change in the amount or not, it will
@@ -84,6 +86,12 @@ export default class TransactionHelper {
       await this.manager
         .getRepository(Account)
         .save([account, transaction.account]);
+    }
+
+    if (categoryId) {
+      transaction.category = await this.manager
+        .getRepository(Category)
+        .findOneOrFail({ id: categoryId, userId: this.user.id });
     }
 
     /* Change the balance if the amount changes */
