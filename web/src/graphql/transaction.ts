@@ -6,11 +6,11 @@ export const myTransactionsQuery = gql`
       id
       amount
       memo
-      resultantBalance
       account {
         id
         name
         bank
+        balance
       }
       createdAt
     }
@@ -31,11 +31,11 @@ export const updateTransactionMutation = gql`
       id
       amount
       memo
-      resultantBalance
       account {
         id
         name
         bank
+        balance
       }
       createdAt
     }
