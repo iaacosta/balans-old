@@ -1,10 +1,12 @@
 import { Resolver, Mutation, Arg } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, getConnection } from 'typeorm';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'apollo-server-express';
 
 import User from '../../models/User';
-import { LoginInput, CreateUserInput } from '../helpers';
+import { LoginInput, CreateUserInput, CategoryType } from '../helpers';
+import defaultCategories from '../../static/defaultCategories.json';
+import Category from '../../models/Category';
 
 @Resolver(User)
 export default class AuthenticationResolvers {
@@ -40,9 +42,27 @@ export default class AuthenticationResolvers {
   @Mutation(() => String)
   async signUp(
     @Arg('input')
-    user: CreateUserInput,
+    userInput: CreateUserInput,
   ): Promise<string> {
-    const createdUser = await this.repository.save(new User(user));
-    return AuthenticationResolvers.generateToken(createdUser);
+    const user = await getConnection().transaction(async (manager) => {
+      const createdUser = await manager
+        .getRepository(User)
+        .save(new User(userInput));
+
+      const categories = defaultCategories.map(
+        ({ type, name }) =>
+          new Category({
+            name,
+            type: type as CategoryType,
+            userId: createdUser.id,
+          }),
+      );
+
+      await manager.getRepository(Category).save(categories);
+
+      return createdUser;
+    });
+
+    return AuthenticationResolvers.generateToken(user);
   }
 }
