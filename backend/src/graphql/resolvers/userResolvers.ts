@@ -9,7 +9,7 @@ import {
   FieldResolver,
   Root,
 } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, getConnection } from 'typeorm';
 import { size } from 'lodash';
 
 import User from '../../models/User';
@@ -17,12 +17,15 @@ import {
   CreateUserInput,
   UpdateUserInput,
   UpdateAnyUserInput,
+  CategoryType,
 } from '../helpers';
 import NoChangesError from '../errors/NoChangesError';
 import roles from '../../constants/roles';
 import { Context } from '../../@types';
 import { updateEntity } from '../../utils/typeORM';
 import Account from '../../models/Account';
+import defaultCategories from '../../static/defaultCategories.json';
+import Category from '../../models/Category';
 
 @Resolver(User)
 export default class UserResolvers {
@@ -65,10 +68,28 @@ export default class UserResolvers {
   @Mutation(() => User)
   async createUser(
     @Arg('input')
-    user: CreateUserInput,
+    userInput: CreateUserInput,
   ): Promise<User> {
-    const createdUser = await this.repository.save(new User(user));
-    return createdUser;
+    const user = await getConnection().transaction(async (manager) => {
+      const createdUser = await manager
+        .getRepository(User)
+        .save(new User(userInput));
+
+      const categories = defaultCategories.map(
+        ({ type, name }) =>
+          new Category({
+            name,
+            type: type as CategoryType,
+            userId: createdUser.id,
+          }),
+      );
+
+      await manager.getRepository(Category).save(categories);
+
+      return createdUser;
+    });
+
+    return user;
   }
 
   @Mutation(() => User)
