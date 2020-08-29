@@ -10,8 +10,10 @@ import Account from '../../../models/Account';
 import { transactionFactory } from '../../factory/transactionFactory';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
-import { AccountType } from '../../../graphql/helpers';
+import { AccountType, CategoryType } from '../../../graphql/helpers';
 import TransactionHelper from '../../../helpers/TransactionHelper';
+import Category from '../../../models/Category';
+import { createCategory } from '../../factory/categoryFactory';
 
 describe('transaction ORM tests', () => {
   const testInitialBalance = 1000;
@@ -19,6 +21,7 @@ describe('transaction ORM tests', () => {
   let connection: Connection;
   let testUser: User;
   let testAccount: Account;
+  let testCategory: Category;
 
   const pgClient = createPgClient();
 
@@ -38,6 +41,12 @@ describe('transaction ORM tests', () => {
         initialBalance: testInitialBalance,
       })
     ).databaseAccount;
+
+    testCategory = (
+      await createCategory(connection, testUser.id, {
+        type: CategoryType.income,
+      })
+    ).databaseCategory;
   });
 
   afterAll(() => {
@@ -54,7 +63,10 @@ describe('transaction ORM tests', () => {
         });
 
         await expect(
-          transactionHelper.performTransaction(transaction, testAccount),
+          transactionHelper.performTransaction(transaction, {
+            account: testAccount,
+            category: testCategory,
+          }),
         ).rejects.toThrowError(UserInputError);
       });
     });
