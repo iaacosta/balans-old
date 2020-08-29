@@ -4,6 +4,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import Category from '../models/Category';
+import { CategoryType } from '../graphql/helpers/enums/categoryTypeEnum';
 
 const registerValidator = (
   validator: Function | ValidatorConstraintInterface,
@@ -28,8 +29,8 @@ export const IsValidCategory = registerValidator({
   validate: (category: Category | undefined, { object: transaction }: any) => {
     if (!category) return true;
     const { amount } = transaction;
-    if (amount < 0) return category.type === 'expense';
-    return category.type === 'income';
+    if (amount < 0) return category.type === CategoryType.expense;
+    return category.type === CategoryType.income;
   },
   defaultMessage: () => "category selected doesn't match the transaction type",
 });
