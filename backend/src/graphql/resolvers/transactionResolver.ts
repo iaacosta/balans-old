@@ -19,6 +19,7 @@ import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
 import TransactionHelper from '../../helpers/TransactionHelper';
 import NoChangesError from '../errors/NoChangesError';
+import Category from '../../models/Category';
 
 @Resolver(Transaction)
 export default class TransactionResolvers {
@@ -47,7 +48,8 @@ export default class TransactionResolvers {
   @Mutation(() => Transaction)
   @Authorized()
   async createTransaction(
-    @Arg('input') { accountId, ...transactionInput }: CreateTransactionInput,
+    @Arg('input')
+    { accountId, categoryId, ...transactionInput }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
     const transactionHelper = new TransactionHelper(currentUser!);
@@ -57,9 +59,17 @@ export default class TransactionResolvers {
       userId: currentUser!.id,
     });
 
+    const category = await getRepository(Category).findOneOrFail({
+      id: categoryId,
+      userId: currentUser!.id,
+    });
+
     const [transaction] = await transactionHelper.performTransaction(
       transactionInput,
-      account,
+      {
+        account,
+        category,
+      },
     );
 
     return transaction;
@@ -116,5 +126,14 @@ export default class TransactionResolvers {
   async account(@Root() { accountId }: Transaction): Promise<Account | null> {
     const account = await this.accountRepository.findOne(accountId);
     return account || null;
+  }
+
+  @FieldResolver()
+  async category(
+    @Root() { categoryId }: Transaction,
+  ): Promise<Category | null> {
+    if (!categoryId) return null;
+    const category = await getRepository(Category).findOne(categoryId);
+    return category || null;
   }
 }
