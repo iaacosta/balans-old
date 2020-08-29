@@ -8,6 +8,7 @@ import {
   ArrowDropUp as ArrowDropUpIcon,
 } from '@material-ui/icons';
 import clsx from 'clsx';
+import { groupBy, mapValues } from 'lodash';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
@@ -24,6 +25,10 @@ type Props = {
   noAccountsCreated: boolean;
 };
 
+export type ProcessedTransaction = MyTransactionsQuery['transactions'][number] & {
+  resultantBalance: number;
+};
+
 const TransactionsTable: React.FC<Props> = ({
   children,
   transactions,
@@ -32,7 +37,26 @@ const TransactionsTable: React.FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const columns: Column<typeof transactions[number]>[] = useMemo(
+  const processedTransactions = useMemo(() => {
+    const withRunningBalance: ProcessedTransaction[] = [];
+    const balances: { [key: string]: number } = mapValues(
+      groupBy(transactions, (transaction) => transaction.account.id),
+      (_transactions) => _transactions.reduce((accum, curr) => accum + curr.amount, 0),
+    );
+
+    transactions.forEach((transaction) => {
+      withRunningBalance.push({
+        ...transaction,
+        resultantBalance: balances[transaction.account.id],
+      });
+
+      balances[transaction.account.id] -= transaction.amount;
+    });
+
+    return withRunningBalance;
+  }, [transactions]);
+
+  const columns: Column<ProcessedTransaction>[] = useMemo(
     () => [
       {
         Header: 'Amount',
@@ -91,7 +115,7 @@ const TransactionsTable: React.FC<Props> = ({
       className={classes.table}
       loading={loading}
       columns={columns}
-      data={transactions}
+      data={processedTransactions}
       noEntriesLabel={
         noAccountsCreated
           ? 'You have no accounts yet, so no transactions can be shown or created '
