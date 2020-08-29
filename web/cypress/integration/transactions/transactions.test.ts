@@ -12,11 +12,18 @@ describe('transactions table', () => {
     cy.fixture('adminUser')
       .then((user) => cy.login(user.username, user.password))
       .then(() =>
-        cy.createAccount(buildAccount({ map: (account) => ({ ...account, initialBalance: 0 }) })),
+        cy.createAccount(
+          buildAccount({ map: (account) => ({ ...account, initialBalance: 0, type: 'checking' }) }),
+        ),
       )
       .then((createdAccount) => {
         testAccount = createdAccount;
-        return cy.createTransaction({ ...buildTransaction(), accountId: testAccount.id });
+        return cy.createTransaction({
+          ...buildTransaction({ amount: 10000 }),
+          accountId: testAccount.id,
+          /* NOTE: this is hardcoded because there is no createCategory mutation yet */
+          categoryId: '2',
+        });
       })
       .then((createdTransaction) => {
         testTransaction = createdTransaction;
@@ -43,6 +50,7 @@ describe('transactions table', () => {
         .type(newTransaction.memo || ''),
     );
     cy.changeSelectOption('accountIdInput', 0);
+    cy.changeSelectOption('categoryIdInput', 0);
     cy.submitForm();
 
     /* should notify changes */
@@ -55,7 +63,7 @@ describe('transactions table', () => {
   it('should be able to update a transaction', () => {
     const rowId = `row${testTransaction.id}`;
     const updateId = `updateTransaction${testTransaction.id}`;
-    const newTransaction = buildTransaction({ map: (t) => ({ ...t, amount: 10000 }) });
+    const newTransaction = buildTransaction({ amount: 10000 });
 
     /* open dialog and verify */
     cy.findByTestId(updateId).should('exist').should('not.be.disabled').click();
@@ -64,22 +72,24 @@ describe('transactions table', () => {
     cy.findByTestId(`amountInput`).within(() =>
       cy.get('input').clear().type(`${newTransaction.amount}`),
     );
-    cy.changeSelectOption('typeInput', 'Income');
+    cy.changeSelectOption('typeInput', 'Expense');
     cy.findByTestId('memoInput').within(() =>
       cy
         .get('input')
         .clear()
         .type(newTransaction.memo || ''),
     );
+    cy.changeSelectOption('categoryIdInput', 0);
 
     cy.submitForm();
 
     /* expect changes to be there */
     cy.findByTestId(rowId)
       .children()
-      .should('contain', `$ 10.000`)
+      .should('contain', `$ (10.000)`)
       .and('contain', `${testAccount.name} (${testAccount.bank})`)
-      .and('contain', newTransaction.memo);
+      .and('contain', newTransaction.memo)
+      .and('contain', 'Sample expense category');
   });
 
   /* TODO: should not allow transaction that makes vista/cash account negative */
@@ -105,16 +115,18 @@ describe('transactions table', () => {
 
   it('should be able to delete a transaction', () => {
     // eslint-disable-next-line jest/valid-expect-in-promise
-    cy.createTransaction({ ...buildTransaction(), accountId: testAccount.id }).then(
-      (transaction) => {
-        /* Delete and it shouldn't exist anymore */
-        cy.findByTestId(`deleteTransaction${transaction.id}`)
-          .should('exist')
-          .should('not.be.disabled')
-          .click();
+    cy.createTransaction({
+      ...buildTransaction({ amount: -1000 }),
+      accountId: testAccount.id,
+      categoryId: '1',
+    }).then((transaction) => {
+      /* Delete and it shouldn't exist anymore */
+      cy.findByTestId(`deleteTransaction${transaction.id}`)
+        .should('exist')
+        .should('not.be.disabled')
+        .click();
 
-        cy.findByTestId(`row${transaction.id}`).should('not.exist');
-      },
-    );
+      cy.findByTestId(`row${transaction.id}`).should('not.exist');
+    });
   });
 });
