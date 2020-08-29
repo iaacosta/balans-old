@@ -19,6 +19,7 @@ import {
   isInErrorMessage,
 } from '../errors/validationErrorMessages';
 import Account from './Account';
+import Category from './Category';
 
 @ObjectType()
 @Entity()
@@ -68,6 +69,13 @@ export default class User {
     onDelete: 'SET NULL',
   })
   accounts: Account[];
+
+  @Field(() => [Category])
+  @OneToMany(() => Category, (category) => category.user, {
+    eager: false,
+    onDelete: 'SET NULL',
+  })
+  categories: Category[];
 
   @Field()
   @CreateDateColumn()
