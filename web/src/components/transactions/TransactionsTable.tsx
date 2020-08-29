@@ -37,11 +37,12 @@ const TransactionsTable: React.FC<Props> = ({
 }) => {
   const classes = useStyles();
 
+  /* TODO: lookup how to display loading if computing this */
   const processedTransactions = useMemo(() => {
     const withRunningBalance: ProcessedTransaction[] = [];
     const balances: { [key: string]: number } = mapValues(
       groupBy(transactions, (transaction) => transaction.account.id),
-      (_transactions) => _transactions.reduce((accum, curr) => accum + curr.amount, 0),
+      (groupedTransactions) => groupedTransactions.reduce((accum, curr) => accum + curr.amount, 0),
     );
 
     transactions.forEach((transaction) => {
@@ -95,6 +96,11 @@ const TransactionsTable: React.FC<Props> = ({
             </Box>
           );
         },
+      },
+      {
+        Header: 'Category',
+        accessor: 'category',
+        Cell: ({ value }) => value?.name || 'None',
       },
       {
         Header: 'Date',
