@@ -29,7 +29,6 @@ export const transactionModelFactory = (
   const transaction = new Transaction({
     ...factoryTransaction,
     accountId: account.id,
-    resultantBalance: account.balance + factoryTransaction.amount,
   });
 
   return { factoryTransaction, transaction };

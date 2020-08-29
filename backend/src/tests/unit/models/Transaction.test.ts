@@ -18,7 +18,6 @@ describe('Transaction model test', () => {
     const transaction = new Transaction({
       ...transactionFactory(),
       accountId: 1,
-      resultantBalance: 0,
       memo: '',
     });
 
