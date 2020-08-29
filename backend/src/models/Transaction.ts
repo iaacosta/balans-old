@@ -34,10 +34,6 @@ export default class Transaction {
   @Column('uuid', { generated: 'uuid' })
   operationId: string;
 
-  @Field(() => Int)
-  @Column()
-  resultantBalance: number;
-
   @Field(() => Account)
   @ManyToOne(() => Account, { onDelete: 'CASCADE' })
   account: Account;
@@ -59,14 +55,12 @@ export default class Transaction {
     accountId: number;
     memo?: string;
     operationId?: string;
-    resultantBalance: number;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
       this.memo = transaction.memo === '' ? undefined : transaction.memo;
       this.operationId = transaction.operationId || uuid();
-      this.resultantBalance = transaction.resultantBalance;
     }
   }
 }
