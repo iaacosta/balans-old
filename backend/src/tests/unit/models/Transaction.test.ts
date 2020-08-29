@@ -7,6 +7,8 @@ import {
 } from '../../factory/transactionFactory';
 import { accountModelFactory } from '../../factory/accountFactory';
 import Transaction from '../../../models/Transaction';
+import { categoryModelFactory } from '../../factory/categoryFactory';
+import { CategoryType } from '../../../graphql/helpers';
 
 describe('Transaction model test', () => {
   it('should create Transaction object', () =>
@@ -51,6 +53,32 @@ describe('Transaction model test', () => {
         { account: accountModelFactory(1).account },
         { amount: 0 },
       );
+      await expect(validateOrReject(transaction)).rejects.toBeTruthy();
+    });
+
+    it('should not pass validation if category is expense and amount is income', async () => {
+      const { transaction } = transactionModelFactory(
+        { account: accountModelFactory(1).account },
+        { amount: 1000 },
+      );
+
+      transaction.category = categoryModelFactory(1, {
+        type: CategoryType.expense,
+      }).category;
+
+      await expect(validateOrReject(transaction)).rejects.toBeTruthy();
+    });
+
+    it('should not pass validation if category is expense and amount is income', async () => {
+      const { transaction } = transactionModelFactory(
+        { account: accountModelFactory(1).account },
+        { amount: -1000 },
+      );
+
+      transaction.category = categoryModelFactory(1, {
+        type: CategoryType.income,
+      }).category;
+
       await expect(validateOrReject(transaction)).rejects.toBeTruthy();
     });
   });
