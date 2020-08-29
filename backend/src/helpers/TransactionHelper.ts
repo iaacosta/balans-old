@@ -42,7 +42,6 @@ export default class TransactionHelper {
       memo,
       accountId: account.id,
       operationId,
-      resultantBalance: account.balance,
     });
 
     const rootTransaction = new Transaction({
@@ -50,7 +49,6 @@ export default class TransactionHelper {
       memo: memo?.concat(' (root)'),
       accountId: rootAccount.id,
       operationId,
-      resultantBalance: rootAccount.balance,
     });
 
     await this.manager.getRepository(Account).save([account, rootAccount]);
