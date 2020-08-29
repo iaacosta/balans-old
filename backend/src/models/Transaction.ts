@@ -43,6 +43,7 @@ export default class Transaction {
   @Column({ nullable: true })
   categoryId?: number;
 
+  @Field(() => Category, { nullable: true })
   @ManyToOne(() => Category, { eager: false, onDelete: 'SET NULL' })
   @IsValidCategory()
   category?: Category;
@@ -64,12 +65,14 @@ export default class Transaction {
     accountId: number;
     memo?: string;
     operationId?: string;
+    category?: Category;
   }) {
     if (transaction) {
       this.amount = transaction.amount;
       this.accountId = transaction.accountId;
       this.memo = transaction.memo === '' ? undefined : transaction.memo;
       this.operationId = transaction.operationId || uuid();
+      this.category = transaction.category;
     }
   }
 }

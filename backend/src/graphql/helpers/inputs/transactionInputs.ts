@@ -10,6 +10,9 @@ export class CreateTransactionInput {
 
   @Field({ nullable: true })
   memo?: string;
+
+  @Field(() => ID)
+  categoryId: number;
 }
 
 @InputType()
@@ -25,4 +28,7 @@ export class UpdateTransactionInput {
 
   @Field(() => ID, { nullable: true })
   accountId?: number;
+
+  @Field(() => ID, { nullable: true })
+  categoryId?: number;
 }

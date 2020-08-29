@@ -58,7 +58,7 @@ export default class AccountResolvers {
 
         await transactionHelper.performTransaction(
           { memo: 'Initial balance', amount: initialBalance },
-          createdAccount,
+          { account: createdAccount },
         );
       }
 
