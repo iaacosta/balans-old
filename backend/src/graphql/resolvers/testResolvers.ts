@@ -2,8 +2,9 @@
 /* eslint-disable no-await-in-loop */
 import { Mutation, Resolver, Arg } from 'type-graphql';
 import { getRepository, getConnection } from 'typeorm';
-import { CreateUserInput } from '../helpers';
+import { CreateUserInput, CategoryType } from '../helpers';
 import User from '../../models/User';
+import Category from '../../models/Category';
 
 @Resolver()
 export default class TestResolvers {
@@ -18,18 +19,27 @@ export default class TestResolvers {
     const entities = connection.entityMetadatas;
     for (const entity of entities) {
       const repository = connection.getRepository(entity.name);
-
-      let query = `DELETE FROM ${entity.tableName};`;
-      if (entity.tableName === 'user') {
-        query = `DELETE FROM public.${entity.tableName};`;
-      }
-
-      await repository.query(query);
+      await repository.query(
+        `DELETE FROM "${entity.tableName}"; ALTER SEQUENCE ${entity.tableName}_id_seq RESTART WITH 1;`,
+      );
     }
 
     const createdUser = await getRepository(User).save(
       new User({ ...user, role: 'admin' }),
     );
+
+    await getRepository(Category).save([
+      new Category({
+        name: 'Sample expense category',
+        type: CategoryType.expense,
+        userId: createdUser.id,
+      }),
+      new Category({
+        name: 'Sample income category',
+        type: CategoryType.income,
+        userId: createdUser.id,
+      }),
+    ]);
 
     return createdUser;
   }

@@ -11,6 +11,32 @@ type Scalars = {
   DateTime: any;
 };
 
+type GQLTransaction = {
+  __typename?: 'Transaction';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  account: GQLAccount;
+  category?: Maybe<GQLCategory>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+type GQLCategory = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: GQLCategoryType;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+type GQLCategoryType = 
+  | 'income'
+  | 'expense';
+
 type GQLUser = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -21,19 +47,7 @@ type GQLUser = {
   username: Scalars['String'];
   role: Scalars['String'];
   accounts: Array<GQLAccount>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-};
-
-
-type GQLTransaction = {
-  __typename?: 'Transaction';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  resultantBalance: Scalars['Int'];
-  account: GQLAccount;
+  categories: Array<GQLCategory>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
@@ -98,16 +112,31 @@ type GQLCreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
+  categoryId: Scalars['ID'];
+};
+
+type GQLUpdateTransactionInput = {
+  id: Scalars['ID'];
+  amount?: Maybe<Scalars['Int']>;
+  memo?: Maybe<Scalars['String']>;
+  accountId?: Maybe<Scalars['ID']>;
+  categoryId?: Maybe<Scalars['ID']>;
 };
 
 type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
+  myCategories: Array<GQLCategory>;
   myTransactions: Array<GQLTransaction>;
   users: Array<GQLUser>;
   deletedUsers: Array<GQLUser>;
   user: GQLUser;
   me: GQLUser;
+};
+
+
+type GQLQueryMyCategoriesArgs = {
+  type: GQLCategoryType;
 };
 
 
@@ -123,6 +152,7 @@ type GQLMutation = {
   signUp: Scalars['String'];
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
+  updateTransaction: GQLTransaction;
   deleteTransaction: Scalars['ID'];
   createUser: GQLUser;
   updateUser: GQLUser;
@@ -159,6 +189,11 @@ type GQLMutationSetupDatabaseArgs = {
 
 type GQLMutationCreateTransactionArgs = {
   input: GQLCreateTransactionInput;
+};
+
+
+type GQLMutationUpdateTransactionArgs = {
+  input: GQLUpdateTransactionInput;
 };
 
 
