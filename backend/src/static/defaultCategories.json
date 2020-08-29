@@ -1,0 +1,16 @@
+[
+  { "name": "Food", "type": "expense" },
+  { "name": "Groceries", "type": "expense" },
+  { "name": "Bills", "type": "expense" },
+  { "name": "Fashion", "type": "expense" },
+  { "name": "Entertainment", "type": "expense" },
+  { "name": "Technology", "type": "expense" },
+  { "name": "Subscriptions", "type": "expense" },
+  { "name": "Sports", "type": "expense" },
+  { "name": "Taxes", "type": "expense" },
+  { "name": "Main salary", "type": "income" },
+  { "name": "Side salary", "type": "income" },
+  { "name": "Services", "type": "income" },
+  { "name": "Gift", "type": "income" },
+  { "name": "Gambling", "type": "income" }
+]
