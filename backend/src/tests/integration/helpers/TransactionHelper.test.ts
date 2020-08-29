@@ -14,9 +14,12 @@ import {
 } from '../../factory/transactionFactory';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
-import { AccountType } from '../../../graphql/helpers';
+import { AccountType, CategoryType } from '../../../graphql/helpers';
 import TransactionHelper from '../../../helpers/TransactionHelper';
-import { createCategoryPair } from '../../factory/categoryFactory';
+import {
+  createCategoryPair,
+  createCategory,
+} from '../../factory/categoryFactory';
 
 const testInitialBalance = 1000;
 
@@ -280,6 +283,47 @@ describe('transaction helper tests', () => {
           expect(siblingTransaction!.memo).toBe(
             toChange.memo?.concat(' (root)'),
           );
+        });
+      });
+
+      describe('category changes', () => {
+        let toChange: { categoryId: number };
+
+        beforeAll(async () => {
+          const sampleTransaction =
+            testTransactions[testTransactions.length - 1];
+
+          const type =
+            sampleTransaction.amount > 0
+              ? CategoryType.income
+              : CategoryType.expense;
+
+          toChange = {
+            categoryId: (
+              await createCategory(connection, testUser.id, { type })
+            ).databaseCategory.id,
+          };
+
+          toUpdateTransaction = await connection
+            .getRepository(Transaction)
+            .findOneOrFail({
+              where: { id: sampleTransaction.id },
+              relations: ['account'],
+            });
+
+          await transactionHelper.updateTransaction(
+            toUpdateTransaction,
+            toChange,
+          );
+        });
+
+        it('should update transactions', async () => {
+          const transaction = await getRepository(Transaction).findOne(
+            toUpdateTransaction.id,
+          );
+
+          expect(transaction).toBeDefined();
+          expect(transaction!.categoryId).toBe(toChange.categoryId);
         });
       });
     });

@@ -27,6 +27,10 @@ const MY_TRANSACTIONS = gql`
         name
         bank
       }
+      category {
+        id
+        name
+      }
       createdAt
       updatedAt
       deletedAt
@@ -43,6 +47,10 @@ const CREATE_TRANSACTION = gql`
       account {
         id
       }
+      category {
+        id
+        name
+      }
       createdAt
       updatedAt
       deletedAt
@@ -58,6 +66,10 @@ const UPDATE_TRANSACTION = gql`
       memo
       account {
         id
+      }
+      category {
+        id
+        name
       }
       createdAt
       updatedAt
