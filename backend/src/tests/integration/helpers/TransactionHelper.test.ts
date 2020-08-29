@@ -118,14 +118,10 @@ describe('transaction helper tests', () => {
         });
 
         it('should have correct values', async () => {
-          const expectedBalance =
-            testInitialBalance +
-            testAmounts
-              .slice(0, idx + 1)
-              .reduce((accum, curr) => accum + curr, 0);
+          const expectedAmount = testTransactions[idx].amount;
 
-          expect(testTransaction.resultantBalance).toBe(expectedBalance);
-          expect(rootTransaction.resultantBalance).toBe(-expectedBalance);
+          expect(testTransaction.amount).toBe(expectedAmount);
+          expect(rootTransaction.amount).toBe(-expectedAmount);
         });
       });
     });
