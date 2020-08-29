@@ -7,11 +7,13 @@ import { map, capitalize } from 'lodash';
 import { useMyDebitAccounts, useCreateTransaction } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
+import { useMyCategories } from '../../hooks/graphql/category';
 
 const CreateTransactionDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
-  const { accounts, loading } = useMyDebitAccounts();
+  const { accounts, loading: accountsLoading } = useMyDebitAccounts();
+  const { income, expense, loading: categoriesLoading } = useMyCategories();
   const [createTransaction, { loading: createLoading }] = useCreateTransaction();
 
   const initialValues = useMemo(
@@ -20,16 +22,18 @@ const CreateTransactionDialog: React.FC = () => {
       type: 'Expense',
       memo: '',
       accountId: (accounts && accounts[0].id) || '',
+      categoryId: (expense && expense[0].id) || '',
     }),
-    [accounts],
+    [accounts, expense],
   );
 
   return (
     <TransactionFormView
       mode="create"
       accounts={accounts}
+      categories={{ income, expense }}
       initialValues={initialValues}
-      initialLoading={loading}
+      initialLoading={accountsLoading || categoriesLoading}
       submitLoading={createLoading}
       onSubmit={async ({ type, amount, ...values }) => {
         try {

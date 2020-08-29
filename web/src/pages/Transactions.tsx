@@ -7,6 +7,7 @@ import TransactionsTable from '../components/transactions/TransactionsTable';
 import TransactionsList from '../components/transactions/TransactionsList';
 import CreateTransactionDialog from '../components/transactions/CreateTransactionDialog';
 import DialogButton from '../components/ui/dialogs/DialogButton';
+import { useMyCategories } from '../hooks/graphql/category';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
@@ -21,9 +22,10 @@ const Transactions: React.FC = () => {
   const classes = useStyles();
   const { transactions, loading: transactionsLoading } = useMyTransactions();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
+  const { loading: loadingCategory } = useMyCategories();
 
   const noAccounts = accounts.length === 0;
-  const loading = transactionsLoading || accountsLoading;
+  const loading = transactionsLoading || accountsLoading || loadingCategory;
 
   const Button = (
     <DialogButton
