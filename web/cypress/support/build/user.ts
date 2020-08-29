@@ -1,7 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { build, fake } from '@jackfranklin/test-data-bot';
 
-export type BaseUser = BuildEntityOmit<GQLUser, '__typename' | 'name' | 'role' | 'accounts'> & {
+export type BaseUser = BuildEntityOmit<
+  GQLUser,
+  '__typename' | 'name' | 'role' | 'accounts' | 'categories'
+> & {
   password: string;
 };
 
