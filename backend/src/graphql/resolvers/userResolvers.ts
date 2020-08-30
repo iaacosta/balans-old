@@ -76,9 +76,9 @@ export default class UserResolvers {
         .save(new User(userInput));
 
       const categories = defaultCategories.map(
-        ({ type, name }) =>
+        ({ type, ...category }) =>
           new Category({
-            name,
+            ...category,
             type: type as CategoryType,
             userId: createdUser.id,
           }),
