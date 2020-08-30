@@ -8,6 +8,7 @@ import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import ContainerLoader from '../ui/misc/ContainerLoader';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
+import CategorySelectItem from '../ui/misc/CategorySelectItem';
 
 type Props<T> = {
   initialValues: T;
@@ -99,7 +100,10 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                     options={(values.type === 'Expense'
                       ? categories.expense
                       : categories.income
-                    ).map(({ id, name }) => ({ key: id, label: name }))}
+                    ).map((category) => ({
+                      key: category.id,
+                      element: <CategorySelectItem category={category} key={category.id} />,
+                    }))}
                   />
                 </Grid>
               </Grid>

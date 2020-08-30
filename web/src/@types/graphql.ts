@@ -301,10 +301,10 @@ export type MyCategoriesQuery = (
   { __typename?: 'Query' }
   & { income: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name'>
+    & Pick<Category, 'id' | 'name' | 'color'>
   )>, expense: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name'>
+    & Pick<Category, 'id' | 'name' | 'color'>
   )> }
 );
 
