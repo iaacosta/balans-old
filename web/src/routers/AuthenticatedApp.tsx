@@ -59,6 +59,11 @@ const pages = [
     component: Placeholder,
   },
   {
+    action: actions.routes.categories,
+    path: routing.authenticated.categories,
+    component: Placeholder,
+  },
+  {
     action: actions.routes.transactions,
     path: routing.authenticated.accounts,
     component: Accounts,
