@@ -12,11 +12,17 @@ import { groupBy, mapValues } from 'lodash';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
+import CategoryIcon from '../ui/misc/CategoryIcon';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
   expense: { color: theme.palette.error.main },
   income: { color: theme.palette.success.main },
+  categoryWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > *:not(:last-child)': { marginRight: theme.spacing(0.5) },
+  },
 }));
 
 type Props = {
@@ -100,7 +106,12 @@ const TransactionsTable: React.FC<Props> = ({
       {
         Header: 'Category',
         accessor: 'category',
-        Cell: ({ value }) => value?.name || 'None',
+        Cell: ({ value }) => (
+          <Box className={classes.categoryWrapper}>
+            <CategoryIcon color={value?.color} />
+            <Typography variant="body2">{value?.name || 'None'}</Typography>
+          </Box>
+        ),
       },
       {
         Header: 'Date',

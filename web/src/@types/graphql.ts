@@ -29,6 +29,7 @@ export type Category = {
   id: Scalars['ID'];
   name: Scalars['String'];
   type: CategoryType;
+  color: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -320,7 +321,7 @@ export type MyTransactionsQuery = (
       & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
     ), category?: Maybe<(
       { __typename?: 'Category' }
-      & Pick<Category, 'id' | 'name'>
+      & Pick<Category, 'id' | 'name' | 'color'>
     )> }
   )> }
 );
@@ -351,7 +352,10 @@ export type UpdateTransactionMutation = (
     & { account: (
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
-    ) }
+    ), category?: Maybe<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name' | 'color'>
+    )> }
   ) }
 );
 
