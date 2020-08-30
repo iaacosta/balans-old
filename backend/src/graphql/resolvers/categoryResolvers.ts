@@ -1,9 +1,9 @@
-import { Resolver, Ctx, Authorized, Query, Arg } from 'type-graphql';
+import { Resolver, Ctx, Authorized, Query, Arg, Mutation } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
 
 import Category from '../../models/Category';
 import { Context } from '../../@types';
-import { CategoryType } from '../helpers';
+import { CategoryType, CreateCategoryInput } from '../helpers';
 
 @Resolver(Category)
 export default class CategoryResolvers {
@@ -26,5 +26,18 @@ export default class CategoryResolvers {
       .andWhere('category.type = :type', { type })
       .orderBy('category.name', 'ASC')
       .getMany();
+  }
+
+  @Mutation(() => Category)
+  @Authorized()
+  async createCategory(
+    @Arg('input') categoryInput: CreateCategoryInput,
+    @Ctx() { currentUser }: Context,
+  ): Promise<Category> {
+    const category = await this.repository.save(
+      new Category({ ...categoryInput, userId: currentUser!.id }),
+    );
+
+    return category;
   }
 }
