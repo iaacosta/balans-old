@@ -24,6 +24,7 @@ import {
   AccountBalanceWallet,
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
+  Category,
 } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -64,6 +65,13 @@ const navigationItems = [
     action: actions.routes.otherMovements,
     Icon: <AccountBalance />,
     label: 'Loans and debts',
+    divides: false,
+  },
+  {
+    id: routing.authenticated.categories,
+    action: actions.routes.categories,
+    Icon: <Category />,
+    label: 'Categories',
     divides: false,
   },
   {

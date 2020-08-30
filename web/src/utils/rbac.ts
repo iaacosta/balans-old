@@ -14,6 +14,7 @@ export const actions = {
     places: 'routes:places',
     people: 'routes:people',
     users: 'routes:users',
+    categories: 'routes:categories',
   },
   users: {
     getAll: 'users:getAll',
@@ -36,6 +37,7 @@ export const rules = {
     actions.routes.otherMovements,
     actions.routes.people,
     actions.routes.places,
+    actions.routes.categories,
   ]),
   admin: new Set<string>([
     actions.routes.dashboard,
@@ -45,6 +47,7 @@ export const rules = {
     actions.routes.people,
     actions.routes.places,
     actions.routes.users,
+    actions.routes.categories,
     actions.users.getAll,
     actions.users.getOne,
     actions.users.create,
