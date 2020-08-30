@@ -9,7 +9,6 @@ import {
   IconButton,
   ListItemAvatar,
   Collapse,
-  Divider,
   Box,
 } from '@material-ui/core';
 import {
@@ -26,18 +25,17 @@ import {
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
 } from '@material-ui/icons';
-import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import routing from '../../../constants/routing';
 import { useMe } from '../../../hooks/auth/useMe';
 import { useToggleable } from '../../../hooks/utils/useToggleable';
 import { actions } from '../../../utils/rbac';
-import { useCan } from '../../../hooks/auth/useRbac';
 import { useLogout } from '../../../hooks/auth/useLogout';
 import { AppState } from '../../../config/redux';
 import { toggleTheme } from '../../../slices/themeSlice';
 import ContainerLoader from '../misc/ContainerLoader';
+import NavigationItem, { useNavigationItemStyles } from './NavigationItem';
 
 const navigationItems = [
   {
@@ -94,18 +92,16 @@ const navigationItems = [
 const useStyles = makeStyles((theme) => ({
   content: { color: theme.palette.primary.contrastText, flex: 1 },
   footer: { padding: theme.spacing(1) },
-  icon: { color: theme.palette.primary.contrastText },
   profileAvatar: { backgroundColor: theme.palette.secondary.main },
   profileName: { color: theme.palette.primary.contrastText },
   profileUsername: { color: theme.palette.primary.contrastText, opacity: 0.6 },
+  profileListItem: { paddingLeft: theme.spacing(4), color: theme.palette.text.primary },
   profileList: {
     backgroundColor: theme.palette.background.default,
     borderRightColor: theme.palette.secondary.main,
     borderRightWidth: theme.spacing(0.25),
     borderRightStyle: 'solid',
   },
-  profileListItem: { paddingLeft: theme.spacing(4), color: theme.palette.text.primary },
-  divider: { backgroundColor: theme.palette.primary.contrastText, opacity: 0.3 },
 }));
 
 const initialsFromName = (name: string) =>
@@ -119,11 +115,10 @@ type Props = {
 };
 
 const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
-  const { canPerform } = useCan();
   const classes = useStyles();
+  const itemClasses = useNavigationItemStyles();
   const logout = useLogout();
   const { user, loading } = useMe();
-  const { pathname } = useLocation();
   const { toggled, toggle } = useToggleable();
   const { themeType } = useSelector((state: AppState) => state.theme);
   const dispatch = useDispatch();
@@ -153,9 +148,9 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
               />
               <IconButton onClick={toggle} size="small">
                 {!toggled ? (
-                  <ExpandMore className={classes.icon} />
+                  <ExpandMore className={itemClasses.icon} />
                 ) : (
-                  <ExpandLess className={classes.icon} />
+                  <ExpandLess className={itemClasses.icon} />
                 )}
               </IconButton>
             </ListItem>
@@ -170,28 +165,13 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
               </ListItem>
             </List>
           </Collapse>
-          {navigationItems.map(
-            ({ id, Icon, label, action, divides }) =>
-              canPerform(action) && (
-                <React.Fragment key={id}>
-                  {divides && <Divider className={classes.divider} />}
-                  <ListItem
-                    onClick={() => onClose && onClose()}
-                    component={Link}
-                    to={id}
-                    selected={id === pathname}
-                    button
-                  >
-                    <ListItemIcon className={classes.icon}>{Icon}</ListItemIcon>
-                    <ListItemText primary={label} />
-                  </ListItem>
-                </React.Fragment>
-              ),
-          )}
+          {navigationItems.map((item) => (
+            <NavigationItem key={item.id} item={item} onClose={onClose} />
+          ))}
         </List>
       </Box>
       <Box className={classes.footer}>
-        <IconButton className={classes.icon} onClick={handleThemeChange}>
+        <IconButton className={itemClasses.icon} onClick={handleThemeChange}>
           {themeType === 'light' && <Brightness4Icon />}
           {themeType === 'dark' && <Brightness7Icon />}
         </IconButton>
