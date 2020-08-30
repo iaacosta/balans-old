@@ -15,6 +15,7 @@ export const myTransactionsQuery = gql`
       category {
         id
         name
+        color
       }
       createdAt
     }
@@ -44,6 +45,7 @@ export const updateTransactionMutation = gql`
       category {
         id
         name
+        color
       }
       createdAt
     }
