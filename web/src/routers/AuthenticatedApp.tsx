@@ -52,6 +52,44 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const pages = [
+  {
+    action: actions.routes.dashboard,
+    path: routing.authenticated.dashboard,
+    component: Placeholder,
+  },
+  {
+    action: actions.routes.transactions,
+    path: routing.authenticated.accounts,
+    component: Accounts,
+  },
+  {
+    action: actions.routes.movements,
+    path: routing.authenticated.transactions,
+    component: Transactions,
+  },
+  {
+    action: actions.routes.otherMovements,
+    path: routing.authenticated.otherMovements,
+    component: Placeholder,
+  },
+  {
+    action: actions.routes.places,
+    path: routing.authenticated.places,
+    component: Placeholder,
+  },
+  {
+    action: actions.routes.people,
+    path: routing.authenticated.people,
+    component: Placeholder,
+  },
+  {
+    action: actions.routes.users,
+    path: routing.authenticated.users,
+    component: Users,
+  },
+] as const;
+
 const AuthenticatedApp: React.FC = () => {
   const classes = useStyles();
   const { canPerform, loading, error } = useCan();
@@ -70,26 +108,9 @@ const AuthenticatedApp: React.FC = () => {
       <Box className={classes.main}>
         <Box className={classes.content}>
           <Switch>
-            {canPerform(actions.routes.dashboard) && (
-              <Route path={routing.authenticated.dashboard} component={Placeholder} exact />
-            )}
-            {canPerform(actions.routes.transactions) && (
-              <Route path={routing.authenticated.accounts} component={Accounts} exact />
-            )}
-            {canPerform(actions.routes.movements) && (
-              <Route path={routing.authenticated.transactions} component={Transactions} exact />
-            )}
-            {canPerform(actions.routes.otherMovements) && (
-              <Route path={routing.authenticated.otherMovements} component={Placeholder} exact />
-            )}
-            {canPerform(actions.routes.places) && (
-              <Route path={routing.authenticated.places} component={Placeholder} exact />
-            )}
-            {canPerform(actions.routes.people) && (
-              <Route path={routing.authenticated.people} component={Placeholder} exact />
-            )}
-            {canPerform(actions.routes.users) && (
-              <Route path={routing.authenticated.users} component={Users} exact />
+            {pages.map(
+              ({ action, path, component }) =>
+                canPerform(action) && <Route key={path} path={path} component={component} exact />,
             )}
             <Route>
               <Redirect to={routing.authenticated.dashboard} />
