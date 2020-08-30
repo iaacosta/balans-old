@@ -11,6 +11,7 @@ const routing = {
     places: '/places',
     people: '/people',
     users: '/users',
+    categories: '/categories',
   },
 } as const;
 
