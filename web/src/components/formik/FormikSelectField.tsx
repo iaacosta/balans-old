@@ -11,10 +11,12 @@ import {
 } from '@material-ui/core';
 import { useField } from 'formik';
 
+type KeyLabelOption = { key: string; label: string };
+type KeyElementOption = { key: string; element: JSX.Element };
 interface Props {
   name: string;
   label: string;
-  options: (string | { key: string; label: string })[];
+  options: (string | KeyLabelOption | KeyElementOption)[];
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -54,15 +56,18 @@ const FormikSelectField: React.FC<Props & SelectProps> = ({
         {...fieldProps}
       >
         {options.map((option) => {
-          let key = '';
-          let optionLabel = '';
+          let key: number | string;
+          let optionLabel: React.ReactNode;
 
           if (typeof option === 'string') {
             key = option;
             optionLabel = option;
+          } else if ((option as KeyLabelOption).label) {
+            key = (option as KeyLabelOption).key;
+            optionLabel = (option as KeyLabelOption).label;
           } else {
             key = option.key;
-            optionLabel = option.label;
+            optionLabel = (option as KeyElementOption).element;
           }
 
           return (

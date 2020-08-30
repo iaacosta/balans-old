@@ -5,10 +5,12 @@ export const myCategoriesQuery = gql`
     income: myCategories(type: income) {
       id
       name
+      color
     }
     expense: myCategories(type: expense) {
       id
       name
+      color
     }
   }
 `;
