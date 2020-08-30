@@ -6,13 +6,15 @@ import { Connection } from 'typeorm';
 import Category from '../../models/Category';
 import { CategoryType } from '../../graphql/helpers';
 import { CategoryPair } from './transactionFactory';
+import colors from '../../constants/colors';
 
-export type BuildType = Pick<Category, 'name' | 'type'>;
+export type BuildType = Pick<Category, 'name' | 'type' | 'color'>;
 
 export const categoryFactory = (overrides?: Partial<BuildType>) => {
   const categoryBuilder = build<BuildType>('Category', {
     fields: {
-      name: fake((faker) => faker.commerce.productName()),
+      name: fake((faker) => faker.name.findName()),
+      color: oneOf(...colors),
       type: oneOf(CategoryType.expense, CategoryType.income),
     },
   });
