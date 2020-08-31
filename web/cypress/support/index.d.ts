@@ -26,6 +26,11 @@ declare namespace Cypress {
      * @example cy.changeSelectOption('testInput', 'option');
      */
     changeSelectOption(testId: string, selector: number | string): Chainable<void>;
+    /**
+     * Custom command to change a color picker to random
+     * @example cy.changeColor('testInput');
+     */
+    changeColor(testId: string): Chainable<void>;
 
     /* Users */
     /**

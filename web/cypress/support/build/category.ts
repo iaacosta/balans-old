@@ -7,7 +7,7 @@ export type BaseCategory = GQLCreateCategoryInput;
 export const buildCategory = (overrides?: Partial<BaseCategory>) => {
   const builder = build<BaseCategory>('account', {
     fields: {
-      name: fake((faker) => faker.commerce.product()),
+      name: fake((faker) => faker.internet.userName()),
       type: oneOf<GQLCategoryType>('income', 'expense'),
       color: oneOf(
         '#e9d45d',
