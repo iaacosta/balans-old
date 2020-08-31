@@ -1,9 +1,18 @@
-import { Resolver, Ctx, Authorized, Query, Arg, Mutation } from 'type-graphql';
+import {
+  Resolver,
+  Ctx,
+  Authorized,
+  Query,
+  Arg,
+  Mutation,
+  ID,
+} from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
 
 import Category from '../../models/Category';
 import { Context } from '../../@types';
 import { CategoryType, CreateCategoryInput } from '../helpers';
+import NotFoundError from '../errors/NotFoundError';
 
 @Resolver(Category)
 export default class CategoryResolvers {
@@ -39,5 +48,23 @@ export default class CategoryResolvers {
     );
 
     return category;
+  }
+
+  @Mutation(() => ID)
+  @Authorized()
+  async deleteCategory(
+    @Arg('id', () => ID) id: string,
+    @Ctx() { currentUser }: Context,
+  ): Promise<string> {
+    const category = await this.repository
+      .createQueryBuilder('category')
+      .select()
+      .where('category.id = :id', { id })
+      .andWhere('category.userId = :userId', { userId: currentUser!.id })
+      .getOne();
+
+    if (!category) throw new NotFoundError('category');
+    await this.repository.remove(category);
+    return id;
   }
 }
