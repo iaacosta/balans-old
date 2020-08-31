@@ -1,12 +1,14 @@
 import { buildTransaction } from '../../support/build/transaction';
 import { validationMatchers } from '../../support/matchers';
 import { buildAccount } from '../../support/build/account';
+import { buildCategory } from '../../support/build/category';
 
 const { requiredField } = validationMatchers;
 
 describe('transactions table', () => {
   let testAccount: GQLCreateDebitAccountMutation['createAccount'];
   let testTransaction: GQLCreateTransactionMutation['createTransaction'];
+  let testCategories: CategoryPair;
 
   beforeEach(() => {
     cy.fixture('adminUser')
@@ -18,11 +20,19 @@ describe('transactions table', () => {
       )
       .then((createdAccount) => {
         testAccount = createdAccount;
+        return cy.createCategory(buildCategory({ type: 'income' }));
+      })
+      .then((incomeCategory) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        testCategories = { income: incomeCategory } as any;
+        return cy.createCategory(buildCategory({ type: 'expense' }));
+      })
+      .then((expenseCategory) => {
+        testCategories.expense = expenseCategory;
         return cy.createTransaction({
           ...buildTransaction({ amount: 10000 }),
           accountId: testAccount.id,
-          /* NOTE: this is hardcoded because there is no createCategory mutation yet */
-          categoryId: '2',
+          categoryId: testCategories.income.id,
         });
       })
       .then((createdTransaction) => {
@@ -89,7 +99,7 @@ describe('transactions table', () => {
       .should('contain', `$ (10.000)`)
       .and('contain', `${testAccount.name} (${testAccount.bank})`)
       .and('contain', newTransaction.memo)
-      .and('contain', 'Sample expense category');
+      .and('contain', testCategories.expense.name);
   });
 
   /* TODO: should not allow transaction that makes vista/cash account negative */
@@ -118,7 +128,7 @@ describe('transactions table', () => {
     cy.createTransaction({
       ...buildTransaction({ amount: -1000 }),
       accountId: testAccount.id,
-      categoryId: '1',
+      categoryId: testCategories.expense.id,
     }).then((transaction) => {
       /* Delete and it shouldn't exist anymore */
       cy.findByTestId(`deleteTransaction${transaction.id}`)
