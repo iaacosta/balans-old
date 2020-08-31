@@ -29,6 +29,7 @@ type GQLCategory = {
   id: Scalars['ID'];
   name: Scalars['String'];
   type: GQLCategoryType;
+  color: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -108,6 +109,12 @@ type GQLCreateAccountInput = {
   initialBalance: Scalars['Int'];
 };
 
+type GQLCreateCategoryInput = {
+  name: Scalars['String'];
+  color: Scalars['String'];
+  type: GQLCategoryType;
+};
+
 type GQLCreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -150,6 +157,7 @@ type GQLMutation = {
   deleteAccount: Scalars['ID'];
   login: Scalars['String'];
   signUp: Scalars['String'];
+  createCategory: GQLCategory;
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
   updateTransaction: GQLTransaction;
@@ -179,6 +187,11 @@ type GQLMutationLoginArgs = {
 
 type GQLMutationSignUpArgs = {
   input: GQLCreateUserInput;
+};
+
+
+type GQLMutationCreateCategoryArgs = {
+  input: GQLCreateCategoryInput;
 };
 
 
@@ -236,6 +249,19 @@ type GQLCreateDebitAccountMutation = (
   & { createAccount: (
     { __typename?: 'Account' }
     & Pick<GQLAccount, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+  ) }
+);
+
+type GQLCreateCategoryMutationVariables = Exact<{
+  input: GQLCreateCategoryInput;
+}>;
+
+
+type GQLCreateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { createCategory: (
+    { __typename?: 'Category' }
+    & Pick<GQLCategory, 'id' | 'name' | 'type' | 'color'>
   ) }
 );
 

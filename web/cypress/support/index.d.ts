@@ -6,6 +6,11 @@ type BuildEntityOmit<T, O extends string> = Omit<
   O | 'id' | 'deletedAt' | 'createdAt' | 'updatedAt'
 >;
 
+type CategoryPair = {
+  income: GQLCreateCategoryMutation['createCategory'];
+  expense: GQLCreateCategoryMutation['createCategory'];
+};
+
 declare namespace Cypress {
   interface Chainable {
     /* Helpers */
@@ -63,6 +68,15 @@ declare namespace Cypress {
     createTransaction(
       transaction: GQLCreateTransactionMutationVariables['input'],
     ): Chainable<GQLCreateTransactionMutation['createTransaction']>;
+
+    /* Categories */
+    /**
+     * Creates an category
+     * @example cy.createCategory(buildCategory())
+     */
+    createCategory(
+      category: GQLCreateCategoryMutationVariables['input'],
+    ): Chainable<GQLCreateCategoryMutation['createCategory']>;
 
     /* Database */
     /**
