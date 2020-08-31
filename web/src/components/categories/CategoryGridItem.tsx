@@ -24,7 +24,7 @@ const CategoryGridItem: React.FC<Props> = ({ category }) => {
   const [deleteCategory, { loading }] = useDeleteCategory();
 
   return (
-    <Paper className={classes.paper} elevation={1}>
+    <Paper data-testid={`category${category.id}`} className={classes.paper} elevation={1}>
       <CategorySelectItem className={classes.category} category={category} />
       <EnhancedIconButton size="small" disabled contained color="info">
         <EditIcon fontSize="small" />
