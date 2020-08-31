@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useEffect } from 'react';
 import { Formik, FormikConfig, Form } from 'formik';
 import * as yup from 'yup';
 import { InputAdornment, Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
@@ -48,72 +49,84 @@ const TransactionFormView = <T extends Record<string, unknown>>({
       })}
       onSubmit={onSubmit}
     >
-      {({ dirty, values }) => (
-        <Form className={classes.form}>
-          <DialogTitle>{label} transaction</DialogTitle>
-          <DialogContent>
-            {initialLoading || !accounts ? (
-              <ContainerLoader />
-            ) : (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <FormikTextField
-                    name="amount"
-                    label="Amount"
-                    type="number"
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    fullWidth
-                  />
+      {({ dirty, values, setFieldValue }) => {
+        useEffect(() => {
+          setFieldValue(
+            'categoryId',
+            values.type === 'Expense' ? categories.expense[0].id : categories.income[0].id,
+          );
+        }, [values.type, setFieldValue]);
+
+        return (
+          <Form className={classes.form}>
+            <DialogTitle>{label} transaction</DialogTitle>
+            <DialogContent>
+              {initialLoading || !accounts ? (
+                <ContainerLoader />
+              ) : (
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <FormikTextField
+                      name="amount"
+                      label="Amount"
+                      type="number"
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormikSelectField
+                      name="type"
+                      label="Transaction type"
+                      fullWidth
+                      displayEmpty
+                      options={['Expense', 'Income']}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormikTextField name="memo" label="Memo" fullWidth />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormikSelectField
+                      name="accountId"
+                      label="Account"
+                      fullWidth
+                      displayEmpty
+                      options={accounts.map(({ id, name, bank }) => ({
+                        key: id,
+                        label: `${name} (${bank})`,
+                      }))}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormikSelectField
+                      name="categoryId"
+                      label="Category"
+                      fullWidth
+                      displayEmpty
+                      options={(values.type === 'Expense'
+                        ? categories.expense
+                        : categories.income
+                      ).map((category) => ({
+                        key: category.id,
+                        element: <CategorySelectItem category={category} key={category.id} />,
+                      }))}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <FormikSelectField
-                    name="type"
-                    label="Transaction type"
-                    fullWidth
-                    displayEmpty
-                    options={['Expense', 'Income']}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormikTextField name="memo" label="Memo" fullWidth />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormikSelectField
-                    name="accountId"
-                    label="Account"
-                    fullWidth
-                    displayEmpty
-                    options={accounts.map(({ id, name, bank }) => ({
-                      key: id,
-                      label: `${name} (${bank})`,
-                    }))}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormikSelectField
-                    name="categoryId"
-                    label="Category"
-                    fullWidth
-                    displayEmpty
-                    options={(values.type === 'Expense'
-                      ? categories.expense
-                      : categories.income
-                    ).map((category) => ({
-                      key: category.id,
-                      element: <CategorySelectItem category={category} key={category.id} />,
-                    }))}
-                  />
-                </Grid>
-              </Grid>
-            )}
-          </DialogContent>
-          <DialogFormButtons loading={submitLoading} disabled={mode === 'update' ? !dirty : false}>
-            {label}
-          </DialogFormButtons>
-        </Form>
-      )}
+              )}
+            </DialogContent>
+            <DialogFormButtons
+              loading={submitLoading}
+              disabled={mode === 'update' ? !dirty : false}
+            >
+              {label}
+            </DialogFormButtons>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };
