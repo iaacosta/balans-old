@@ -5,9 +5,14 @@ import {
   MyCategoriesQueryVariables,
   CreateCategoryMutation,
   CreateCategoryMutationVariables,
+  DeleteCategoryMutation,
 } from '../../@types/graphql';
-import { useRedirectedQuery, useInputMutation } from './utils';
-import { myCategoriesQuery, createCategoryMutation } from '../../graphql/category';
+import { useRedirectedQuery, useInputMutation, UseIdMutationReturn, useIdMutation } from './utils';
+import {
+  myCategoriesQuery,
+  createCategoryMutation,
+  deleteCategoryMutation,
+} from '../../graphql/category';
 import { InputMutationTuple } from '../../@types/helpers';
 
 export const useMyCategories = (): Omit<
@@ -30,3 +35,10 @@ export const useCreateCategory = (): InputMutationTuple<
   useInputMutation(createCategoryMutation, {
     refetchQueries: [{ query: myCategoriesQuery }],
   });
+
+export const useDeleteCategory = (): UseIdMutationReturn<DeleteCategoryMutation> => {
+  return useIdMutation<DeleteCategoryMutation>(deleteCategoryMutation, {
+    refetchQueries: [{ query: myCategoriesQuery }],
+    snackbarMessage: 'Category deleted successfully',
+  });
+};
