@@ -2,10 +2,8 @@
 /* eslint-disable no-await-in-loop */
 import { Mutation, Resolver, Arg } from 'type-graphql';
 import { getRepository, getConnection } from 'typeorm';
-import { CreateUserInput, CategoryType } from '../helpers';
+import { CreateUserInput } from '../helpers';
 import User from '../../models/User';
-import Category from '../../models/Category';
-import colors from '../../constants/colors';
 
 @Resolver()
 export default class TestResolvers {
@@ -28,21 +26,6 @@ export default class TestResolvers {
     const createdUser = await getRepository(User).save(
       new User({ ...user, role: 'admin' }),
     );
-
-    await getRepository(Category).save([
-      new Category({
-        name: 'Sample expense category',
-        color: colors[0],
-        type: CategoryType.expense,
-        userId: createdUser.id,
-      }),
-      new Category({
-        name: 'Sample income category',
-        color: colors[1],
-        type: CategoryType.income,
-        userId: createdUser.id,
-      }),
-    ]);
 
     return createdUser;
   }
