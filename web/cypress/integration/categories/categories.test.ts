@@ -38,4 +38,23 @@ describe('categories view', () => {
       cy.contains(requiredField).should('exist');
     });
   });
+
+  it('should be able to delete a transaction', () => {
+    // eslint-disable-next-line jest/valid-expect-in-promise
+    cy.createCategory(buildCategory()).then((category) => {
+      cy.visit('/categories');
+
+      /* Delete and it shouldn't exist anymore */
+      cy.findByTestId(`deleteCategory${category.id}`)
+        .should('exist')
+        .should('not.be.disabled')
+        .click();
+
+      /* should notify changes */
+      cy.findByText(/category deleted/i).should('exist');
+
+      /* should not find it */
+      cy.findByTestId(`category${category.id}`).should('not.exist');
+    });
+  });
 });
