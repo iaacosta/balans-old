@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import { random } from 'lodash';
 
 Cypress.Commands.add('submitForm', () => cy.get('button[type="submit"]').click());
 
@@ -11,4 +12,9 @@ Cypress.Commands.add('changeSelectOption', (testId, selector) => {
       cy.get('li').within(() => cy.contains(selector).click());
     }
   });
+});
+
+Cypress.Commands.add('changeColor', (testId) => {
+  cy.findByTestId(testId).click();
+  cy.get('.circle-picker').within(() => cy.get('span').eq(random(12, false)).click());
 });
