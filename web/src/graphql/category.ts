@@ -14,3 +14,11 @@ export const myCategoriesQuery = gql`
     }
   }
 `;
+
+export const createCategoryMutation = gql`
+  mutation CreateCategory($input: CreateCategoryInput!) {
+    createCategory(input: $input) {
+      id
+    }
+  }
+`;
