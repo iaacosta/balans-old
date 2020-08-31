@@ -41,6 +41,12 @@ const CREATE_CATEGORY = gql`
   }
 `;
 
+const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($id: ID!) {
+    deleteCategory(id: $id)
+  }
+`;
+
 describe('category API calls', () => {
   let connection: Connection;
   let testUser: User;
@@ -150,6 +156,38 @@ describe('category API calls', () => {
         variables: { input: testCategory },
       });
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('deleteCategory', () => {
+    it('should delete a category if mine', async () => {
+      const createdCategory = (await createCategory(connection, testUser.id))
+        .databaseCategory;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_CATEGORY,
+        variables: { id: createdCategory.id },
+      });
+
+      expect(response).toBeSuccessful();
+      await expect(
+        getRepository(Category).findOneOrFail(response.data!.deleteCategory),
+      ).rejects.toBeTruthy();
+    });
+
+    it('should not delete a category if not mine', async () => {
+      const otherUser = (await createUser(connection)).databaseUser;
+      const createdCategory = (await createCategory(connection, otherUser.id))
+        .databaseCategory;
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_CATEGORY,
+        variables: { id: createdCategory.id },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 });
