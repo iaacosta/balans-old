@@ -1,10 +1,10 @@
-import { createConnection, Connection } from 'typeorm';
+import { createConnection, Connection, getRepository } from 'typeorm';
 import { gql } from 'apollo-server-express';
 import { keyBy } from 'lodash';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Category from '../../../models/Category';
-import { createCategory } from '../../factory/categoryFactory';
+import { createCategory, categoryFactory } from '../../factory/categoryFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import { CategoryType } from '../../../graphql/helpers';
@@ -22,6 +22,19 @@ const MY_CATEGORIES = gql`
       id
       name
       type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const CREATE_CATEGORY = gql`
+  mutation CreateCategory($input: CreateCategoryInput!) {
+    createCategory(input: $input) {
+      id
+      name
+      type
+      color
       createdAt
       updatedAt
     }
@@ -108,6 +121,34 @@ describe('category API calls', () => {
     it('should not authorize unauthenticated users', async () => {
       const { query } = await mountTestClient();
       const response = await query({ query: MY_CATEGORIES });
+      expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('createCategory', () => {
+    it('should create category', async () => {
+      const testCategory = categoryFactory();
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: CREATE_CATEGORY,
+        variables: { input: testCategory },
+      });
+
+      expect(response).toBeSuccessful();
+      const createdCategory = await getRepository(Category).findOneOrFail(
+        response.data!.createCategory.id,
+      );
+      expect(createdCategory.name).toBe(testCategory.name);
+    });
+
+    it('should not authorize unauthenticated users', async () => {
+      const testCategory = categoryFactory();
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: CREATE_CATEGORY,
+        variables: { input: testCategory },
+      });
       expect(response).toBeRejectedByAuth();
     });
   });
