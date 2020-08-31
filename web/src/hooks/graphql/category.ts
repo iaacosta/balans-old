@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
 import { QueryResult } from '@apollo/client';
-import { MyCategoriesQuery, MyCategoriesQueryVariables } from '../../@types/graphql';
-import { useRedirectedQuery } from './utils';
-import { myCategoriesQuery } from '../../graphql/category';
+import {
+  MyCategoriesQuery,
+  MyCategoriesQueryVariables,
+  CreateCategoryMutation,
+  CreateCategoryMutationVariables,
+} from '../../@types/graphql';
+import { useRedirectedQuery, useInputMutation } from './utils';
+import { myCategoriesQuery, createCategoryMutation } from '../../graphql/category';
+import { InputMutationTuple } from '../../@types/helpers';
 
 export const useMyCategories = (): Omit<
   QueryResult<MyCategoriesQuery, MyCategoriesQueryVariables>,
@@ -16,3 +22,11 @@ export const useMyCategories = (): Omit<
   const expense = useMemo(() => data?.expense || [], [data]);
   return { income, expense, loading: loading || !data, ...meta };
 };
+
+export const useCreateCategory = (): InputMutationTuple<
+  CreateCategoryMutation,
+  CreateCategoryMutationVariables
+> =>
+  useInputMutation(createCategoryMutation, {
+    refetchQueries: [{ query: myCategoriesQuery }],
+  });
