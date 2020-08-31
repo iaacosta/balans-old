@@ -11,6 +11,7 @@ import Users from '../pages/Users';
 import Accounts from '../pages/Accounts';
 import ViewportContainer from '../components/ui/misc/ViewportContainer';
 import Transactions from '../pages/Transactions';
+import Categories from '../pages/Categories';
 
 const Placeholder: React.FC = () => {
   const { pathname } = useLocation();
@@ -61,7 +62,7 @@ const pages = [
   {
     action: actions.routes.categories,
     path: routing.authenticated.categories,
-    component: Placeholder,
+    component: Categories,
   },
   {
     action: actions.routes.transactions,

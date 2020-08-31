@@ -111,6 +111,12 @@ export type CreateAccountInput = {
   initialBalance: Scalars['Int'];
 };
 
+export type CreateCategoryInput = {
+  name: Scalars['String'];
+  color: Scalars['String'];
+  type: CategoryType;
+};
+
 export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -153,6 +159,7 @@ export type Mutation = {
   deleteAccount: Scalars['ID'];
   login: Scalars['String'];
   signUp: Scalars['String'];
+  createCategory: Category;
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -182,6 +189,11 @@ export type MutationLoginArgs = {
 
 export type MutationSignUpArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationCreateCategoryArgs = {
+  input: CreateCategoryInput;
 };
 
 
@@ -306,6 +318,19 @@ export type MyCategoriesQuery = (
     { __typename?: 'Category' }
     & Pick<Category, 'id' | 'name' | 'color'>
   )> }
+);
+
+export type CreateCategoryMutationVariables = Exact<{
+  input: CreateCategoryInput;
+}>;
+
+
+export type CreateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { createCategory: (
+    { __typename?: 'Category' }
+    & Pick<Category, 'id'>
+  ) }
 );
 
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
