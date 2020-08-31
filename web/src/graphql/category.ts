@@ -22,3 +22,9 @@ export const createCategoryMutation = gql`
     }
   }
 `;
+
+export const deleteCategoryMutation = gql`
+  mutation DeleteCategory($id: ID!) {
+    deleteCategory(id: $id)
+  }
+`;

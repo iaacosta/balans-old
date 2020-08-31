@@ -160,6 +160,7 @@ export type Mutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   createCategory: Category;
+  deleteCategory: Scalars['ID'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -194,6 +195,11 @@ export type MutationSignUpArgs = {
 
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
+};
+
+
+export type MutationDeleteCategoryArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -331,6 +337,16 @@ export type CreateCategoryMutation = (
     { __typename?: 'Category' }
     & Pick<Category, 'id'>
   ) }
+);
+
+export type DeleteCategoryMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteCategory'>
 );
 
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
