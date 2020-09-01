@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, FormikConfig, Form } from 'formik';
 import * as yup from 'yup';
 import { InputAdornment, Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
@@ -37,6 +37,9 @@ const TransactionFormView = <T extends Record<string, unknown>>({
   const classes = useStyles();
   const label = mode === 'create' ? 'Create' : 'Update';
 
+  const getCategoriesByType = (type: unknown) =>
+    categories[type === 'Expense' ? 'expense' : 'income'];
+
   return (
     <Formik
       enableReinitialize
@@ -50,11 +53,18 @@ const TransactionFormView = <T extends Record<string, unknown>>({
       onSubmit={onSubmit}
     >
       {({ dirty, values, setFieldValue }) => {
+        const [internalCategories, setCategories] = useState(getCategoriesByType(values.type));
+
         useEffect(() => {
-          setFieldValue(
-            'categoryId',
-            values.type === 'Expense' ? categories.expense[0].id : categories.income[0].id,
-          );
+          const newCategories = getCategoriesByType(values.type);
+          let newCategory = newCategories[0].id;
+
+          if (mode === 'update' && initialValues.type === values.type) {
+            newCategory = initialValues.categoryId as string;
+          }
+
+          setCategories(newCategories);
+          setFieldValue('categoryId', newCategory);
         }, [values.type, setFieldValue]);
 
         return (
@@ -106,10 +116,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                       label="Category"
                       fullWidth
                       displayEmpty
-                      options={(values.type === 'Expense'
-                        ? categories.expense
-                        : categories.income
-                      ).map((category) => ({
+                      options={internalCategories.map((category) => ({
                         key: category.id,
                         element: <CategorySelectItem category={category} key={category.id} />,
                       }))}
