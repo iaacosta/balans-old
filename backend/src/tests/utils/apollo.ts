@@ -9,6 +9,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { buildOwnSchema } from '../../config/apollo';
 import formatError from '../../errors/apolloErrorFormatter';
 import { Context } from '../../@types';
+import initializeLoaders from '../../graphql/loaders';
 
 export const mountTestClient = async (
   context?: Partial<Context>,
@@ -18,7 +19,11 @@ export const mountTestClient = async (
   const server = new ApolloServer({
     schema,
     formatError,
-    context: context || { s3: {}, currentUser: null },
+    context: (): Context => ({
+      currentUser: null,
+      loaders: initializeLoaders(),
+      ...context,
+    }),
   });
 
   return createTestClient(server);
