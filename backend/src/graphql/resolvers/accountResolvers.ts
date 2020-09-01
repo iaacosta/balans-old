@@ -83,6 +83,7 @@ export default class AccountResolvers {
     return id;
   }
 
+  /* TODO: check if this is necessary */
   @FieldResolver()
   async user(@Root() { userId }: Account): Promise<User | null> {
     const user = await getRepository(User).findOne(userId);
