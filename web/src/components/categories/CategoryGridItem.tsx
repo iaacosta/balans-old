@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
     display: 'flex',
+    alignItems: 'center',
     '& > *:not(:last-child)': { marginRight: theme.spacing(1) },
   },
   category: { flex: 1 },
