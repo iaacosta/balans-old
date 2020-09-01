@@ -5,6 +5,7 @@ import { resolve } from 'path';
 
 import { authenticateUser } from '../services/passport';
 import { Context } from '../@types';
+import initializeLoaders from '../graphql/loaders';
 import formatError from '../errors/apolloErrorFormatter';
 
 export const buildOwnSchema = async (): Promise<GraphQLSchema> => {
@@ -30,5 +31,6 @@ export const mountApollo = async (): Promise<ApolloServer> =>
     formatError,
     context: async ({ req }): Promise<Context> => ({
       currentUser: await authenticateUser(req),
+      loaders: initializeLoaders(),
     }),
   });
