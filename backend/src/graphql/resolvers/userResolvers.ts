@@ -23,9 +23,9 @@ import NoChangesError from '../errors/NoChangesError';
 import roles from '../../constants/roles';
 import { Context } from '../../@types';
 import { updateEntity } from '../../utils/typeORM';
-import Account from '../../models/Account';
 import defaultCategories from '../../static/defaultCategories.json';
 import Category from '../../models/Category';
+import Account from '../../models/Account';
 
 @Resolver(User)
 export default class UserResolvers {
@@ -134,6 +134,7 @@ export default class UserResolvers {
     return this.repository.recover(user);
   }
 
+  /* TODO: check if this is necessary */
   @FieldResolver()
   accounts(@Root() { id }: User): Promise<Account[]> {
     return getRepository(Account).find({ where: { userId: id } });
