@@ -123,17 +123,20 @@ export default class TransactionResolvers {
   }
 
   @FieldResolver()
-  async account(@Root() { accountId }: Transaction): Promise<Account | null> {
-    const account = await this.accountRepository.findOne(accountId);
-    return account || null;
+  async account(
+    @Root() { accountId }: Transaction,
+    @Ctx() { loaders }: Context,
+  ): Promise<Account | null> {
+    if (!accountId) return null;
+    return loaders.accounts.byId.load(accountId);
   }
 
   @FieldResolver()
   async category(
     @Root() { categoryId }: Transaction,
+    @Ctx() { loaders }: Context,
   ): Promise<Category | null> {
     if (!categoryId) return null;
-    const category = await getRepository(Category).findOne(categoryId);
-    return category || null;
+    return loaders.categories.byId.load(categoryId);
   }
 }
