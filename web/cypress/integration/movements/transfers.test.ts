@@ -43,6 +43,9 @@ describe('transfers table', () => {
 
     /* should notify changes */
     cy.findByText(/transfer created/i).should('exist');
+
+    /* should show created transaction */
+    cy.get('tbody tr').should('have.length', 1);
   });
 
   it('should validate transfer fields', () => {
