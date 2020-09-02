@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 const tabs = [
   { key: 'debit' as const, label: 'Debit accounts' },
-  { key: 'credit' as const, label: 'Credit accounts' },
+  { key: 'credit' as const, label: 'Credit accounts', disabled: true },
 ];
 
 const Accounts: React.FC = () => {
