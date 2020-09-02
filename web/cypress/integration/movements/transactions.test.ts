@@ -13,11 +13,7 @@ describe('transactions table', () => {
   beforeEach(() => {
     cy.fixture('adminUser')
       .then((user) => cy.login(user.username, user.password))
-      .then(() =>
-        cy.createAccount(
-          buildAccount({ map: (account) => ({ ...account, initialBalance: 0, type: 'checking' }) }),
-        ),
-      )
+      .then(() => cy.createAccount(buildAccount({ initialBalance: 0, type: 'checking' })))
       .then((createdAccount) => {
         testAccount = createdAccount;
         return cy.createCategory(buildCategory({ type: 'income' }));
