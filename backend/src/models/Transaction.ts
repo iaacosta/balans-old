@@ -1,45 +1,12 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from 'typeorm';
-import { ObjectType, Field, ID, Int } from 'type-graphql';
-import { NotEquals } from 'class-validator';
-import { v4 as uuid } from 'uuid';
-import Account from './Account';
+import { Entity, Column, ManyToOne, DeleteDateColumn } from 'typeorm';
+import { ObjectType, Field } from 'type-graphql';
 import Category from './Category';
 import { IsValidCategory } from '../utils';
+import Movement from './Movement';
 
 @ObjectType()
 @Entity()
-export default class Transaction {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Field(() => Int)
-  @Column('integer')
-  @NotEquals(0)
-  amount: number;
-
-  @Column()
-  accountId: number;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  memo?: string;
-
-  @Column('uuid', { generated: 'uuid' })
-  operationId: string;
-
-  @Field(() => Account)
-  @ManyToOne(() => Account, { eager: false, onDelete: 'CASCADE' })
-  account: Account;
-
+export default class Transaction extends Movement {
   @Column({ nullable: true })
   categoryId?: number;
 
@@ -47,14 +14,6 @@ export default class Transaction {
   @ManyToOne(() => Category, { eager: false, onDelete: 'SET NULL' })
   @IsValidCategory()
   category?: Category;
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @Field({ nullable: true })
   @DeleteDateColumn()
@@ -67,11 +26,8 @@ export default class Transaction {
     operationId?: string;
     category?: Category;
   }) {
+    super(transaction);
     if (transaction) {
-      this.amount = transaction.amount;
-      this.accountId = transaction.accountId;
-      this.memo = transaction.memo === '' ? undefined : transaction.memo;
-      this.operationId = transaction.operationId || uuid();
       this.category = transaction.category;
     }
   }
