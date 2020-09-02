@@ -2,7 +2,7 @@ import React from 'react';
 import { Paper, Tabs, makeStyles, Tab } from '@material-ui/core';
 
 type Props<T> = {
-  tabs: { key: T; label: string }[];
+  tabs: { key: T; label: string; disabled?: boolean }[];
   selected: T;
   change: (tab: T) => void;
 };
@@ -17,8 +17,8 @@ const CustomTabs = <T extends string>({ tabs, selected, change }: Props<T>): Rea
   return (
     <Paper square className={classes.paper} elevation={1}>
       <Tabs textColor="secondary" value={selected} onChange={(event, value) => change(value as T)}>
-        {tabs.map(({ key, label }) => (
-          <Tab key={key} value={key} label={label} data-testid={`${key}Tab`} />
+        {tabs.map(({ key, label, disabled }) => (
+          <Tab key={key} value={key} disabled={disabled} label={label} data-testid={`${key}Tab`} />
         ))}
       </Tabs>
     </Paper>
