@@ -18,6 +18,7 @@ import { IsValidBalance } from '../utils';
 import { AccountType } from '../graphql/helpers';
 import User from './User';
 import Transaction from './Transaction';
+import Transfer from './Transfer';
 
 @ObjectType()
 @Unique(['name', 'bank', 'userId'])
@@ -59,6 +60,12 @@ export default class Account {
     onDelete: 'CASCADE',
   })
   transactions: Transaction[];
+
+  @OneToMany(() => Transfer, (transfer) => transfer.account, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
+  transfers: Transfer[];
 
   @Field()
   @CreateDateColumn()
