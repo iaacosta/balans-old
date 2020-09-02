@@ -133,6 +133,7 @@ const TransactionsTable: React.FC<Props> = ({
       loading={loading}
       columns={columns}
       data={processedTransactions}
+      initialState={{ pageSize: 7 }}
       noEntriesLabel={
         noAccountsCreated
           ? 'You have no accounts yet, so no transactions can be shown or created '

@@ -10,7 +10,7 @@ import ContainerLoader from '../components/ui/misc/ContainerLoader';
 import Users from '../pages/Users';
 import Accounts from '../pages/Accounts';
 import ViewportContainer from '../components/ui/misc/ViewportContainer';
-import Transactions from '../pages/Transactions';
+import Movements from '../pages/Movements';
 import Categories from '../pages/Categories';
 
 const Placeholder: React.FC = () => {
@@ -71,13 +71,8 @@ const pages = [
   },
   {
     action: actions.routes.movements,
-    path: routing.authenticated.transactions,
-    component: Transactions,
-  },
-  {
-    action: actions.routes.otherMovements,
-    path: routing.authenticated.otherMovements,
-    component: Placeholder,
+    path: routing.authenticated.movements,
+    component: Movements,
   },
   {
     action: actions.routes.places,

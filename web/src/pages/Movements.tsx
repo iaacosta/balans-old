@@ -8,6 +8,8 @@ import TransactionsList from '../components/transactions/TransactionsList';
 import CreateTransactionDialog from '../components/transactions/CreateTransactionDialog';
 import DialogButton from '../components/ui/dialogs/DialogButton';
 import { useMyCategories } from '../hooks/graphql/category';
+import CustomTabs from '../components/ui/navigation/CustomTabs';
+import { useTabs } from '../hooks/utils/useTabs';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
@@ -18,11 +20,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Transactions: React.FC = () => {
+const tabs = [
+  { key: 'transactions' as const, label: 'Transactions' },
+  { key: 'transfers' as const, label: 'Transfers' },
+  { key: 'passive' as const, label: 'Passive transactions' },
+];
+
+const Movements: React.FC = () => {
   const classes = useStyles();
   const { transactions, loading: transactionsLoading } = useMyTransactions();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const { loading: loadingCategory } = useMyCategories();
+  const { selected, change } = useTabs({
+    tabs: tabs.map(({ key }) => key),
+    initialTab: 'transactions',
+  });
 
   const noAccounts = accounts.length === 0;
   const loading = transactionsLoading || accountsLoading || loadingCategory;
@@ -41,27 +53,32 @@ const Transactions: React.FC = () => {
   return (
     <ViewportContainer>
       <Typography className={classes.title} variant="h5">
-        My transactions
+        My movements
       </Typography>
-      <Hidden smDown>
-        <TransactionsTable
-          transactions={transactions}
-          loading={loading}
-          noAccountsCreated={noAccounts}
-        >
-          {Button}
-        </TransactionsTable>
-      </Hidden>
-      <Hidden mdUp>
-        <TransactionsList
-          transactions={transactions}
-          loading={loading}
-          noAccountsCreated={noAccounts}
-        />
-        <Box className={classes.buttonWrapper}>{Button}</Box>
-      </Hidden>
+      <CustomTabs tabs={tabs} selected={selected} change={change} />
+      {selected === 'transactions' && (
+        <>
+          <Hidden smDown>
+            <TransactionsTable
+              transactions={transactions}
+              loading={loading}
+              noAccountsCreated={noAccounts}
+            >
+              {Button}
+            </TransactionsTable>
+          </Hidden>
+          <Hidden mdUp>
+            <TransactionsList
+              transactions={transactions}
+              loading={loading}
+              noAccountsCreated={noAccounts}
+            />
+            <Box className={classes.buttonWrapper}>{Button}</Box>
+          </Hidden>
+        </>
+      )}
     </ViewportContainer>
   );
 };
 
-export default Transactions;
+export default Movements;
