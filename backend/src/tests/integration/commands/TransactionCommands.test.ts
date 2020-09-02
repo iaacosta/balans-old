@@ -15,7 +15,7 @@ import {
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import { AccountType, CategoryType } from '../../../graphql/helpers';
-import TransactionHelper from '../../../helpers/TransactionHelper';
+import TransactionCommands from '../../../commands/TransactionCommands';
 import {
   createCategoryPair,
   createCategory,
@@ -76,7 +76,7 @@ describe('transaction helper tests', () => {
     let rootTransaction: Transaction;
 
     beforeAll(async () => {
-      const transactionHelper = new TransactionHelper(testUser);
+      const transactionCommands = new TransactionCommands(testUser);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (let i = 0; i < staticArray.length; i += 1) {
@@ -87,7 +87,7 @@ describe('transaction helper tests', () => {
 
         if (i === 0) factoryTransaction.memo = undefined;
 
-        const [transaction] = await transactionHelper.performTransaction(
+        const [transaction] = await transactionCommands.create(
           factoryTransaction,
           {
             account: testAccount,
@@ -147,13 +147,13 @@ describe('transaction helper tests', () => {
     const staticArray = Array.from(Array(5).keys());
     const testTransactions: Transaction[] = [];
     const testAmounts: number[] = [];
-    let transactionHelper: TransactionHelper;
+    let transactionCommands: TransactionCommands;
     let toUpdateTransaction: Transaction;
 
     beforeAll(async () => {
       testUser = (await createUser(connection)).databaseUser;
 
-      transactionHelper = new TransactionHelper(testUser);
+      transactionCommands = new TransactionCommands(testUser);
 
       testRootAccount = await getRepository(Account).findOneOrFail({
         userId: testUser.id,
@@ -174,7 +174,7 @@ describe('transaction helper tests', () => {
           categories: testCategories,
         });
 
-        const [transaction] = await transactionHelper.performTransaction(
+        const [transaction] = await transactionCommands.create(
           factoryTransaction,
           {
             account: testAccount,
@@ -203,10 +203,7 @@ describe('transaction helper tests', () => {
               relations: ['account'],
             });
 
-          await transactionHelper.updateTransaction(
-            toUpdateTransaction,
-            toChange,
-          );
+          await transactionCommands.update(toUpdateTransaction, toChange);
         });
 
         it('should update transactions', async () => {
@@ -260,10 +257,7 @@ describe('transaction helper tests', () => {
               relations: ['account'],
             });
 
-          await transactionHelper.updateTransaction(
-            toUpdateTransaction,
-            toChange,
-          );
+          await transactionCommands.update(toUpdateTransaction, toChange);
         });
 
         it('should update transactions', async () => {
@@ -311,10 +305,7 @@ describe('transaction helper tests', () => {
               relations: ['account'],
             });
 
-          await transactionHelper.updateTransaction(
-            toUpdateTransaction,
-            toChange,
-          );
+          await transactionCommands.update(toUpdateTransaction, toChange);
         });
 
         it('should update transactions', async () => {
@@ -352,10 +343,7 @@ describe('transaction helper tests', () => {
             relations: ['account'],
           });
 
-        await transactionHelper.updateTransaction(
-          toUpdateTransaction,
-          toChange,
-        );
+        await transactionCommands.update(toUpdateTransaction, toChange);
       });
 
       it('should update transactions', async () => {
@@ -416,13 +404,13 @@ describe('transaction helper tests', () => {
     const staticArray = Array.from(Array(5).keys());
     const testTransactions: Transaction[] = [];
     const testAmounts: number[] = [];
-    let transactionHelper: TransactionHelper;
+    let transactionCommands: TransactionCommands;
     let toDeleteTransaction: Transaction;
 
     beforeAll(async () => {
       testUser = (await createUser(connection)).databaseUser;
 
-      transactionHelper = new TransactionHelper(testUser);
+      transactionCommands = new TransactionCommands(testUser);
 
       testRootAccount = await getRepository(Account).findOneOrFail({
         userId: testUser.id,
@@ -443,7 +431,7 @@ describe('transaction helper tests', () => {
           categories: testCategories,
         });
 
-        const [transaction] = await transactionHelper.performTransaction(
+        const [transaction] = await transactionCommands.create(
           factoryTransaction,
           {
             account: testAccount,
@@ -464,7 +452,7 @@ describe('transaction helper tests', () => {
           relations: ['account'],
         });
 
-      await transactionHelper.revertTransaction(toDeleteTransaction);
+      await transactionCommands.delete(toDeleteTransaction);
     });
 
     it('should delete the sibling transaction on root account', async () => {

@@ -12,7 +12,7 @@ import User from '../models/User';
 import { updateEntity } from '../utils';
 import Category from '../models/Category';
 
-export default class TransactionHelper {
+export default class TransactionCommands {
   manager: EntityManager;
 
   user: Pick<User, 'id'>;
@@ -28,7 +28,7 @@ export default class TransactionHelper {
       .findOneOrFail({ userId: this.user.id, type: 'root' });
   }
 
-  async performTransaction(
+  async create(
     { memo, amount }: Pick<CreateTransactionInput, 'memo' | 'amount'>,
     { account, category }: { account: Account; category?: Category },
   ): Promise<Transaction[]> {
@@ -60,7 +60,7 @@ export default class TransactionHelper {
       .save([transaction, rootTransaction]);
   }
 
-  async updateTransaction(
+  async update(
     transaction: Transaction,
     { categoryId, ...toChange }: Omit<UpdateTransactionInput, 'id'>,
   ): Promise<Transaction[]> {
@@ -126,7 +126,7 @@ export default class TransactionHelper {
       .save([transaction, rootTransaction]);
   }
 
-  async revertTransaction(transaction: Transaction): Promise<Transaction[]> {
+  async delete(transaction: Transaction): Promise<Transaction[]> {
     const rootAccount = await this.getRootAccount();
     const rootTransaction = await this.manager
       .getRepository(Transaction)

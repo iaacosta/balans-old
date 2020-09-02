@@ -15,7 +15,7 @@ import Account from '../../models/Account';
 import { CreateAccountInput } from '../helpers';
 import { Context } from '../../@types';
 import User from '../../models/User';
-import TransactionHelper from '../../helpers/TransactionHelper';
+import TransactionCommands from '../../commands/TransactionCommands';
 
 @Resolver(Account)
 export default class AccountResolvers {
@@ -51,12 +51,12 @@ export default class AccountResolvers {
         });
 
       if (initialBalance !== 0) {
-        const transactionHelper = new TransactionHelper(
+        const transactionCommands = new TransactionCommands(
           currentUser!,
           entityManager,
         );
 
-        await transactionHelper.performTransaction(
+        await transactionCommands.create(
           { memo: 'Initial balance', amount: initialBalance },
           { account: createdAccount },
         );
