@@ -18,7 +18,7 @@ const CustomTabs = <T extends string>({ tabs, selected, change }: Props<T>): Rea
     <Paper square className={classes.paper} elevation={1}>
       <Tabs textColor="secondary" value={selected} onChange={(event, value) => change(value as T)}>
         {tabs.map(({ key, label }) => (
-          <Tab key={key} value={key} label={label} />
+          <Tab key={key} value={key} label={label} data-testid={`${key}Tab`} />
         ))}
       </Tabs>
     </Paper>
