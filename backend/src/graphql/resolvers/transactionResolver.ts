@@ -17,7 +17,7 @@ import { CreateTransactionInput, UpdateTransactionInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
-import TransactionHelper from '../../helpers/TransactionHelper';
+import TransactionCommands from '../../commands/TransactionCommands';
 import NoChangesError from '../errors/NoChangesError';
 import Category from '../../models/Category';
 
@@ -52,7 +52,7 @@ export default class TransactionResolvers {
     { accountId, categoryId, ...transactionInput }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
-    const transactionHelper = new TransactionHelper(currentUser!);
+    const transactionCommands = new TransactionCommands(currentUser!);
 
     const account = await this.accountRepository.findOneOrFail({
       id: accountId,
@@ -64,13 +64,10 @@ export default class TransactionResolvers {
       userId: currentUser!.id,
     });
 
-    const [transaction] = await transactionHelper.performTransaction(
-      transactionInput,
-      {
-        account,
-        category,
-      },
-    );
+    const [transaction] = await transactionCommands.create(transactionInput, {
+      account,
+      category,
+    });
 
     return transaction;
   }
@@ -83,7 +80,7 @@ export default class TransactionResolvers {
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
     if (!size(toChange)) throw new NoChangesError();
-    const transactionHelper = new TransactionHelper(currentUser!);
+    const transactionCommands = new TransactionCommands(currentUser!);
 
     const transaction = await this.repository
       .createQueryBuilder('transaction')
@@ -94,7 +91,7 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    const [updatedTransaction] = await transactionHelper.updateTransaction(
+    const [updatedTransaction] = await transactionCommands.update(
       transaction,
       toChange,
     );
@@ -108,7 +105,7 @@ export default class TransactionResolvers {
     @Arg('id', () => ID) id: string,
     @Ctx() { currentUser }: Context,
   ): Promise<string> {
-    const transactionHelper = new TransactionHelper(currentUser!);
+    const transactionCommands = new TransactionCommands(currentUser!);
     const transaction = await this.repository
       .createQueryBuilder('transaction')
       .select()
@@ -118,7 +115,7 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    await transactionHelper.revertTransaction(transaction);
+    await transactionCommands.delete(transaction);
     return id;
   }
 

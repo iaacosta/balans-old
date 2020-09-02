@@ -4,7 +4,7 @@ import { build, fake, oneOf } from '@jackfranklin/test-data-bot';
 import { Connection } from 'typeorm';
 
 import Account from '../../models/Account';
-import TransactionHelper from '../../helpers/TransactionHelper';
+import TransactionCommands from '../../commands/TransactionCommands';
 
 export type BuildType = Pick<Account, 'name' | 'bank' | 'type'> & {
   initialBalance: number;
@@ -45,12 +45,12 @@ export const createAccount = async (
     .save(account);
 
   if (factoryAccount.initialBalance !== 0) {
-    const transactionHelper = new TransactionHelper(
+    const transactionCommands = new TransactionCommands(
       { id: userId! },
       entityManager,
     );
 
-    await transactionHelper.performTransaction(
+    await transactionCommands.create(
       { memo: 'Initial balance', amount: factoryAccount.initialBalance },
       { account: databaseAccount },
     );
