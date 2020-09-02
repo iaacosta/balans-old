@@ -5,6 +5,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
 
 import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
+import { useDeleteTransfer } from '../../hooks/graphql';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -18,14 +19,26 @@ const TransferActionCell: React.FC<CellProps<MyTransfersQuery['transfers'][numbe
   row,
 }) => {
   const classes = useStyles();
-  const { id } = row.original.from;
+  const [deleteTransfer, { loading }] = useDeleteTransfer();
+  const { operationId } = row.original.from;
 
   return (
     <Box className={classes.wrapper}>
-      <EnhancedIconButton data-testid={`updateTransfer${id}`} contained disabled color="info">
+      <EnhancedIconButton
+        data-testid={`updateTransfer${operationId}`}
+        contained
+        disabled
+        color="info"
+      >
         <EditIcon />
       </EnhancedIconButton>
-      <EnhancedIconButton contained disabled data-testid={`deleteTransfer${id}`} color="error">
+      <EnhancedIconButton
+        contained
+        disabled={loading}
+        onClick={() => deleteTransfer(operationId)}
+        data-testid={`deleteTransfer${operationId}`}
+        color="error"
+      >
         <DeleteIcon />
       </EnhancedIconButton>
     </Box>

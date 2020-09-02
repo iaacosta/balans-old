@@ -204,6 +204,7 @@ export type Mutation = {
   updateTransaction: Transaction;
   deleteTransaction: Scalars['ID'];
   createTransfer: Array<Transfer>;
+  deleteTransfer: Scalars['String'];
   createUser: User;
   updateUser: User;
   updateMe: User;
@@ -264,6 +265,11 @@ export type MutationDeleteTransactionArgs = {
 
 export type MutationCreateTransferArgs = {
   input: CreateTransferInput;
+};
+
+
+export type MutationDeleteTransferArgs = {
+  operationId: Scalars['String'];
 };
 
 
@@ -463,14 +469,14 @@ export type MyTransfersQuery = (
     { __typename?: 'PairedTransfer' }
     & { from: (
       { __typename?: 'Transfer' }
-      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'createdAt'>
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'createdAt'>
       & { account: (
         { __typename?: 'Account' }
         & Pick<Account, 'id' | 'name'>
       ) }
     ), to: (
       { __typename?: 'Transfer' }
-      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'createdAt'>
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'createdAt'>
       & { account: (
         { __typename?: 'Account' }
         & Pick<Account, 'id' | 'name'>
@@ -490,6 +496,16 @@ export type CreateTransferMutation = (
     { __typename?: 'Transfer' }
     & Pick<Transfer, 'id'>
   )> }
+);
+
+export type DeleteTransferMutationVariables = Exact<{
+  operationId: Scalars['String'];
+}>;
+
+
+export type DeleteTransferMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteTransfer'>
 );
 
 export type AllUsersQueryVariables = Exact<{ [key: string]: never; }>;
