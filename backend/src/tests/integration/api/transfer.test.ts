@@ -1,13 +1,64 @@
 import { createConnection, Connection, getRepository, In } from 'typeorm';
 import { gql } from 'apollo-server-express';
+import { keyBy } from 'lodash';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Transfer from '../../../models/Transfer';
-import { transferFactory } from '../../factory/transferFactory';
+import { transferFactory, createTransfer } from '../../factory/transferFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
+import { AccountType } from '../../../graphql/helpers';
+
+const MY_TRANSFERS = gql`
+  query MyTransfers {
+    transfers: myTransfers {
+      id
+      amount
+      memo
+      operationId
+      account {
+        id
+        name
+        bank
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const MY_PAIRED_TRANSFERS = gql`
+  query MyTransfers {
+    transfers: myPairedTransfers {
+      from {
+        id
+        amount
+        memo
+        operationId
+        account {
+          id
+          name
+        }
+        createdAt
+        updatedAt
+      }
+      to {
+        id
+        amount
+        memo
+        operationId
+        account {
+          id
+          name
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 
 const CREATE_TRANSFER = gql`
   mutation CreateTransfer($input: CreateTransferInput!) {
@@ -30,6 +81,8 @@ describe('transfer API calls', () => {
   let testUser: User;
   let testFromAccount: Account;
   let testToAccount: Account;
+  let testTransfers: Transfer[];
+  let testPairedTransfers: { to: Transfer; from: Transfer }[];
 
   const pgClient = createPgClient();
 
@@ -38,16 +91,108 @@ describe('transfer API calls', () => {
     await pgClient.connect();
     await seedTestDatabase(pgClient);
     testUser = (await createUser(connection)).databaseUser;
+
     testFromAccount = (
-      await createAccount(connection, testUser.id, { initialBalance: 20000 })
+      await createAccount(connection, testUser.id, {
+        type: AccountType.checking,
+      })
     ).databaseAccount;
+
     testToAccount = (await createAccount(connection, testUser.id))
       .databaseAccount;
+
+    const staticArray = Array.from(Array(5).keys());
+    testPairedTransfers = await Promise.all(
+      staticArray.map(() =>
+        createTransfer(connection, {
+          fromAccount: testFromAccount,
+          toAccount: testToAccount,
+        }).then(({ toDatabaseTransfer, fromDatabaseTransfer }) => ({
+          to: toDatabaseTransfer,
+          from: fromDatabaseTransfer,
+        })),
+      ),
+    );
+
+    testTransfers = testPairedTransfers
+      .map(({ to, from }) => [from, to])
+      .flat();
+
+    const { databaseUser: otherUser } = await createUser(connection);
+    const { databaseAccount: otherFromAccount } = await createAccount(
+      connection,
+      otherUser.id,
+      {
+        type: AccountType.checking,
+      },
+    );
+
+    const { databaseAccount: otherToAccount } = await createAccount(
+      connection,
+      otherUser.id,
+    );
+
+    await Promise.all(
+      Array.from(Array(4).keys()).map(() =>
+        createTransfer(connection, {
+          fromAccount: otherFromAccount,
+          toAccount: otherToAccount,
+        }),
+      ),
+    );
   });
 
   afterAll(() => {
     connection.close();
     pgClient.end();
+  });
+
+  describe('myTransfers', () => {
+    it('should get correct transfers for the user', async () => {
+      const { query } = await mountTestClient({ currentUser: testUser });
+      const response = await query({ query: MY_TRANSFERS });
+      expect(response).toBeSuccessful();
+
+      expect(response.data!.transfers).toHaveLength(testTransfers.length);
+
+      const transfersById = keyBy(response.data!.transfers, 'id');
+      testTransfers.forEach((transfer) =>
+        expect(transfersById[transfer.id].id).toBe(`${transfer.id}`),
+      );
+    });
+
+    it('should not authorize unauthenticated users', async () => {
+      const { query } = await mountTestClient();
+      const response = await query({ query: MY_TRANSFERS });
+      expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('myPairedTransfers', () => {
+    it('should get correct paired transfers for the user', async () => {
+      const { query } = await mountTestClient({ currentUser: testUser });
+      const response = await query({ query: MY_PAIRED_TRANSFERS });
+      expect(response).toBeSuccessful();
+
+      expect(response.data!.transfers).toHaveLength(testPairedTransfers.length);
+
+      const transfersByOperationId = keyBy(
+        response.data!.transfers,
+        (transferPair) => transferPair.from.operationId,
+      );
+
+      testPairedTransfers.forEach(({ from, to }) => {
+        const { operationId } = from;
+        expect(transfersByOperationId[operationId].from.id).toBe(`${from.id}`);
+        expect(transfersByOperationId[operationId].to.id).toBe(`${to.id}`);
+      });
+    });
+
+    it('should not authorize unauthenticated users', async () => {
+      const { query } = await mountTestClient();
+      const response = await query({ query: MY_PAIRED_TRANSFERS });
+      expect(response).toBeRejectedByAuth();
+    });
   });
 
   describe('createTransfer', () => {
