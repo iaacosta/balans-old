@@ -1,13 +1,20 @@
 import { useMemo } from 'react';
-import { QueryResult } from '@apollo/client';
+import { QueryResult, MutationTuple, useMutation } from '@apollo/client';
+import { useSnackbar } from 'notistack';
 import { InputMutationTuple } from '../../@types/helpers';
-import { createTransferMutation, myTransfersQuery } from '../../graphql/transfer';
+import {
+  createTransferMutation,
+  myTransfersQuery,
+  deleteTransferMutation,
+} from '../../graphql/transfer';
 import { myAccountsQuery } from '../../graphql/account';
 import {
   CreateTransferMutationVariables,
   CreateTransferMutation,
   MyTransfersQuery,
   MyTransfersQueryVariables,
+  DeleteTransferMutation,
+  DeleteTransferMutationVariables,
 } from '../../@types/graphql';
 import { useInputMutation, useRedirectedQuery } from './utils';
 
@@ -27,3 +34,28 @@ export const useCreateTransfer = (): InputMutationTuple<
   useInputMutation(createTransferMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }],
   });
+
+export const useDeleteTransfer = (): [
+  (operationId: string) => Promise<void>,
+  MutationTuple<DeleteTransferMutation, DeleteTransferMutationVariables>[1],
+] => {
+  const { enqueueSnackbar } = useSnackbar();
+  const [mutate, meta] = useMutation<DeleteTransferMutation, DeleteTransferMutationVariables>(
+    deleteTransferMutation,
+    { refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }] },
+  );
+
+  return [
+    async (operationId) => {
+      try {
+        await mutate({ variables: { operationId } });
+        enqueueSnackbar('Transfer deleted successfully', {
+          variant: 'success',
+        });
+      } catch (err) {
+        enqueueSnackbar(err.message, { variant: 'error' });
+      }
+    },
+    meta,
+  ];
+};

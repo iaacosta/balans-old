@@ -19,6 +19,7 @@ import { formatMoney } from 'accounting';
 import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
+import { useDeleteTransfer } from '../../hooks/graphql';
 
 type Props = {
   transfers: MyTransfersQuery['transfers'];
@@ -59,6 +60,7 @@ const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts 
         {({ data, index, style }) => {
           const { from, to } = data[index];
           const { amount } = to;
+          const [deleteTransfer, { loading: deleteLoading }] = useDeleteTransfer();
           return (
             <Box style={style} key={index}>
               <ListItem classes={{ container: classes.container }} component="div">
@@ -86,7 +88,8 @@ const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts 
                   <EnhancedIconButton
                     data-testid={`deleteTransfer${from.id}`}
                     contained
-                    disabled
+                    disabled={deleteLoading}
+                    onClick={() => deleteTransfer(from.operationId)}
                     color="error"
                   >
                     <DeleteIcon fontSize="small" />

@@ -7,6 +7,7 @@ export const myTransfersQuery = gql`
         id
         amount
         memo
+        operationId
         account {
           id
           name
@@ -17,6 +18,7 @@ export const myTransfersQuery = gql`
         id
         amount
         memo
+        operationId
         account {
           id
           name
@@ -32,5 +34,11 @@ export const createTransferMutation = gql`
     createTransfer(input: $input) {
       id
     }
+  }
+`;
+
+export const deleteTransferMutation = gql`
+  mutation DeleteTransfer($operationId: String!) {
+    deleteTransfer(operationId: $operationId)
   }
 `;
