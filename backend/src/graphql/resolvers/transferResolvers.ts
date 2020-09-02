@@ -18,6 +18,7 @@ import { CreateTransferInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
 import TransferCommands from '../../commands/TransferCommands';
+import NotFoundError from '../errors/NotFoundError';
 
 @ObjectType()
 class PairedTransfer {
@@ -93,6 +94,28 @@ export default class TransferResolvers {
     });
 
     return transferCommands.create(transferInput, { fromAccount, toAccount });
+  }
+
+  @Mutation(() => String)
+  @Authorized()
+  async deleteTransfer(
+    @Arg('operationId') operationId: string,
+    @Ctx() { currentUser }: Context,
+  ): Promise<string> {
+    const transferCommands = new TransferCommands(currentUser!);
+    const transfers = await this.manager
+      .getRepository(Transfer)
+      .createQueryBuilder('transfer')
+      .select()
+      .leftJoinAndSelect('transfer.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('transfer.operationId = :operationId', { operationId })
+      .orderBy('transfer.amount', 'ASC')
+      .getMany();
+
+    if (transfers.length < 2) throw new NotFoundError('transfer');
+    await transferCommands.delete(transfers);
+    return operationId;
   }
 
   @FieldResolver(() => Account)

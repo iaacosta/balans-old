@@ -40,4 +40,18 @@ export default class TransferCommands {
       }),
     ]);
   }
+
+  async delete([fromTransfer, toTransfer]: Transfer[]): Promise<Transfer[]> {
+    const { amount } = toTransfer;
+    fromTransfer.account.balance += amount;
+    toTransfer.account.balance -= amount;
+
+    await this.manager
+      .getRepository(Account)
+      .save([fromTransfer.account, toTransfer.account]);
+
+    return this.manager
+      .getRepository(Transfer)
+      .remove([fromTransfer, toTransfer]);
+  }
 }
