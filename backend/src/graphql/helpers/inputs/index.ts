@@ -3,3 +3,4 @@ export * from './authenticationInputs';
 export * from './accountInputs';
 export * from './categoryInputs';
 export * from './transactionInputs';
+export * from './transferInputs';
