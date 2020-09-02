@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
 const tabs = [
   { key: 'transactions' as const, label: 'Transactions' },
   { key: 'transfers' as const, label: 'Transfers' },
-  { key: 'passive' as const, label: 'Passive transactions' },
+  { key: 'passive' as const, label: 'Passives', disabled: true },
 ];
 
 const Movements: React.FC = () => {
