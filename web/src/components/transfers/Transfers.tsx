@@ -3,7 +3,9 @@ import { Add as AddIcon } from '@material-ui/icons';
 import { Hidden, Box, makeStyles } from '@material-ui/core';
 import DialogButton from '../ui/dialogs/DialogButton';
 import CreateTransferDialog from './CreateTransferDialog';
-import { useMyDebitAccounts } from '../../hooks/graphql';
+import { useMyDebitAccounts, useMyTransfers } from '../../hooks/graphql';
+import TransfersTable from './TransfersTable';
+import TransfersList from './TransfersList';
 
 const useStyles = makeStyles((theme) => ({
   buttonWrapper: {
@@ -15,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Transfers: React.FC = () => {
   const classes = useStyles();
+  const { transfers, loading: transfersLoading } = useMyTransfers();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const notEnoughAccounts = accounts.length < 2;
 
@@ -32,11 +35,20 @@ const Transfers: React.FC = () => {
   return (
     <>
       <Hidden smDown>
-        <div>Table</div>
-        <Box className={classes.buttonWrapper}>{Button}</Box>
+        <TransfersTable
+          loading={transfersLoading || accountsLoading}
+          transfers={transfers}
+          notEnoughAccounts={notEnoughAccounts}
+        >
+          {Button}
+        </TransfersTable>
       </Hidden>
       <Hidden mdUp>
-        <div>List</div>
+        <TransfersList
+          loading={transfersLoading || accountsLoading}
+          transfers={transfers}
+          notEnoughAccounts={notEnoughAccounts}
+        />
         <Box className={classes.buttonWrapper}>{Button}</Box>
       </Hidden>
     </>

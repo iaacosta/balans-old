@@ -97,6 +97,12 @@ export enum AccountType {
   Checking = 'checking'
 }
 
+export type PairedTransfer = {
+  __typename?: 'PairedTransfer';
+  from: Transfer;
+  to: Transfer;
+};
+
 export type CreateUserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -167,6 +173,8 @@ export type Query = {
   myAccounts: Array<Account>;
   myCategories: Array<Category>;
   myTransactions: Array<Transaction>;
+  myTransfers: Array<Transfer>;
+  myPairedTransfers: Array<PairedTransfer>;
   users: Array<User>;
   deletedUsers: Array<User>;
   user: User;
@@ -444,6 +452,31 @@ export type DeleteTransactionMutationVariables = Exact<{
 export type DeleteTransactionMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteTransaction'>
+);
+
+export type MyTransfersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyTransfersQuery = (
+  { __typename?: 'Query' }
+  & { transfers: Array<(
+    { __typename?: 'PairedTransfer' }
+    & { from: (
+      { __typename?: 'Transfer' }
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'createdAt'>
+      & { account: (
+        { __typename?: 'Account' }
+        & Pick<Account, 'id' | 'name'>
+      ) }
+    ), to: (
+      { __typename?: 'Transfer' }
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'createdAt'>
+      & { account: (
+        { __typename?: 'Account' }
+        & Pick<Account, 'id' | 'name'>
+      ) }
+    ) }
+  )> }
 );
 
 export type CreateTransferMutationVariables = Exact<{
