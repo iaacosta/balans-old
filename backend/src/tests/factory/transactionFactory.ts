@@ -5,7 +5,7 @@ import { Connection } from 'typeorm';
 
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
-import TransactionHelper from '../../helpers/TransactionHelper';
+import TransactionCommands from '../../commands/TransactionCommands';
 import Category from '../../models/Category';
 
 export type BuildType = Pick<Transaction, 'amount' | 'memo'>;
@@ -57,7 +57,7 @@ export const createTransaction = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
-  const transactionHelper = new TransactionHelper(
+  const transactionCommands = new TransactionCommands(
     { id: account.userId! },
     entityManager,
   );
@@ -67,7 +67,7 @@ export const createTransaction = async (
     overrides,
   );
 
-  const [databaseTransaction] = await transactionHelper.performTransaction(
+  const [databaseTransaction] = await transactionCommands.create(
     factoryTransaction,
     {
       account,

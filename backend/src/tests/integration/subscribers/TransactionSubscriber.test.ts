@@ -11,7 +11,7 @@ import { transactionFactory } from '../../factory/transactionFactory';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import { AccountType, CategoryType } from '../../../graphql/helpers';
-import TransactionHelper from '../../../helpers/TransactionHelper';
+import TransactionCommands from '../../../commands/TransactionCommands';
 import Category from '../../../models/Category';
 import { createCategory } from '../../factory/categoryFactory';
 
@@ -57,13 +57,13 @@ describe('transaction ORM tests', () => {
   describe('subscribers', () => {
     describe('create', () => {
       it('should call validateOrReject on save', async () => {
-        const transactionHelper = new TransactionHelper(testUser);
+        const transactionCommands = new TransactionCommands(testUser);
         const transaction = transactionFactory({
           amount: -2 * testInitialBalance,
         });
 
         await expect(
-          transactionHelper.performTransaction(transaction, {
+          transactionCommands.create(transaction, {
             account: testAccount,
             category: testCategory,
           }),
