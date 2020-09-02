@@ -4,6 +4,7 @@ import ViewportContainer from '../components/ui/misc/ViewportContainer';
 import CustomTabs from '../components/ui/navigation/CustomTabs';
 import { useTabs } from '../hooks/utils/useTabs';
 import Transactions from '../components/transactions/Transactions';
+import Transfers from '../components/transfers/Transfers';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
@@ -29,6 +30,7 @@ const Movements: React.FC = () => {
       </Typography>
       <CustomTabs tabs={tabs} selected={selected} change={change} />
       {selected === 'transactions' && <Transactions />}
+      {selected === 'transfers' && <Transfers />}
     </ViewportContainer>
   );
 };
