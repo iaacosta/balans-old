@@ -14,7 +14,6 @@ import {
 import {
   InsertChart,
   AttachMoney,
-  AccountBalance,
   Place,
   People,
   ExpandMore,
@@ -54,17 +53,10 @@ const navigationItems = [
     divides: false,
   },
   {
-    id: routing.authenticated.transactions,
+    id: routing.authenticated.movements,
     action: actions.routes.movements,
     Icon: <AttachMoney />,
-    label: 'Transactions',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.otherMovements,
-    action: actions.routes.otherMovements,
-    Icon: <AccountBalance />,
-    label: 'Loans and debts',
+    label: 'Movements',
     divides: false,
   },
   {
