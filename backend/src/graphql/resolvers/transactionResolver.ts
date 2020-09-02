@@ -122,7 +122,7 @@ export default class TransactionResolvers {
     return id;
   }
 
-  @FieldResolver()
+  @FieldResolver(() => Account)
   async account(
     @Root() { accountId }: Transaction,
     @Ctx() { loaders }: Context,
