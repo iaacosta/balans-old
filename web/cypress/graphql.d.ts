@@ -11,18 +11,30 @@ type Scalars = {
   DateTime: any;
 };
 
+type GQLMovement = {
+  __typename?: 'Movement';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo: Scalars['String'];
+  operationId: Scalars['String'];
+  account: GQLAccount;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+
 type GQLTransaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
+  memo: Scalars['String'];
+  operationId: Scalars['String'];
   account: GQLAccount;
-  category?: Maybe<GQLCategory>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  category?: Maybe<GQLCategory>;
   deletedAt?: Maybe<Scalars['DateTime']>;
 };
-
 
 type GQLCategory = {
   __typename?: 'Category';
@@ -52,6 +64,17 @@ type GQLUser = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+};
+
+type GQLTransfer = {
+  __typename?: 'Transfer';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo: Scalars['String'];
+  operationId: Scalars['String'];
+  account: GQLAccount;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 type GQLAccount = {
@@ -130,6 +153,13 @@ type GQLUpdateTransactionInput = {
   categoryId?: Maybe<Scalars['ID']>;
 };
 
+type GQLCreateTransferInput = {
+  amount: Scalars['Int'];
+  fromAccountId: Scalars['ID'];
+  toAccountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
+};
+
 type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
@@ -158,10 +188,12 @@ type GQLMutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   createCategory: GQLCategory;
+  deleteCategory: Scalars['ID'];
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
   updateTransaction: GQLTransaction;
   deleteTransaction: Scalars['ID'];
+  createTransfer: Array<GQLTransfer>;
   createUser: GQLUser;
   updateUser: GQLUser;
   updateMe: GQLUser;
@@ -195,6 +227,11 @@ type GQLMutationCreateCategoryArgs = {
 };
 
 
+type GQLMutationDeleteCategoryArgs = {
+  id: Scalars['ID'];
+};
+
+
 type GQLMutationSetupDatabaseArgs = {
   adminUser: GQLCreateUserInput;
 };
@@ -212,6 +249,11 @@ type GQLMutationUpdateTransactionArgs = {
 
 type GQLMutationDeleteTransactionArgs = {
   id: Scalars['ID'];
+};
+
+
+type GQLMutationCreateTransferArgs = {
+  input: GQLCreateTransferInput;
 };
 
 

@@ -35,7 +35,7 @@ describe('transactions table', () => {
         testTransaction = createdTransaction;
       });
 
-    cy.visit('/transactions');
+    cy.visit('/movements');
   });
 
   it('should be able to create a transaction', () => {
