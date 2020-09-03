@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { createConnection, Connection } from 'typeorm';
-import { UserInputError } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-express';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import User from '../../../models/User';
@@ -67,7 +67,7 @@ describe('transaction ORM tests', () => {
             account: testAccount,
             category: testCategory,
           }),
-        ).rejects.toThrowError(UserInputError);
+        ).rejects.toThrowError(ApolloError);
       });
     });
   });

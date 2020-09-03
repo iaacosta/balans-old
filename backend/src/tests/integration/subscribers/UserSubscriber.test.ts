@@ -1,6 +1,6 @@
 import { createConnection, Connection, Repository } from 'typeorm';
 import { compare } from 'bcrypt';
-import { UserInputError } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-express';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import User from '../../../models/User';
@@ -37,7 +37,7 @@ describe('user ORM tests', () => {
 
       it('should call validateOrReject on save', async () => {
         const { user } = userModelFactory({ password: 'nope' });
-        await expect(repo.save(user)).rejects.toThrowError(UserInputError);
+        await expect(repo.save(user)).rejects.toThrowError(ApolloError);
       });
     });
 
@@ -61,7 +61,7 @@ describe('user ORM tests', () => {
         const testUser = (await repo.findOne(databaseUser.id)) as User;
         expect(testUser).toBeDefined();
         testUser.password = 'noop';
-        await expect(repo.save(testUser)).rejects.toThrowError(UserInputError);
+        await expect(repo.save(testUser)).rejects.toThrowError(ApolloError);
       });
     });
   });

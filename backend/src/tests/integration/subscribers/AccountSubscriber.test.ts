@@ -2,7 +2,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import { createConnection, Connection, Repository, In } from 'typeorm';
-import { UserInputError } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-express';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import Account from '../../../models/Account';
@@ -48,7 +48,7 @@ describe('account ORM tests', () => {
     describe('create', () => {
       it('should call validateOrReject on save', async () => {
         const { account } = accountModelFactory(testUser.id, { name: '' });
-        await expect(repo.save(account)).rejects.toThrowError(UserInputError);
+        await expect(repo.save(account)).rejects.toThrowError(ApolloError);
       });
 
       it('should not allow two root type accounts', async () => {
@@ -66,9 +66,7 @@ describe('account ORM tests', () => {
         const testAccount = (await repo.findOne(databaseAccount.id)) as Account;
         expect(testAccount).toBeDefined();
         testAccount.name = '';
-        await expect(repo.save(testAccount)).rejects.toThrowError(
-          UserInputError,
-        );
+        await expect(repo.save(testAccount)).rejects.toThrowError(ApolloError);
       });
 
       it('should not allow two root type accounts', async () => {
