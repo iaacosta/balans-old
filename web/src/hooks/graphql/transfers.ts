@@ -17,6 +17,7 @@ import {
   DeleteTransferMutationVariables,
 } from '../../@types/graphql';
 import { useInputMutation, useRedirectedQuery } from './utils';
+import { handleError } from '../../utils/errors';
 
 export const useMyTransfers = (): Omit<
   QueryResult<MyTransfersQuery, MyTransfersQueryVariables>,
@@ -53,7 +54,7 @@ export const useDeleteTransfer = (): [
           variant: 'success',
         });
       } catch (err) {
-        enqueueSnackbar(err.message, { variant: 'error' });
+        handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
       }
     },
     meta,
