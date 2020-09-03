@@ -74,6 +74,15 @@ declare namespace Cypress {
       transaction: GQLCreateTransactionMutationVariables['input'],
     ): Chainable<GQLCreateTransactionMutation['createTransaction']>;
 
+    /* Transfers */
+    /**
+     * Creates a transfer
+     * @example cy.createTransfer(buildTransfer())
+     */
+    createTransfer(
+      transfer: GQLCreateTransferMutationVariables['input'],
+    ): Chainable<GQLCreateTransferMutation['createTransfer']>;
+
     /* Categories */
     /**
      * Creates an category
