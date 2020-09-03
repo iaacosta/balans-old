@@ -12,6 +12,7 @@ import FormikSelectField from '../formik/FormikSelectField';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { useCreateDebitAccount } from '../../hooks/graphql';
+import { handleError } from '../../utils/errors';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -71,7 +72,7 @@ const CreateDebitAccountDialog: React.FC = () => {
           enqueueSnackbar('Account created successfully', { variant: 'success' });
           onClose();
         } catch (err) {
-          enqueueSnackbar(err.message, { variant: 'error' });
+          handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
         }
       }}
     >
