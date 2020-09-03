@@ -21,7 +21,23 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
-      expect(error.message.includes('mockColumn')).toBe(true);
+      expect(error.message.includes('Mock Column')).toBe(true);
+      expect(error.message.includes('mockTable')).toBe(true);
+    });
+
+    it('should return correct error if unique constraint with multiple columns', () => {
+      const error = formatError({
+        message: 'unique',
+        originalError: {
+          name: 'QueryFailedError',
+          table: 'mockTable',
+          detail: 'Key (testColumn, mockColumn)=(value)',
+        },
+      } as any);
+
+      expect(error).toBeInstanceOf(UniqueConstraintError);
+      expect(error.message.includes('Test Column')).toBe(true);
+      expect(error.message.includes('Mock Column')).toBe(true);
       expect(error.message.includes('mockTable')).toBe(true);
     });
 
