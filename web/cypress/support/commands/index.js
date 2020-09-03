@@ -4,6 +4,7 @@ import './database';
 import './users';
 import './account';
 import './transaction';
+import './transfer';
 import './category';
 
 Cypress.Commands.add('graphQLRequest', ({ request, variables = {} }) => {

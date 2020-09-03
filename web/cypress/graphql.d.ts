@@ -95,6 +95,12 @@ type GQLAccountType =
   | 'vista'
   | 'checking';
 
+type GQLPairedTransfer = {
+  __typename?: 'PairedTransfer';
+  from: GQLTransfer;
+  to: GQLTransfer;
+};
+
 type GQLCreateUserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -165,6 +171,8 @@ type GQLQuery = {
   myAccounts: Array<GQLAccount>;
   myCategories: Array<GQLCategory>;
   myTransactions: Array<GQLTransaction>;
+  myTransfers: Array<GQLTransfer>;
+  myPairedTransfers: Array<GQLPairedTransfer>;
   users: Array<GQLUser>;
   deletedUsers: Array<GQLUser>;
   user: GQLUser;
@@ -194,6 +202,7 @@ type GQLMutation = {
   updateTransaction: GQLTransaction;
   deleteTransaction: Scalars['ID'];
   createTransfer: Array<GQLTransfer>;
+  deleteTransfer: Scalars['String'];
   createUser: GQLUser;
   updateUser: GQLUser;
   updateMe: GQLUser;
@@ -254,6 +263,11 @@ type GQLMutationDeleteTransactionArgs = {
 
 type GQLMutationCreateTransferArgs = {
   input: GQLCreateTransferInput;
+};
+
+
+type GQLMutationDeleteTransferArgs = {
+  operationId: Scalars['String'];
 };
 
 
@@ -331,6 +345,19 @@ type GQLCreateTransactionMutation = (
     { __typename?: 'Transaction' }
     & Pick<GQLTransaction, 'id'>
   ) }
+);
+
+type GQLCreateTransferMutationVariables = Exact<{
+  input: GQLCreateTransferInput;
+}>;
+
+
+type GQLCreateTransferMutation = (
+  { __typename?: 'Mutation' }
+  & { createTransfer: Array<(
+    { __typename?: 'Transfer' }
+    & Pick<GQLTransfer, 'id' | 'operationId'>
+  )> }
 );
 
 type GQLMeQueryVariables = Exact<{ [key: string]: never; }>;
