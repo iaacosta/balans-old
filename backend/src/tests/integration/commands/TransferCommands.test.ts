@@ -23,12 +23,7 @@ describe('transfer helper tests', () => {
 
   const pgClient = createPgClient();
 
-  beforeAll(async () => {
-    connection = await createConnection();
-    await pgClient.connect();
-
-    await seedTestDatabase(pgClient);
-
+  const setupAccounts = async () => {
     testUser = (await createUser(connection)).databaseUser;
 
     testFromAccount = (
@@ -44,6 +39,13 @@ describe('transfer helper tests', () => {
         type: AccountType.checking,
       })
     ).databaseAccount;
+  };
+
+  beforeAll(async () => {
+    connection = await createConnection();
+    await pgClient.connect();
+
+    await seedTestDatabase(pgClient);
   });
 
   afterAll(() => {
@@ -67,10 +69,12 @@ describe('transfer helper tests', () => {
     let testToTransfer: Transfer;
 
     beforeAll(async () => {
+      await setupAccounts();
+
       const transferCommands = new TransferCommands(testUser);
 
       for (let i = 0; i < numberOfTransfers; i += 1) {
-        const testAmount = (i + 1) * 1000;
+        const testAmount = (i + 1) * 100;
         const { factoryTransfer } = transferModelFactory(
           { fromAccount: testFromAccount, toAccount: testToAccount },
           { amount: testAmount },
@@ -127,6 +131,73 @@ describe('transfer helper tests', () => {
           expect(testToTransfer.amount).toBe(-expectedAmount);
         });
       });
+    });
+  });
+
+  describe('delete', () => {
+    const numberOfTransfers = 5;
+    const testTransfers: Transfer[] = [];
+    const testAmounts: number[] = [];
+    let toDeleteTransfers: Transfer[];
+
+    beforeAll(async () => {
+      await setupAccounts();
+      const transferCommands = new TransferCommands(testUser);
+
+      for (let i = 0; i < numberOfTransfers; i += 1) {
+        const testAmount = (i + 1) * 100;
+        const { factoryTransfer } = transferModelFactory(
+          {
+            fromAccount: testFromAccount,
+            toAccount: testToAccount,
+          },
+          { amount: testAmount },
+        );
+
+        const [fromTransfer, toTransfer] = await transferCommands.create(
+          factoryTransfer,
+          {
+            fromAccount: testFromAccount,
+            toAccount: testToAccount,
+          },
+        );
+
+        testTransfers.push(fromTransfer, toTransfer);
+        testAmounts.push(testAmount);
+      }
+    });
+
+    it('should delete transfers and change balances', async () => {
+      const transferCommands = new TransferCommands(testUser);
+      const deletedTransfer = testTransfers[testTransfers.length - 1];
+
+      toDeleteTransfers = await connection.getRepository(Transfer).find({
+        where: { operationId: deletedTransfer.operationId },
+        relations: ['account'],
+      });
+
+      await transferCommands.delete(toDeleteTransfers);
+
+      testFromAccount = await getRepository(Account).findOneOrFail(
+        testFromAccount.id,
+      );
+
+      testToAccount = await getRepository(Account).findOneOrFail(
+        testToAccount.id,
+      );
+
+      expect(
+        await connection
+          .getRepository(Transfer)
+          .find({ operationId: deletedTransfer.operationId }),
+      ).toHaveLength(0);
+
+      const transferEffect = testAmounts
+        .slice(0, testAmounts.length - 1)
+        .reduce((accum, curr) => accum + curr, 0);
+
+      expect(testFromAccount.balance).toBe(testInitialBalance - transferEffect);
+      expect(testToAccount.balance).toBe(testInitialBalance + transferEffect);
     });
   });
 });
