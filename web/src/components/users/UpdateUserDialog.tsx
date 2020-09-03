@@ -15,6 +15,7 @@ import { useMe } from '../../hooks/auth/useMe';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { useUpdateUser } from '../../hooks/graphql';
+import { handleError } from '../../utils/errors';
 
 interface Props {
   user: AllUsersQuery['users'][number];
@@ -55,7 +56,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
           enqueueSnackbar('User updated successfully', { variant: 'success' });
           onClose();
         } catch (err) {
-          enqueueSnackbar(err.message, { variant: 'error' });
+          handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
         }
       }}
     >

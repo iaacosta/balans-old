@@ -13,6 +13,7 @@ import AuthWrapper from '../components/authenticate/AuthWrapper';
 import { addToken } from '../slices/authSlice';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
 import { useSignUp } from '../hooks/graphql/authentication';
+import { handleError } from '../utils/errors';
 
 const schema = yup.object().shape({
   firstName: yup.string().required(),
@@ -69,7 +70,7 @@ const SignUp: React.FC = () => {
               enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });
             }
           } catch (err) {
-            enqueueSnackbar(err.message, { variant: 'error' });
+            handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
           }
         }}
       >

@@ -7,6 +7,7 @@ import DialogFormContext from '../../contexts/DialogFormContext';
 import colors from '../../constants/colors';
 import { useCreateCategory } from '../../hooks/graphql/category';
 import { CategoryType } from '../../@types/graphql';
+import { handleError } from '../../utils/errors';
 
 const CreateCategoryDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -33,7 +34,7 @@ const CreateCategoryDialog: React.FC = () => {
           enqueueSnackbar('Category created successfully', { variant: 'success' });
           onClose();
         } catch (err) {
-          enqueueSnackbar(err.message, { variant: 'error' });
+          handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
         }
       }}
     />

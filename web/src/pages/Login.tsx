@@ -14,6 +14,7 @@ import { addToken } from '../slices/authSlice';
 import FormikCheckbox from '../components/formik/FormikCheckbox';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
 import { useLogin } from '../hooks/graphql/authentication';
+import { handleError } from '../utils/errors';
 
 const schema = yup.object().shape({
   username: yup.string().required(),
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
               enqueueSnackbar(UNKNOWN_ERROR, { variant: 'error' });
             }
           } catch (err) {
-            enqueueSnackbar(err.message, { variant: 'error' });
+            handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
           }
         }}
       >

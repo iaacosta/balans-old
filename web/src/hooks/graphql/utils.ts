@@ -14,6 +14,7 @@ import { useSnackbar } from 'notistack';
 import routing from '../../constants/routing';
 import { Scalars, Exact } from '../../@types/graphql';
 import { InputMutationTuple } from '../../@types/helpers';
+import { handleError } from '../../utils/errors';
 
 export type IdMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -39,7 +40,7 @@ export const useIdMutation = <TData extends Record<string, unknown>>(
           variant: 'success',
         });
       } catch (err) {
-        enqueueSnackbar(err.message, { variant: 'error' });
+        handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
       }
     },
     meta,
