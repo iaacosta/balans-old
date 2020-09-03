@@ -76,6 +76,12 @@ const CREATE_TRANSFER = gql`
   }
 `;
 
+const DELETE_TRANSFER = gql`
+  mutation DeleteTransfer($operationId: String!) {
+    deleteTransfer(operationId: $operationId)
+  }
+`;
+
 describe('transfer API calls', () => {
   let connection: Connection;
   let testUser: User;
@@ -237,6 +243,60 @@ describe('transfer API calls', () => {
       });
 
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('deleteTransfer', () => {
+    it('should delete a transfer if mine', async () => {
+      const { fromDatabaseTransfer } = await createTransfer(
+        connection,
+        { fromAccount: testFromAccount, toAccount: testToAccount },
+        { amount: 100 },
+      );
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_TRANSFER,
+        variables: { operationId: fromDatabaseTransfer.operationId },
+      });
+
+      expect(response).toBeSuccessful();
+
+      await expect(
+        getRepository(Transfer).findOneOrFail(response.data!.deleteTransfer),
+      ).rejects.toBeTruthy();
+    });
+
+    it('should not delete a transfer if not mine', async () => {
+      const { databaseUser: otherUser } = await createUser(connection);
+      const { databaseAccount: otherFromAccount } = await createAccount(
+        connection,
+        otherUser.id,
+        {
+          type: AccountType.checking,
+        },
+      );
+
+      const { databaseAccount: otherToAccount } = await createAccount(
+        connection,
+        otherUser.id,
+        {
+          type: AccountType.checking,
+        },
+      );
+
+      const { fromDatabaseTransfer } = await createTransfer(connection, {
+        fromAccount: otherFromAccount,
+        toAccount: otherToAccount,
+      });
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_TRANSFER,
+        variables: { operationId: fromDatabaseTransfer.operationId },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 });
