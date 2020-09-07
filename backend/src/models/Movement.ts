@@ -24,7 +24,7 @@ export default abstract class Movement {
   @Column()
   accountId: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   memo?: string;
 
