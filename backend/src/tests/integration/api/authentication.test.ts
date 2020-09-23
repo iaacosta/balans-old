@@ -74,7 +74,9 @@ describe('authentication API calls', () => {
   });
 
   describe('signUp', () => {
-    let testUser: ReturnType<typeof userBuilder>;
+    let testUser: Omit<ReturnType<typeof userBuilder>, 'role'> & {
+      role?: 'admin' | 'user';
+    };
 
     beforeEach(() => {
       testUser = userBuilder();
