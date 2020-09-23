@@ -74,7 +74,7 @@ describe('User model test', () => {
       it('should verify an incorrect password', async () => {
         const { user } = userModelFactory();
         user.password = await hash(user.password, await genSalt(10));
-        await expect(user.verifyPassword('nope')).rejects.toThrowError(
+        await expect(user.verifyPassword('nope')).rejects.toThrow(
           AuthenticationError,
         );
       });

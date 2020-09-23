@@ -2,10 +2,12 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "plugin:@typescript-eslint/recommended",
-    "airbnb-typescript/base"
+    "airbnb-typescript/base",
+    "plugin:jest/style"
   ],
+  "plugins": ["jest"],
   "env": {
-    "jest": true
+    "jest/globals": true
   },
   "parserOptions": {
     "ecmaVersion": 2019,
