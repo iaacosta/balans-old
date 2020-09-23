@@ -4,6 +4,9 @@
     "plugin:@typescript-eslint/recommended",
     "airbnb-typescript/base"
   ],
+  "env": {
+    "jest": true
+  },
   "parserOptions": {
     "ecmaVersion": 2019,
     "project": "./tsconfig.json"
