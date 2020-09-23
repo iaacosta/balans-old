@@ -2,7 +2,7 @@
 /* eslint-disable no-await-in-loop */
 import { Client } from 'pg';
 
-export const createPgClient = () => {
+export const createPgClient = (): Client => {
   const { DB_USERNAME, DB_PASSWORD, DB_NAME } = process.env;
   return new Client({
     database: `${DB_NAME}_test`,
@@ -11,7 +11,7 @@ export const createPgClient = () => {
   });
 };
 
-export const seedTestDatabase = async (_client: Client) => {
+export const seedTestDatabase = async (_client: Client): Promise<void> => {
   const queries = [
     'ALTER SEQUENCE user_id_seq RESTART;',
     'DELETE FROM "user" CASCADE;',
