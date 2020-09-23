@@ -119,6 +119,7 @@ export default class TransactionCommands {
     });
     updateEntity(transaction, toChange);
 
+    /* @ts-ignore */
     delete transaction.account;
 
     return this.manager
