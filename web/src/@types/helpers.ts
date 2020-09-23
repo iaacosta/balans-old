@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MutationTuple } from '@apollo/client';
 
-export type ElementOf<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementOf>
-  ? ElementOf
+export type ElementOf<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer Element>
+  ? Element
   : never;
 
 export type InputMutationTuple<TData, TVariables extends { input: any }> = [
