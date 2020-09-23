@@ -48,12 +48,12 @@ describe('account ORM tests', () => {
     describe('create', () => {
       it('should call validateOrReject on save', async () => {
         const { account } = accountModelFactory(testUser.id, { name: '' });
-        await expect(repo.save(account)).rejects.toThrowError(ApolloError);
+        await expect(repo.save(account)).rejects.toThrow(ApolloError);
       });
 
       it('should not allow two root type accounts', async () => {
         const { account } = accountModelFactory(testUser.id, { type: 'root' });
-        await expect(repo.save(account)).rejects.toThrowError();
+        await expect(repo.save(account)).rejects.toThrow();
       });
     });
 
@@ -66,7 +66,7 @@ describe('account ORM tests', () => {
         const testAccount = (await repo.findOne(databaseAccount.id)) as Account;
         expect(testAccount).toBeDefined();
         testAccount.name = '';
-        await expect(repo.save(testAccount)).rejects.toThrowError(ApolloError);
+        await expect(repo.save(testAccount)).rejects.toThrow(ApolloError);
       });
 
       it('should not allow two root type accounts', async () => {
@@ -77,7 +77,7 @@ describe('account ORM tests', () => {
         const testAccount = (await repo.findOne(databaseAccount.id)) as Account;
         expect(testAccount).toBeDefined();
         testAccount.type = 'root';
-        await expect(repo.save(testAccount)).rejects.toThrowError();
+        await expect(repo.save(testAccount)).rejects.toThrow();
       });
     });
 
