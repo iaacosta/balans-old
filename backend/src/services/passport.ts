@@ -19,6 +19,7 @@ export const getUserFromToken: VerifyFunction = (token, done) => {
 
 passport.use(new BearerStrategy(getUserFromToken));
 
+// eslint-disable-next-line no-undef
 export const authenticateUser = (req: Express.Request): ContextUser =>
   new Promise((resolve, reject) =>
     passport.authenticate('bearer', { session: false }, (err, user) => {

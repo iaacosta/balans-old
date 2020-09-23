@@ -24,7 +24,7 @@
     "console": "ts-node ./src/console.ts",
     "build": "tsc -p .",
     "start": "node ./dist/index.js",
-    "lint": "eslint src/**/*.ts --ext ts",
+    "lint": "eslint . --ext ts",
     "coverage-badge": "coverage-badger -r coverage/clover.xml -d .",
     "test": "NODE_ENV=test jest --runInBand",
     "test:dev": "NODE_ENV=test jest --watch -o --runInBand",
