@@ -46,7 +46,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write src/**/*.ts{,x}",
-    "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
+    "lint": "eslint . --ext ts",
     "generate-types": "graphql-codegen --config codegen.yml",
     "start:backend": "yarn --cwd ../backend cypress:dev",
     "cypress:generate-types": "graphql-codegen --config codegen.cypress.yml",
