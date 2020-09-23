@@ -67,7 +67,7 @@ describe('transaction ORM tests', () => {
             account: testAccount,
             category: testCategory,
           }),
-        ).rejects.toThrowError(ApolloError);
+        ).rejects.toThrow(ApolloError);
       });
     });
   });

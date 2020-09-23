@@ -6,7 +6,7 @@ describe('NotFoundError test cases', () => {
       throw new NotFoundError('user');
     };
 
-    expect(testCase).toThrowError(NotFoundError);
+    expect(testCase).toThrow(NotFoundError);
   });
 
   it('should throw error if no argument given', () => {
@@ -14,6 +14,6 @@ describe('NotFoundError test cases', () => {
       throw new NotFoundError();
     };
 
-    expect(testCase).toThrowError(NotFoundError);
+    expect(testCase).toThrow(NotFoundError);
   });
 });

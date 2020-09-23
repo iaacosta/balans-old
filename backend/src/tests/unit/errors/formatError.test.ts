@@ -21,8 +21,8 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
-      expect(error.message.includes('Mock Column')).toBe(true);
-      expect(error.message.includes('mockTable')).toBe(true);
+      expect(error.message).toContain('Mock Column');
+      expect(error.message).toContain('mockTable');
     });
 
     it('should return correct error if unique constraint with multiple columns', () => {
@@ -36,9 +36,9 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
-      expect(error.message.includes('Test Column')).toBe(true);
-      expect(error.message.includes('Mock Column')).toBe(true);
-      expect(error.message.includes('mockTable')).toBe(true);
+      expect(error.message).toContain('Test Column');
+      expect(error.message).toContain('Mock Column');
+      expect(error.message).toContain('mockTable');
     });
 
     it('should return correct error if incorrect detail', () => {
@@ -52,7 +52,7 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
-      expect(error.message.includes('column')).toBe(true);
+      expect(error.message).toContain('column');
     });
 
     it('should return correct error if no detail', () => {
@@ -65,7 +65,7 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(UniqueConstraintError);
-      expect(error.message.includes('column')).toBe(true);
+      expect(error.message).toContain('column');
     });
   });
 
@@ -79,8 +79,8 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(NotFoundError);
-      expect(error.message.includes('mock')).toBe(true);
-      expect(error.message.includes('resource')).toBe(false);
+      expect(error.message).toContain('mock');
+      expect(error.message).not.toContain('resource');
     });
 
     it('should return correct error if incorrect original error message', () => {
@@ -92,7 +92,7 @@ describe('formatError', () => {
       } as any);
 
       expect(error).toBeInstanceOf(NotFoundError);
-      expect(error.message.includes('resource')).toBe(true);
+      expect(error.message).toContain('resource');
     });
   });
 
