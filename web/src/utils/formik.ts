@@ -8,3 +8,5 @@ export const filterUnchangedValues = <T extends object>(values: T, initialValues
     values,
     (value, key) => (value !== initialValues[key as keyof T] ? value : null) as any,
   );
+
+export const initialEmptyNumber = (undefined as unknown) as number;

@@ -2,13 +2,14 @@
 import React from 'react';
 import { Formik, FormikConfig, Form } from 'formik';
 import * as yup from 'yup';
-import { InputAdornment, Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
+import { Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
 
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import ContainerLoader from '../ui/misc/ContainerLoader';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { MyAccountsQuery } from '../../@types/graphql';
+import FormikCurrencyField from '../formik/FormikCurrencyField';
 
 type Props<T> = {
   initialValues: T;
@@ -61,15 +62,7 @@ const TransferFormView = <T extends Record<string, unknown>>({
             ) : (
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <FormikTextField
-                    name="amount"
-                    label="Amount"
-                    type="number"
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    fullWidth
-                  />
+                  <FormikCurrencyField name="amount" label="Amount" fullWidth />
                 </Grid>
                 <Grid item xs={12}>
                   <FormikTextField name="memo" label="Memo" fullWidth />

@@ -7,6 +7,7 @@ import TransactionFormView from './TransactionFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { useMyCategories } from '../../hooks/graphql/category';
 import { handleError } from '../../utils/errors';
+import { initialEmptyNumber } from '../../utils/formik';
 
 const CreateTransactionDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -17,7 +18,7 @@ const CreateTransactionDialog: React.FC = () => {
 
   const initialValues = useMemo(
     () => ({
-      amount: 0,
+      amount: initialEmptyNumber,
       type: 'Expense',
       memo: '',
       accountId: (accounts && accounts[0].id) || '',
