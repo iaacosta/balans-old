@@ -6,6 +6,7 @@ import { useMyDebitAccounts, useCreateTransfer } from '../../hooks/graphql';
 import TransferFormView from './TransferFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { handleError } from '../../utils/errors';
+import { initialEmptyNumber } from '../../utils/formik';
 
 const CreateTransferDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -15,7 +16,7 @@ const CreateTransferDialog: React.FC = () => {
 
   const initialValues = useMemo(
     () => ({
-      amount: 0,
+      amount: initialEmptyNumber,
       memo: '',
       fromAccountId: (accounts && accounts[0].id) || '',
       toAccountId: (accounts && accounts[1].id) || '',
