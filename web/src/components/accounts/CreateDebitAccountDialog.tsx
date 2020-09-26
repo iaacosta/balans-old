@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useMemo, useEffect, useContext } from 'react';
-import { DialogTitle, DialogContent, Grid, InputAdornment } from '@material-ui/core';
+import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
@@ -13,6 +13,8 @@ import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { useCreateDebitAccount } from '../../hooks/graphql';
 import { handleError } from '../../utils/errors';
+import FormikCurrencyField from '../formik/FormikCurrencyField';
+import { initialEmptyNumber } from '../../utils/formik';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -56,7 +58,7 @@ const CreateDebitAccountDialog: React.FC = () => {
     () => ({
       name: '',
       bank: '',
-      initialBalance: 0,
+      initialBalance: initialEmptyNumber,
       type: '' as AccountType,
     }),
     [],
@@ -103,15 +105,7 @@ const CreateDebitAccountDialog: React.FC = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormikTextField
-                    name="initialBalance"
-                    label="Initial Balance"
-                    type="number"
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    fullWidth
-                  />
+                  <FormikCurrencyField name="initialBalance" label="Initial Balance" fullWidth />
                 </Grid>
                 {values.type !== 'cash' && (
                   <Grid item xs={12}>
