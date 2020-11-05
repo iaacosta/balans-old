@@ -13,4 +13,7 @@ export class CreateTransferInput {
 
   @Field({ nullable: true })
   memo?: string;
+
+  @Field(() => Date)
+  issuedAt: Date;
 }

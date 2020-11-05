@@ -6,6 +6,7 @@ import { CreateTransferInput } from '../graphql/helpers';
 import Transfer from '../models/Transfer';
 import Account from '../models/Account';
 import User from '../models/User';
+import { CreateMovementCommandInput } from '../@types';
 
 export default class TransferCommands {
   manager: EntityManager;
@@ -18,7 +19,7 @@ export default class TransferCommands {
   }
 
   async create(
-    { memo, amount }: Pick<CreateTransferInput, 'memo' | 'amount'>,
+    { memo, amount, issuedAt }: CreateMovementCommandInput<CreateTransferInput>,
     { fromAccount, toAccount }: { fromAccount: Account; toAccount: Account },
   ): Promise<Transfer[]> {
     fromAccount.balance -= amount;
@@ -31,12 +32,14 @@ export default class TransferCommands {
         memo,
         accountId: fromAccount.id,
         operationId,
+        issuedAt,
       }),
       new Transfer({
         amount,
         memo,
         accountId: toAccount.id,
         operationId,
+        issuedAt,
       }),
     ]);
   }

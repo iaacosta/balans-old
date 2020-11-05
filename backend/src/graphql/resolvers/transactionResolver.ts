@@ -41,7 +41,7 @@ export default class TransactionResolvers {
       .leftJoin('transaction.account', 'account')
       .where('account.userId = :userId', { userId: currentUser!.id })
       .andWhere('account.type != :type', { type: 'root' })
-      .orderBy('transaction.createdAt', 'DESC')
+      .orderBy('transaction.issuedAt', 'DESC')
       .getMany();
   }
 
