@@ -22,6 +22,7 @@ export const buildOwnSchema = async (): Promise<GraphQLSchema> => {
       resolve(__dirname, '..', 'models', '*'),
     ],
     authChecker,
+    dateScalarMode: 'timestamp',
   });
 };
 
