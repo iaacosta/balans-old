@@ -51,12 +51,14 @@ export default abstract class Movement {
   constructor(movement: {
     amount: number;
     accountId: number;
+    issuedAt?: Date;
     memo?: string;
     operationId?: string;
   }) {
     if (movement) {
       this.amount = movement.amount;
       this.accountId = movement.accountId;
+      this.issuedAt = movement.issuedAt || new Date();
       this.memo = movement.memo === '' ? undefined : movement.memo;
       this.operationId = movement.operationId || uuid();
     }
