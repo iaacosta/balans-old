@@ -9,6 +9,7 @@ export default class Transfer extends Movement {
   constructor(transfer: {
     amount: number;
     accountId: number;
+    issuedAt?: Date;
     memo?: string;
     operationId?: string;
   }) {

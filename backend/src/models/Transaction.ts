@@ -22,6 +22,7 @@ export default class Transaction extends Movement {
   constructor(transaction: {
     amount: number;
     accountId: number;
+    issuedAt?: Date;
     memo?: string;
     operationId?: string;
     category?: Category;
