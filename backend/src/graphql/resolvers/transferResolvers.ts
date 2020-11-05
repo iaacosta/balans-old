@@ -62,7 +62,7 @@ export default class TransferResolvers {
       .select()
       .leftJoin('transfer.account', 'account')
       .where('account.userId = :userId', { userId: currentUser!.id })
-      .orderBy('transfer.createdAt', 'DESC')
+      .orderBy('transfer.issuedAt', 'DESC')
       .addOrderBy('transfer.amount', 'ASC')
       .getMany();
 

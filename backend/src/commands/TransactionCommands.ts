@@ -11,6 +11,7 @@ import Account from '../models/Account';
 import User from '../models/User';
 import { updateEntity } from '../utils';
 import Category from '../models/Category';
+import { CreateMovementCommandInput } from '../@types';
 
 export default class TransactionCommands {
   manager: EntityManager;
@@ -29,7 +30,11 @@ export default class TransactionCommands {
   }
 
   async create(
-    { memo, amount }: Pick<CreateTransactionInput, 'memo' | 'amount'>,
+    {
+      memo,
+      amount,
+      issuedAt,
+    }: CreateMovementCommandInput<CreateTransactionInput>,
     { account, category }: { account: Account; category?: Category },
   ): Promise<Transaction[]> {
     const rootAccount = await this.getRootAccount();
@@ -42,6 +47,7 @@ export default class TransactionCommands {
       amount,
       memo,
       accountId: account.id,
+      issuedAt,
       operationId,
       category,
     });
@@ -51,6 +57,7 @@ export default class TransactionCommands {
       memo: memo?.concat(' (root)'),
       accountId: rootAccount.id,
       operationId,
+      issuedAt,
     });
 
     await this.manager.getRepository(Account).save([account, rootAccount]);

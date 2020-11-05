@@ -13,6 +13,9 @@ export class CreateTransactionInput {
 
   @Field(() => ID)
   categoryId: number;
+
+  @Field(() => Date)
+  issuedAt: Date;
 }
 
 @InputType()
@@ -31,4 +34,7 @@ export class UpdateTransactionInput {
 
   @Field(() => ID, { nullable: true })
   categoryId?: number;
+
+  @Field(() => Date, { nullable: true })
+  issuedAt?: Date;
 }
