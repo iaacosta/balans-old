@@ -29,6 +29,7 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
       memo: transaction.memo || '',
       accountId: transaction.account.id,
       categoryId: transaction.category?.id || '',
+      issuedAt: new Date(transaction.issuedAt),
     }),
     [transaction],
   );

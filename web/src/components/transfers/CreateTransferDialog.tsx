@@ -20,6 +20,7 @@ const CreateTransferDialog: React.FC = () => {
       memo: '',
       fromAccountId: (accounts && accounts[0].id) || '',
       toAccountId: (accounts && accounts[1].id) || '',
+      issuedAt: new Date(),
     }),
     [accounts],
   );
