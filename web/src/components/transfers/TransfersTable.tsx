@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import { makeStyles, Typography, Box } from '@material-ui/core';
 import { Column, CellProps } from 'react-table';
 import { formatMoney } from 'accounting';
-import dayjs from 'dayjs';
 import { TrendingFlat as TransferIcon } from '@material-ui/icons';
 import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransferActionCell from './TransferActionCell';
+import { longDateFormatter } from '../../utils/date';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -59,9 +59,8 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
       },
       {
         Header: 'Date',
-        id: 'createdAt',
-        Cell: ({ row }: CustomCellProps) =>
-          dayjs(row.original.from.createdAt).format('HH:mm DD/MM/YYYY'),
+        id: 'issuedAt',
+        Cell: ({ row }: CustomCellProps) => longDateFormatter(row.original.from.issuedAt),
       },
       {
         Header: 'Actions',

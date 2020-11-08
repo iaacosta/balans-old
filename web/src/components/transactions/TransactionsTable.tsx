@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 import { makeStyles, Typography, Box } from '@material-ui/core';
 import { Column } from 'react-table';
 import { formatMoney } from 'accounting';
-import dayjs from 'dayjs';
 import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
 import CategoryIcon from '../ui/misc/CategoryIcon';
+import { longDateFormatter } from '../../utils/date';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -70,8 +70,8 @@ const TransactionsTable: React.FC<Props> = ({
       },
       {
         Header: 'Date',
-        accessor: 'createdAt',
-        Cell: ({ value }) => dayjs(value).format('HH:mm DD/MM/YYYY'),
+        accessor: 'issuedAt',
+        Cell: ({ value }) => longDateFormatter(value),
       },
       {
         Header: 'Actions',
