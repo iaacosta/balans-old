@@ -6,6 +6,8 @@ import { Close as CloseIcon } from '@material-ui/icons';
 import { SnackbarProvider } from 'notistack';
 import { BrowserRouter as RouterProvider } from 'react-router-dom';
 import { Provider, useSelector } from 'react-redux';
+import { MuiPickersUtilsProvider as DatepickerProvider } from '@material-ui/pickers';
+import DayJsUtils from '@date-io/dayjs';
 
 import './config/accounting';
 import client from './config/apollo';
@@ -75,8 +77,10 @@ const AppProviders: React.FC = ({ children }) => (
       <ApolloProvider client={client}>
         <CustomThemeProvider>
           <CustomSnackbarProvider>
-            <CssBaseline />
-            {children}
+            <DatepickerProvider utils={DayJsUtils}>
+              <CssBaseline />
+              {children}
+            </DatepickerProvider>
           </CustomSnackbarProvider>
         </CustomThemeProvider>
       </ApolloProvider>
