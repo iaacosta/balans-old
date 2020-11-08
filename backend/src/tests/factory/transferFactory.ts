@@ -8,12 +8,13 @@ import Transfer from '../../models/Transfer';
 import Account from '../../models/Account';
 import TransferCommands from '../../commands/TransferCommands';
 
-export type BuildType = Pick<Transfer, 'amount' | 'memo'>;
+export type BuildType = Pick<Transfer, 'amount' | 'memo' | 'issuedAt'>;
 
 export const transferBuilder = build<BuildType>('transfer', {
   fields: {
     amount: fake((faker) => faker.random.number(15000)),
     memo: fake((faker) => faker.lorem.words(3)),
+    issuedAt: fake((faker) => faker.date.past()),
   },
 });
 
