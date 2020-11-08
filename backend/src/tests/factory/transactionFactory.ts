@@ -8,12 +8,13 @@ import Account from '../../models/Account';
 import TransactionCommands from '../../commands/TransactionCommands';
 import Category from '../../models/Category';
 
-export type BuildType = Pick<Transaction, 'amount' | 'memo'>;
+export type BuildType = Pick<Transaction, 'amount' | 'memo' | 'issuedAt'>;
 
 export const transactionBuilder = build<BuildType>('transaction', {
   fields: {
     amount: fake((faker) => faker.random.number(15000)),
     memo: fake((faker) => faker.lorem.words(3)),
+    issuedAt: fake((faker) => faker.date.past()),
   },
 });
 
