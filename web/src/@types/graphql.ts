@@ -7,19 +7,20 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: any;
+  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: any;
 };
 
 export type Movement = {
   __typename?: 'Movement';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: Account;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 
@@ -27,13 +28,14 @@ export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: Account;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
   category?: Maybe<Category>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 export type Category = {
@@ -42,8 +44,8 @@ export type Category = {
   name: Scalars['String'];
   type: CategoryType;
   color: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 export enum CategoryType {
@@ -62,20 +64,21 @@ export type User = {
   role: Scalars['String'];
   accounts: Array<Account>;
   categories: Array<Category>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 export type Transfer = {
   __typename?: 'Transfer';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: Account;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 export type Account = {
@@ -86,9 +89,9 @@ export type Account = {
   bank: Scalars['String'];
   balance: Scalars['Int'];
   user: User;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 export enum AccountType {
@@ -151,6 +154,7 @@ export type CreateTransactionInput = {
   accountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
   categoryId: Scalars['ID'];
+  issuedAt: Scalars['Timestamp'];
 };
 
 export type UpdateTransactionInput = {
@@ -159,6 +163,7 @@ export type UpdateTransactionInput = {
   memo?: Maybe<Scalars['String']>;
   accountId?: Maybe<Scalars['ID']>;
   categoryId?: Maybe<Scalars['ID']>;
+  issuedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 export type CreateTransferInput = {
@@ -166,6 +171,7 @@ export type CreateTransferInput = {
   fromAccountId: Scalars['ID'];
   toAccountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
+  issuedAt: Scalars['Timestamp'];
 };
 
 export type Query = {
@@ -406,7 +412,7 @@ export type MyTransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: Array<(
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'createdAt'>
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'issuedAt'>
     & { account: (
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
@@ -439,7 +445,7 @@ export type UpdateTransactionMutation = (
   { __typename?: 'Mutation' }
   & { updateTransaction: (
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'createdAt'>
+    & Pick<Transaction, 'id' | 'amount' | 'memo' | 'issuedAt'>
     & { account: (
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
@@ -469,14 +475,14 @@ export type MyTransfersQuery = (
     { __typename?: 'PairedTransfer' }
     & { from: (
       { __typename?: 'Transfer' }
-      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'createdAt'>
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'issuedAt'>
       & { account: (
         { __typename?: 'Account' }
         & Pick<Account, 'id' | 'name'>
       ) }
     ), to: (
       { __typename?: 'Transfer' }
-      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'createdAt'>
+      & Pick<Transfer, 'id' | 'amount' | 'memo' | 'operationId' | 'issuedAt'>
       & { account: (
         { __typename?: 'Account' }
         & Pick<Account, 'id' | 'name'>
