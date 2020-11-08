@@ -37,7 +37,7 @@ export default abstract class Movement {
   account: Account;
 
   @Field()
-  @Column('timestamp without time zone', { default: 'NOW()' })
+  @Column('timestamp without time zone', { default: () => 'NOW()' })
   issuedAt: Date;
 
   @Field()
