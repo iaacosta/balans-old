@@ -1,7 +1,7 @@
 import React from 'react';
 import { DateTimePicker, DateTimePickerProps } from '@material-ui/pickers';
 import { useField } from 'formik';
-import { makeStyles } from '@material-ui/core';
+import { InputProps, makeStyles } from '@material-ui/core';
 import { longDateFormat } from '../../utils/date';
 
 interface Props {
@@ -37,6 +37,7 @@ const FormikDatepicker: React.FC<Props & Omit<DateTimePickerProps, 'value' | 'on
       helperText={hasError && error}
       disableFuture
       DialogProps={{ className: classes.dialog }}
+      InputProps={({ 'data-testid': `${name}Input` } as unknown) as InputProps}
       {...otherProps}
       {...props}
     />

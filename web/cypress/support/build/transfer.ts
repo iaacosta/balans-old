@@ -9,6 +9,7 @@ export const buildTransfer = (overrides?: Partial<BaseTransfer>) => {
     fields: {
       amount: fake((faker) => faker.random.number(2000000)),
       memo: fake((faker) => faker.lorem.words(3)),
+      issuedAt: fake((faker) => faker.date.past()),
     },
   });
 
