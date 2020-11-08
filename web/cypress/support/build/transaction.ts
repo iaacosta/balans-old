@@ -12,6 +12,7 @@ export const buildTransaction = (overrides?: Partial<BaseTransaction>) => {
     fields: {
       amount: fake((faker) => faker.random.number(2000000)),
       memo: fake((faker) => faker.lorem.words(3)),
+      issuedAt: fake((faker) => faker.date.past()),
     },
   });
   return builder({ map: (transaction) => ({ ...transaction, ...overrides }) });

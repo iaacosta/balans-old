@@ -66,6 +66,8 @@ describe('transactions table', () => {
     cy.get('tbody tr').should('have.length', 1);
   });
 
+  /* TODO: figure a way of testing the date dynamically */
+
   it('should be able to update a transaction', () => {
     const rowId = `row${testTransaction.id}`;
     const updateId = `updateTransaction${testTransaction.id}`;

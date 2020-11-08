@@ -7,19 +7,20 @@ type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: any;
+  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: any;
 };
 
 type GQLMovement = {
   __typename?: 'Movement';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: GQLAccount;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 
@@ -27,13 +28,14 @@ type GQLTransaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: GQLAccount;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
   category?: Maybe<GQLCategory>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 type GQLCategory = {
@@ -42,8 +44,8 @@ type GQLCategory = {
   name: Scalars['String'];
   type: GQLCategoryType;
   color: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 type GQLCategoryType = 
@@ -61,20 +63,21 @@ type GQLUser = {
   role: Scalars['String'];
   accounts: Array<GQLAccount>;
   categories: Array<GQLCategory>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 type GQLTransfer = {
   __typename?: 'Transfer';
   id: Scalars['ID'];
   amount: Scalars['Int'];
-  memo: Scalars['String'];
+  memo?: Maybe<Scalars['String']>;
   operationId: Scalars['String'];
   account: GQLAccount;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
 };
 
 type GQLAccount = {
@@ -85,9 +88,9 @@ type GQLAccount = {
   bank: Scalars['String'];
   balance: Scalars['Int'];
   user: GQLUser;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 type GQLAccountType = 
@@ -149,6 +152,7 @@ type GQLCreateTransactionInput = {
   accountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
   categoryId: Scalars['ID'];
+  issuedAt: Scalars['Timestamp'];
 };
 
 type GQLUpdateTransactionInput = {
@@ -157,6 +161,7 @@ type GQLUpdateTransactionInput = {
   memo?: Maybe<Scalars['String']>;
   accountId?: Maybe<Scalars['ID']>;
   categoryId?: Maybe<Scalars['ID']>;
+  issuedAt?: Maybe<Scalars['Timestamp']>;
 };
 
 type GQLCreateTransferInput = {
@@ -164,6 +169,7 @@ type GQLCreateTransferInput = {
   fromAccountId: Scalars['ID'];
   toAccountId: Scalars['ID'];
   memo?: Maybe<Scalars['String']>;
+  issuedAt: Scalars['Timestamp'];
 };
 
 type GQLQuery = {
