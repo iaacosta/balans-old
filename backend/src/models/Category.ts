@@ -16,7 +16,7 @@ import { CategoryType } from '../graphql/helpers';
 import colors from '../constants/colors';
 
 @Entity()
-@Unique(['name', 'userId'])
+@Unique(['name', 'userId', 'type'])
 @ObjectType()
 export default class Category {
   @Field(() => ID)
