@@ -11,6 +11,7 @@ import ContainerLoader from '../ui/misc/ContainerLoader';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import CategorySelectItem from '../ui/misc/CategorySelectItem';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
+import FormikDatepicker from '../formik/FormikDatepicker';
 
 type Props<T> = {
   initialValues: T;
@@ -50,6 +51,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
         memo: yup.string(),
         accountId: yup.string().required(),
         categoryId: yup.string(),
+        issuedAt: yup.date().max(new Date()).required(),
       })}
       onSubmit={onSubmit}
     >
@@ -79,13 +81,25 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                   <Grid item xs={12}>
                     <FormikCurrencyField name="amount" label="Amount" fullWidth />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <FormikSelectField
                       name="type"
                       label="Transaction type"
                       fullWidth
                       displayEmpty
                       options={['Expense', 'Income']}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormikSelectField
+                      name="categoryId"
+                      label="Category"
+                      fullWidth
+                      displayEmpty
+                      options={internalCategories.map((category) => ({
+                        key: category.id,
+                        element: <CategorySelectItem category={category} key={category.id} />,
+                      }))}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -104,16 +118,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <FormikSelectField
-                      name="categoryId"
-                      label="Category"
-                      fullWidth
-                      displayEmpty
-                      options={internalCategories.map((category) => ({
-                        key: category.id,
-                        element: <CategorySelectItem category={category} key={category.id} />,
-                      }))}
-                    />
+                    <FormikDatepicker name="issuedAt" label="Issued at" />
                   </Grid>
                 </Grid>
               )}

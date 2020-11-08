@@ -10,6 +10,7 @@ import ContainerLoader from '../ui/misc/ContainerLoader';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { MyAccountsQuery } from '../../@types/graphql';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
+import FormikDatepicker from '../formik/FormikDatepicker';
 
 type Props<T> = {
   initialValues: T;
@@ -50,6 +51,7 @@ const TransferFormView = <T extends Record<string, unknown>>({
           .string()
           .notOneOf([yup.ref('fromAccountId')], 'Must be different from destination account')
           .required(),
+        issuedAt: yup.date().max(new Date()).required(),
       })}
       onSubmit={onSubmit}
     >
@@ -67,7 +69,7 @@ const TransferFormView = <T extends Record<string, unknown>>({
                 <Grid item xs={12}>
                   <FormikTextField name="memo" label="Memo" fullWidth />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <FormikSelectField
                     name="fromAccountId"
                     label="Origin account"
@@ -79,7 +81,7 @@ const TransferFormView = <T extends Record<string, unknown>>({
                     }))}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <FormikSelectField
                     name="toAccountId"
                     label="Destination account"
@@ -90,6 +92,9 @@ const TransferFormView = <T extends Record<string, unknown>>({
                       label: `${name} (${bank})`,
                     }))}
                   />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormikDatepicker name="issuedAt" label="Issued at" />
                 </Grid>
               </Grid>
             )}

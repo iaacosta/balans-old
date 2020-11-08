@@ -21,6 +21,7 @@ const CreateTransactionDialog: React.FC = () => {
       amount: initialEmptyNumber,
       type: 'Expense',
       memo: '',
+      issuedAt: new Date(),
       accountId: (accounts && accounts[0].id) || '',
       categoryId: (expense && expense[0].id) || '',
     }),
