@@ -5,6 +5,8 @@ export type ElementOf<T extends ReadonlyArray<unknown>> = T extends ReadonlyArra
   ? Element
   : never;
 
+export type ArgumentOf<T> = T extends (...args: infer U) => any ? U : never;
+
 export type InputMutationTuple<TData, TVariables extends { input: any }> = [
   (input: TVariables['input']) => ReturnType<MutationTuple<TData, TVariables>[0]>,
   MutationTuple<TData, TVariables>[1],
