@@ -17,7 +17,7 @@ export const myTransactionsQuery = gql`
         name
         color
       }
-      createdAt
+      issuedAt
     }
   }
 `;
@@ -47,7 +47,7 @@ export const updateTransactionMutation = gql`
         name
         color
       }
-      createdAt
+      issuedAt
     }
   }
 `;

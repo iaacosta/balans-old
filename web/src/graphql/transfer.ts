@@ -12,7 +12,7 @@ export const myTransfersQuery = gql`
           id
           name
         }
-        createdAt
+        issuedAt
       }
       to {
         id
@@ -23,7 +23,7 @@ export const myTransfersQuery = gql`
           id
           name
         }
-        createdAt
+        issuedAt
       }
     }
   }

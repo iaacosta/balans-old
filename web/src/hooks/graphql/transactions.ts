@@ -39,7 +39,10 @@ export const useCreateTransaction = (): InputMutationTuple<
 export const useUpdateTransaction = (): InputMutationTuple<
   UpdateTransactionMutation,
   UpdateTransactionMutationVariables
-> => useInputMutation(updateTransactionMutation, { refetchQueries: [{ query: myAccountsQuery }] });
+> =>
+  useInputMutation(updateTransactionMutation, {
+    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
+  });
 
 export const useDeleteTransaction = (): UseIdMutationReturn<DeleteTransactionMutation> => {
   return useIdMutation<DeleteTransactionMutation>(deleteTransactionMutation, {
