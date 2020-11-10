@@ -36,9 +36,13 @@ const CreateTransactionDialog: React.FC = () => {
       initialValues={initialValues}
       initialLoading={accountsLoading || categoriesLoading}
       submitLoading={createLoading}
-      onSubmit={async ({ type, amount, ...values }) => {
+      onSubmit={async ({ type, amount, issuedAt, ...values }) => {
         try {
-          await createTransaction({ ...values, amount: type === 'Expense' ? -amount : amount });
+          await createTransaction({
+            ...values,
+            amount: type === 'expense' ? -amount : amount,
+            issuedAt: issuedAt.valueOf(),
+          });
           enqueueSnackbar('Transaction created successfully', { variant: 'success' });
           onClose();
         } catch (err) {

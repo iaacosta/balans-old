@@ -34,7 +34,7 @@ const CreateTransferDialog: React.FC = () => {
       submitLoading={createLoading}
       onSubmit={async (values) => {
         try {
-          await createTransfer(values);
+          await createTransfer({ ...values, issuedAt: values.issuedAt.valueOf() });
           enqueueSnackbar('Transfer created successfully', { variant: 'success' });
           onClose();
         } catch (err) {

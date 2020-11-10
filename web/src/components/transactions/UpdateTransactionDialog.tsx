@@ -43,14 +43,19 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
       initialLoading={accountLoading || categoriesLoading}
       initialValues={initialValues}
       onSubmit={async ({ type, amount, ...values }) => {
-        const toChange = { ...values, amount: type === 'Expense' ? -amount : amount };
         const { type: initialType, ...original } = initialValues;
-        original.amount = original.amount * (initialType === 'Expense' ? -1 : 1);
+        original.amount = original.amount * (initialType === 'expense' ? -1 : 1);
+
+        const toChange = filterUnchangedValues(
+          { ...values, amount: type === 'expense' ? -amount : amount },
+          original,
+        );
 
         try {
           await updateTransaction({
             id: transaction.id,
-            ...filterUnchangedValues(toChange, original),
+            ...toChange,
+            issuedAt: toChange.issuedAt?.valueOf(),
           });
           enqueueSnackbar('Transaction updated successfully', { variant: 'success' });
           onClose();
