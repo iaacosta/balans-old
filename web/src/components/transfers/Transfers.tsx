@@ -6,6 +6,7 @@ import CreateTransferDialog from './CreateTransferDialog';
 import { useMyDebitAccounts, useMyTransfers } from '../../hooks/graphql';
 import TransfersTable from './TransfersTable';
 import TransfersList from './TransfersList';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
   buttonWrapper: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Transfers: React.FC = () => {
   const classes = useStyles();
+  const { locale } = useLocale();
   const { transfers, loading: transfersLoading } = useMyTransfers();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const notEnoughAccounts = accounts.length < 2;
@@ -24,7 +26,7 @@ const Transfers: React.FC = () => {
   const Button = (
     <DialogButton
       disabled={notEnoughAccounts || accountsLoading}
-      buttonLabel="Add new transfer"
+      buttonLabel={locale('movements:create:transfer')}
       data-testid="createTransferButton"
       startIcon={<AddIcon />}
     >

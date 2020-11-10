@@ -12,6 +12,8 @@ import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import CategorySelectItem from '../ui/misc/CategorySelectItem';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
 import FormikDatepicker from '../formik/FormikDatepicker';
+import { useLocale } from '../../hooks/utils/useLocale';
+import { LocaleKeys } from '../../@types/locales';
 
 type Props<T> = {
   initialValues: T;
@@ -22,6 +24,8 @@ type Props<T> = {
   submitLoading: boolean;
   mode: 'update' | 'create';
 };
+
+type TransactionType = 'expense' | 'income';
 
 const useStyles = makeStyles((theme) => ({
   form: { minWidth: theme.spacing(75), [theme.breakpoints.down('sm')]: { minWidth: 0 } },
@@ -37,10 +41,9 @@ const TransactionFormView = <T extends Record<string, unknown>>({
   mode,
 }: Props<T>): JSX.Element => {
   const classes = useStyles();
-  const label = mode === 'create' ? 'Create' : 'Update';
-
-  const getCategoriesByType = (type: unknown) =>
-    categories[type === 'Expense' ? 'expense' : 'income'];
+  const { locale } = useLocale();
+  const localeKey: LocaleKeys = mode === 'create' ? 'forms:create' : 'forms:update';
+  const getCategoriesByType = (type: TransactionType) => categories[type];
 
   return (
     <Formik
@@ -56,10 +59,12 @@ const TransactionFormView = <T extends Record<string, unknown>>({
       onSubmit={onSubmit}
     >
       {({ dirty, values, setFieldValue }) => {
-        const [internalCategories, setCategories] = useState(getCategoriesByType(values.type));
+        const [internalCategories, setCategories] = useState(
+          getCategoriesByType(values.type as TransactionType),
+        );
 
         useEffect(() => {
-          const newCategories = getCategoriesByType(values.type);
+          const newCategories = getCategoriesByType(values.type as TransactionType);
           let newCategory = newCategories[0].id;
 
           if (mode === 'update' && initialValues.type === values.type) {
@@ -72,28 +77,37 @@ const TransactionFormView = <T extends Record<string, unknown>>({
 
         return (
           <Form className={classes.form}>
-            <DialogTitle>{label} transaction</DialogTitle>
+            <DialogTitle>
+              {locale(localeKey)} {locale('movements:transaction').toLowerCase()}
+            </DialogTitle>
             <DialogContent>
               {initialLoading || !accounts ? (
                 <ContainerLoader />
               ) : (
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <FormikCurrencyField name="amount" label="Amount" fullWidth />
+                    <FormikCurrencyField
+                      name="amount"
+                      label={locale('movements:form:amount')}
+                      fullWidth
+                    />
                   </Grid>
                   <Grid item xs={6}>
                     <FormikSelectField
                       name="type"
-                      label="Transaction type"
+                      label={locale('movements:form:transactionType')}
                       fullWidth
                       displayEmpty
-                      options={['Expense', 'Income']}
+                      options={[
+                        { key: 'expense', label: locale('movements:form:expense') },
+                        { key: 'income', label: locale('movements:form:income') },
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={6}>
                     <FormikSelectField
                       name="categoryId"
-                      label="Category"
+                      label={locale('movements:form:category')}
                       fullWidth
                       displayEmpty
                       options={internalCategories.map((category) => ({
@@ -108,7 +122,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                   <Grid item xs={12}>
                     <FormikSelectField
                       name="accountId"
-                      label="Account"
+                      label={locale('movements:form:account')}
                       fullWidth
                       displayEmpty
                       options={accounts.map(({ id, name, bank }) => ({
@@ -118,7 +132,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <FormikDatepicker name="issuedAt" label="Issued at" />
+                    <FormikDatepicker name="issuedAt" label={locale('movements:form:issuedAt')} />
                   </Grid>
                 </Grid>
               )}
@@ -127,7 +141,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
               loading={submitLoading}
               disabled={mode === 'update' ? !dirty : false}
             >
-              {label}
+              {locale(localeKey)}
             </DialogFormButtons>
           </Form>
         );

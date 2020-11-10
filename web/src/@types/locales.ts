@@ -27,7 +27,9 @@ type NavbarKeys =
   | 'navbar:en'
   | 'navbar:es';
 
-type FormKeys = 'forms:create' | 'forms:go' | 'forms:cancel';
+type FormKeys = 'forms:create' | 'forms:update' | 'forms:go' | 'forms:cancel';
+
+type TableKeys = 'tables:actions';
 
 type AccountKeys =
   | 'accounts:title'
@@ -45,4 +47,28 @@ type AccountKeys =
   | 'accounts:form:initialBalance'
   | 'accounts:form:bank';
 
-export type LocaleKeys = AuthKeys | NavbarKeys | FormKeys | AccountKeys;
+type MovementKeys =
+  | 'movements:title'
+  | 'movements:transaction'
+  | 'movements:transfer'
+  | 'movements:atLeastOneAccount'
+  | 'movements:atLeastTwoAccounts'
+  | 'movements:noTransactionsCreated'
+  | 'movements:noTransfersCreated'
+  | 'movements:create:transaction'
+  | 'movements:create:transfer'
+  | 'movements:tabs:transactions'
+  | 'movements:tabs:transfers'
+  | 'movements:tabs:passive'
+  | 'movements:form:amount'
+  | 'movements:form:expense'
+  | 'movements:form:income'
+  | 'movements:form:transactionType'
+  | 'movements:form:category'
+  | 'movements:form:memo'
+  | 'movements:form:account'
+  | 'movements:form:fromAccount'
+  | 'movements:form:toAccount'
+  | 'movements:form:issuedAt';
+
+export type LocaleKeys = AuthKeys | NavbarKeys | FormKeys | AccountKeys | TableKeys | MovementKeys;

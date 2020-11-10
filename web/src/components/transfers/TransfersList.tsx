@@ -20,6 +20,7 @@ import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import { useDeleteTransfer } from '../../hooks/graphql';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 type Props = {
   transfers: MyTransfersQuery['transfers'];
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts }) => {
   const classes = useStyles();
+  const { locale } = useLocale();
 
   return (
     <Paper className={classes.paper} square elevation={1}>
@@ -53,8 +55,8 @@ const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts 
         loading={loading}
         noEntriesLabel={
           notEnoughAccounts
-            ? 'You need at least two accounts to make transfers'
-            : 'No transfers created yet'
+            ? locale('movements:atLeastTwoAccounts')
+            : locale('movements:noTransfersCreated')
         }
       >
         {({ data, index, style }) => {

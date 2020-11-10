@@ -25,7 +25,7 @@ const UpdateTransactionDialog: React.FC<Props> = ({ transaction }) => {
   const initialValues = useMemo(
     () => ({
       amount: Math.abs(transaction.amount),
-      type: transaction.amount > 0 ? 'Income' : 'Expense',
+      type: transaction.amount > 0 ? 'income' : 'expense',
       memo: transaction.memo || '',
       accountId: transaction.account.id,
       categoryId: transaction.category?.id || '',

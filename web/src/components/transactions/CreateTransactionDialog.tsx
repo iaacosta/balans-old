@@ -19,7 +19,7 @@ const CreateTransactionDialog: React.FC = () => {
   const initialValues = useMemo(
     () => ({
       amount: initialEmptyNumber,
-      type: 'Expense',
+      type: 'expense',
       memo: '',
       issuedAt: new Date(),
       accountId: (accounts && accounts[0].id) || '',

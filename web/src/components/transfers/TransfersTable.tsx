@@ -7,6 +7,7 @@ import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransferActionCell from './TransferActionCell';
 import { longDateFormatter } from '../../utils/date';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -29,11 +30,12 @@ type CustomCellProps = CellProps<MyTransfersQuery['transfers'][number]>;
 
 const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnoughAccounts }) => {
   const classes = useStyles();
+  const { locale } = useLocale();
 
   const columns: Column<MyTransfersQuery['transfers'][number]>[] = useMemo(
     () => [
       {
-        Header: 'Amount',
+        Header: locale('movements:form:amount'),
         id: 'amount',
         Cell: ({ row }: CustomCellProps) => (
           <Typography variant="body2" className={classes.amount}>
@@ -42,7 +44,7 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
         ),
       },
       {
-        Header: 'Transfer',
+        Header: locale('movements:transfer'),
         id: 'transfer',
         Cell: ({ row }: CustomCellProps) => (
           <Box className={classes.transfer}>
@@ -53,22 +55,22 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
         ),
       },
       {
-        Header: 'Memo',
+        Header: locale('movements:form:memo'),
         id: 'memo',
         Cell: ({ row }: CustomCellProps) => row.original.from.memo || '-',
       },
       {
-        Header: 'Date',
+        Header: locale('movements:form:issuedAt'),
         id: 'issuedAt',
         Cell: ({ row }: CustomCellProps) => longDateFormatter(row.original.from.issuedAt),
       },
       {
-        Header: 'Actions',
+        Header: locale('tables:actions'),
         id: 'actions',
         Cell: TransferActionCell,
       },
     ],
-    [classes],
+    [classes, locale],
   );
 
   return (
@@ -77,11 +79,11 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
       loading={loading}
       columns={columns}
       data={transfers}
-      initialState={{ pageSize: 7 }}
+      initialState={{ pageSize: 8 }}
       noEntriesLabel={
         notEnoughAccounts
-          ? 'You need at least two accounts to make transfers'
-          : 'No transfers created yet'
+          ? locale('movements:atLeastTwoAccounts')
+          : locale('movements:noTransfersCreated')
       }
     >
       {children}

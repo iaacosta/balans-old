@@ -11,6 +11,8 @@ import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { MyAccountsQuery } from '../../@types/graphql';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
 import FormikDatepicker from '../formik/FormikDatepicker';
+import { useLocale } from '../../hooks/utils/useLocale';
+import { LocaleKeys } from '../../@types/locales';
 
 type Props<T> = {
   initialValues: T;
@@ -34,7 +36,8 @@ const TransferFormView = <T extends Record<string, unknown>>({
   mode,
 }: Props<T>): JSX.Element => {
   const classes = useStyles();
-  const label = mode === 'create' ? 'Create' : 'Update';
+  const { locale } = useLocale();
+  const localeKey: LocaleKeys = mode === 'create' ? 'forms:create' : 'forms:update';
 
   return (
     <Formik
@@ -57,22 +60,28 @@ const TransferFormView = <T extends Record<string, unknown>>({
     >
       {({ dirty }) => (
         <Form className={classes.form}>
-          <DialogTitle>{label} transfer</DialogTitle>
+          <DialogTitle>
+            {locale(localeKey)} {locale('movements:transfer').toLowerCase()}
+          </DialogTitle>
           <DialogContent>
             {initialLoading ? (
               <ContainerLoader />
             ) : (
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <FormikCurrencyField name="amount" label="Amount" fullWidth />
+                  <FormikCurrencyField
+                    name="amount"
+                    label={locale('movements:form:amount')}
+                    fullWidth
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormikTextField name="memo" label="Memo" fullWidth />
+                  <FormikTextField name="memo" label={locale('movements:form:memo')} fullWidth />
                 </Grid>
                 <Grid item xs={6}>
                   <FormikSelectField
                     name="fromAccountId"
-                    label="Origin account"
+                    label={locale('movements:form:fromAccount')}
                     fullWidth
                     displayEmpty
                     options={accounts.map(({ id, name, bank }) => ({
@@ -84,7 +93,7 @@ const TransferFormView = <T extends Record<string, unknown>>({
                 <Grid item xs={6}>
                   <FormikSelectField
                     name="toAccountId"
-                    label="Destination account"
+                    label={locale('movements:form:toAccount')}
                     fullWidth
                     displayEmpty
                     options={accounts.map(({ id, name, bank }) => ({
@@ -94,13 +103,13 @@ const TransferFormView = <T extends Record<string, unknown>>({
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormikDatepicker name="issuedAt" label="Issued at" />
+                  <FormikDatepicker name="issuedAt" label={locale('movements:form:issuedAt')} />
                 </Grid>
               </Grid>
             )}
           </DialogContent>
           <DialogFormButtons loading={submitLoading} disabled={mode === 'update' ? !dirty : false}>
-            {label}
+            {locale(localeKey)}
           </DialogFormButtons>
         </Form>
       )}
