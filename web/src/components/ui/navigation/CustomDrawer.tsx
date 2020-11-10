@@ -21,21 +21,17 @@ import {
   ExitToApp,
   SupervisedUserCircleSharp,
   AccountBalanceWallet,
-  Brightness4 as Brightness4Icon,
-  Brightness7 as Brightness7Icon,
   Category,
 } from '@material-ui/icons';
-import { useSelector, useDispatch } from 'react-redux';
 
 import routing from '../../../constants/routing';
 import { useMe } from '../../../hooks/auth/useMe';
 import { useToggleable } from '../../../hooks/utils/useToggleable';
 import { actions } from '../../../utils/rbac';
 import { useLogout } from '../../../hooks/auth/useLogout';
-import { AppState } from '../../../config/redux';
-import { toggleTheme } from '../../../slices/themeSlice';
 import ContainerLoader from '../misc/ContainerLoader';
 import NavigationItem, { useNavigationItemStyles } from './NavigationItem';
+import ChangeTheme from './ChangeTheme';
 
 const navigationItems = [
   {
@@ -171,10 +167,7 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
         </List>
       </Box>
       <Box className={classes.footer}>
-        <IconButton className={itemClasses.icon} onClick={handleThemeChange}>
-          {themeType === 'light' && <Brightness4Icon />}
-          {themeType === 'dark' && <Brightness7Icon />}
-        </IconButton>
+        <ChangeTheme />
       </Box>
     </>
   );
