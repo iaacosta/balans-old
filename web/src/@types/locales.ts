@@ -61,8 +61,6 @@ type MovementKeys =
   | 'movements:tabs:transfers'
   | 'movements:tabs:passive'
   | 'movements:form:amount'
-  | 'movements:form:expense'
-  | 'movements:form:income'
   | 'movements:form:transactionType'
   | 'movements:form:category'
   | 'movements:form:memo'
@@ -71,4 +69,20 @@ type MovementKeys =
   | 'movements:form:toAccount'
   | 'movements:form:issuedAt';
 
-export type LocaleKeys = AuthKeys | NavbarKeys | FormKeys | AccountKeys | TableKeys | MovementKeys;
+type CategoryKeys =
+  | 'categories:title'
+  | 'categories:create'
+  | 'categories:expense'
+  | 'categories:income'
+  | 'categories:form:name'
+  | 'categories:form:type'
+  | 'categories:form:color';
+
+export type LocaleKeys =
+  | AuthKeys
+  | NavbarKeys
+  | FormKeys
+  | AccountKeys
+  | TableKeys
+  | MovementKeys
+  | CategoryKeys;

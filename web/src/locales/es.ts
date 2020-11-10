@@ -84,8 +84,6 @@ export const es: LocaleShape = {
     },
     form: {
       amount: 'Monto',
-      expense: 'Gasto',
-      income: 'Ingreso',
       transactionType: 'Tipo de transacción',
       category: 'Categoría',
       memo: 'Nota',
@@ -93,6 +91,17 @@ export const es: LocaleShape = {
       fromAccount: 'Cuenta de origen',
       toAccount: 'Cuenta de destino',
       issuedAt: 'Fecha',
+    },
+  },
+  categories: {
+    title: 'Mis categorías',
+    create: 'Crear nueva categoría',
+    expense: 'Gasto',
+    income: 'Ingreso',
+    form: {
+      name: 'Nombre',
+      type: 'Tipo',
+      color: 'Color',
     },
   },
 };

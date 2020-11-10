@@ -99,8 +99,8 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                       fullWidth
                       displayEmpty
                       options={[
-                        { key: 'expense', label: locale('movements:form:expense') },
-                        { key: 'income', label: locale('movements:form:income') },
+                        { key: 'expense', label: locale('categories:expense') },
+                        { key: 'income', label: locale('categories:income') },
                       ]}
                     />
                   </Grid>

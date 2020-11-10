@@ -82,8 +82,6 @@ export const en = {
     },
     form: {
       amount: 'Amount',
-      expense: 'Expense',
-      income: 'Income',
       transactionType: 'Transaction type',
       category: 'Category',
       memo: 'Memo',
@@ -91,6 +89,17 @@ export const en = {
       fromAccount: 'Origin account',
       toAccount: 'Destination account',
       issuedAt: 'Issued at',
+    },
+  },
+  categories: {
+    title: 'My categories',
+    create: 'Create new category',
+    expense: 'Expense',
+    income: 'Income',
+    form: {
+      name: 'Name',
+      type: 'Type',
+      color: 'Color',
     },
   },
 };
