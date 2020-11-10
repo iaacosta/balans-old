@@ -3,9 +3,11 @@ import { Grid, Typography } from '@material-ui/core';
 import ContainerLoader from '../ui/misc/ContainerLoader';
 import DebitAccountCard from './DebitAccountCard';
 import { useMyDebitAccounts } from '../../hooks/graphql';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 const DebitAccountsGrid: React.FC = () => {
   const { accounts, loading } = useMyDebitAccounts();
+  const { locale } = useLocale();
 
   if (loading) return <ContainerLoader />;
 
@@ -19,7 +21,7 @@ const DebitAccountsGrid: React.FC = () => {
     </Grid>
   ) : (
     <Typography variant="caption" color="textSecondary">
-      You have no debit accounts yet. Go ahead and create one!
+      {locale('accounts:noDebitAccounts')}
     </Typography>
   );
 };

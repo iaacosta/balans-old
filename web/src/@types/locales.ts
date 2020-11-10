@@ -27,4 +27,22 @@ type NavbarKeys =
   | 'navbar:en'
   | 'navbar:es';
 
-export type LocaleKeys = AuthKeys | NavbarKeys;
+type FormKeys = 'forms:create' | 'forms:go' | 'forms:cancel';
+
+type AccountKeys =
+  | 'accounts:title'
+  | 'accounts:noDebitAccounts'
+  | 'accounts:checking'
+  | 'accounts:vista'
+  | 'accounts:cash'
+  | 'accounts:tabs:debit'
+  | 'accounts:tabs:credit'
+  | 'accounts:create:debit'
+  | 'accounts:create:credit'
+  | 'accounts:form:title'
+  | 'accounts:form:name'
+  | 'accounts:form:type'
+  | 'accounts:form:initialBalance'
+  | 'accounts:form:bank';
+
+export type LocaleKeys = AuthKeys | NavbarKeys | FormKeys | AccountKeys;

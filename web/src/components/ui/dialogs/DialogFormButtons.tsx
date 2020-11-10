@@ -3,6 +3,7 @@ import { Button, DialogActions, ButtonProps } from '@material-ui/core';
 
 import FormikSubmitButton from '../../formik/FormikSubmitButton';
 import DialogFormContext from '../../../contexts/DialogFormContext';
+import { useLocale } from '../../../hooks/utils/useLocale';
 
 type Props = {
   loading: boolean;
@@ -10,14 +11,15 @@ type Props = {
 
 const DialogFormButtons: React.FC<Props & ButtonProps> = ({ children, loading, ...props }) => {
   const { onClose } = useContext(DialogFormContext);
+  const { locale } = useLocale();
 
   return (
     <DialogActions>
       <Button onClick={() => onClose()} color="secondary">
-        Cancel
+        {locale('forms:cancel')}
       </Button>
       <FormikSubmitButton color="primary" loading={loading} {...props}>
-        {children || 'Go'}
+        {children || locale('forms:go')}
       </FormikSubmitButton>
     </DialogActions>
   );

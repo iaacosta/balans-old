@@ -34,4 +34,31 @@ export const es: LocaleShape = {
     es: 'Español',
     exit: 'Salir',
   },
+  forms: {
+    create: 'Crear',
+    go: 'Ir',
+    cancel: 'Cancelar',
+  },
+  accounts: {
+    title: 'Mis cuentas',
+    noDebitAccounts: 'No tienes cuentas aún. ¡Crea tu primera!',
+    tabs: {
+      debit: 'Cuentas de débito',
+      credit: 'Cuentas de crédito',
+    },
+    checking: 'Corriente',
+    vista: 'Vista',
+    cash: 'Efectivo',
+    create: {
+      debit: 'Crear nueva cuenta de débito',
+      credit: 'Crear nueva cuenta de crédito',
+    },
+    form: {
+      title: 'Crear cuenta',
+      name: 'Nombre',
+      type: 'Tipo',
+      initialBalance: 'Balance inicial',
+      bank: 'Banco',
+    },
+  },
 };

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, CardActions, Box, makeStyles } from '@material-ui/core';
 import { formatMoney } from 'accounting';
-import { capitalize } from 'lodash';
 import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
@@ -12,6 +11,8 @@ import { MyAccountsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 import { useDeleteDebitAccount } from '../../hooks/graphql';
+import { useLocale } from '../../hooks/utils/useLocale';
+import { localeKeyFromAccountType } from '../../utils/accounts';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, balance, type } }) => {
   const classes = useStyles();
   const isMobile = useBreakpoint({ layout: 'xs' });
+  const { locale } = useLocale();
   const [deleteDebitAccount, { loading: deleteLoading }] = useDeleteDebitAccount();
 
   const iconFontSize = isMobile ? 'small' : 'default';
@@ -43,7 +45,7 @@ const DebitAccountCard: React.FC<Props> = ({ debitAccount: { id, name, bank, bal
         </CardContent>
         <CardActions className={classes.actions}>
           <Typography className={classes.type} variant="overline" color="textSecondary">
-            {capitalize(type)}
+            {locale(localeKeyFromAccountType(type))}
           </Typography>
           <Box className={classes.buttons}>
             <EnhancedIconButton contained disabled color="success">

@@ -32,6 +32,33 @@ export const en = {
     es: 'Spanish',
     exit: 'Exit',
   },
+  forms: {
+    create: 'Create',
+    go: 'Go',
+    cancel: 'Cancel',
+  },
+  accounts: {
+    title: 'My accounts',
+    noDebitAccounts: 'You have no debit accounts yet. Go ahead and create one!',
+    tabs: {
+      debit: 'Debit accounts',
+      credit: 'Credit accounts',
+    },
+    checking: 'Checking',
+    vista: 'Vista',
+    cash: 'Cash',
+    create: {
+      debit: 'Create new debit account',
+      credit: 'Create new credit account',
+    },
+    form: {
+      title: 'Create account',
+      name: 'Name',
+      type: 'Type',
+      initialBalance: 'Initial balance',
+      bank: 'Bank',
+    },
+  },
 };
 
 export type LocaleShape = typeof en;
