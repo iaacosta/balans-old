@@ -15,4 +15,16 @@ type AuthKeys =
   | 'auth:signUpPage:email'
   | 'auth:signUpPage:confirmPassword';
 
-export type LocaleKeys = AuthKeys;
+type NavbarKeys =
+  | 'navbar:dashboard'
+  | 'navbar:accounts'
+  | 'navbar:movements'
+  | 'navbar:categories'
+  | 'navbar:places'
+  | 'navbar:people'
+  | 'navbar:users'
+  | 'navbar:exit'
+  | 'navbar:en'
+  | 'navbar:es';
+
+export type LocaleKeys = AuthKeys | NavbarKeys;

@@ -20,6 +20,18 @@ export const en = {
       confirmPassword: 'Confirm password',
     },
   },
+  navbar: {
+    dashboard: 'Dashboard',
+    accounts: 'Accounts',
+    movements: 'Movements',
+    categories: 'Categories',
+    places: 'Places',
+    people: 'People',
+    users: 'Users',
+    en: 'English',
+    es: 'Spanish',
+    exit: 'Exit',
+  },
 };
 
 export type LocaleShape = typeof en;

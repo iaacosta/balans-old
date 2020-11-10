@@ -22,4 +22,16 @@ export const es: LocaleShape = {
       confirmPassword: 'Confirmar contraseña',
     },
   },
+  navbar: {
+    dashboard: 'Tablero',
+    accounts: 'Cuentas',
+    movements: 'Movimientos',
+    categories: 'Categorías',
+    places: 'Lugares',
+    people: 'Personas',
+    users: 'Usuarios',
+    en: 'Inglés',
+    es: 'Español',
+    exit: 'Salir',
+  },
 };

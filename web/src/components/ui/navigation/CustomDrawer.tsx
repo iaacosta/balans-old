@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   List,
   ListItem,
@@ -32,62 +32,17 @@ import { useLogout } from '../../../hooks/auth/useLogout';
 import ContainerLoader from '../misc/ContainerLoader';
 import NavigationItem, { useNavigationItemStyles } from './NavigationItem';
 import ChangeTheme from './ChangeTheme';
-
-const navigationItems = [
-  {
-    id: routing.authenticated.dashboard,
-    action: actions.routes.dashboard,
-    Icon: <InsertChart />,
-    label: 'Dashboard',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.accounts,
-    action: actions.routes.transactions,
-    Icon: <AccountBalanceWallet />,
-    label: 'Accounts',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.movements,
-    action: actions.routes.movements,
-    Icon: <AttachMoney />,
-    label: 'Movements',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.categories,
-    action: actions.routes.categories,
-    Icon: <Category />,
-    label: 'Categories',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.places,
-    action: actions.routes.places,
-    Icon: <Place />,
-    label: 'Places',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.people,
-    action: actions.routes.people,
-    Icon: <People />,
-    label: 'People',
-    divides: false,
-  },
-  {
-    id: routing.authenticated.users,
-    action: actions.routes.users,
-    Icon: <SupervisedUserCircleSharp />,
-    label: 'Users',
-    divides: true,
-  },
-] as const;
+import { useLocale } from '../../../hooks/utils/useLocale';
+import ChangeLocale from './ChangeLocale';
 
 const useStyles = makeStyles((theme) => ({
   content: { color: theme.palette.primary.contrastText, flex: 1 },
-  footer: { padding: theme.spacing(1) },
+  footer: {
+    padding: theme.spacing(1),
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   profileAvatar: { backgroundColor: theme.palette.secondary.main },
   profileName: { color: theme.palette.primary.contrastText },
   profileUsername: { color: theme.palette.primary.contrastText, opacity: 0.6 },
@@ -112,17 +67,66 @@ type Props = {
 
 const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
   const classes = useStyles();
-  const itemClasses = useNavigationItemStyles();
   const logout = useLogout();
+  const itemClasses = useNavigationItemStyles();
   const { user, loading } = useMe();
   const { toggled, toggle } = useToggleable();
-  const { themeType } = useSelector((state: AppState) => state.theme);
-  const dispatch = useDispatch();
+  const { locale } = useLocale();
 
-  const handleThemeChange = () => {
-    localStorage.setItem('theme', themeType === 'dark' ? 'light' : 'dark');
-    dispatch(toggleTheme());
-  };
+  const navigationItems = useMemo(
+    () => [
+      {
+        id: routing.authenticated.dashboard,
+        action: actions.routes.dashboard,
+        Icon: <InsertChart />,
+        label: locale('navbar:dashboard'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.accounts,
+        action: actions.routes.transactions,
+        Icon: <AccountBalanceWallet />,
+        label: locale('navbar:accounts'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.movements,
+        action: actions.routes.movements,
+        Icon: <AttachMoney />,
+        label: locale('navbar:movements'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.categories,
+        action: actions.routes.categories,
+        Icon: <Category />,
+        label: locale('navbar:categories'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.places,
+        action: actions.routes.places,
+        Icon: <Place />,
+        label: locale('navbar:places'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.people,
+        action: actions.routes.people,
+        Icon: <People />,
+        label: locale('navbar:people'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.users,
+        action: actions.routes.users,
+        Icon: <SupervisedUserCircleSharp />,
+        label: locale('navbar:users'),
+        divides: true,
+      },
+    ],
+    [locale],
+  );
 
   if (loading) return <ContainerLoader />;
 
@@ -157,7 +161,7 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
                 <ListItemIcon>
                   <ExitToApp />
                 </ListItemIcon>
-                <ListItemText primary="Exit" />
+                <ListItemText primary={locale('navbar:exit')} />
               </ListItem>
             </List>
           </Collapse>
@@ -168,6 +172,7 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
       </Box>
       <Box className={classes.footer}>
         <ChangeTheme />
+        <ChangeLocale />
       </Box>
     </>
   );
