@@ -15,6 +15,7 @@ import FormikCheckbox from '../components/formik/FormikCheckbox';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
 import { useLogin } from '../hooks/graphql/authentication';
 import { handleError } from '../utils/errors';
+import { useLocale } from '../hooks/utils/useLocale';
 
 const schema = yup.object().shape({
   username: yup.string().required(),
@@ -32,12 +33,13 @@ const Login: React.FC = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const [login, { loading }] = useLogin();
+  const { locale } = useLocale();
 
   return (
     <AuthWrapper>
-      <Typography variant="h2">Welcome back!</Typography>
+      <Typography variant="h2">{locale('auth:loginPage:title')}</Typography>
       <Hidden xsDown>
-        <Typography variant="subtitle1">Please log in with your account or social media</Typography>
+        <Typography variant="subtitle1">{locale('auth:loginPage:subtitle')}</Typography>
       </Hidden>
       <Formik
         initialValues={{ username: '', password: '', rememberMe: false }}
@@ -60,13 +62,18 @@ const Login: React.FC = () => {
           <Form className={classes.form}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <FormikTextField name="username" label="Username" fullWidth />
+                <FormikTextField name="username" label={locale('auth:common:username')} fullWidth />
               </Grid>
               <Grid item xs={12}>
-                <FormikTextField name="password" type="password" label="Password" fullWidth />
+                <FormikTextField
+                  name="password"
+                  type="password"
+                  label={locale('auth:common:password')}
+                  fullWidth
+                />
               </Grid>
               <Grid item xs={12}>
-                <FormikCheckbox name="rememberMe" label="Remember me?" />
+                <FormikCheckbox name="rememberMe" label={locale('auth:loginPage:rememberMe')} />
               </Grid>
               <Grid item xs={12}>
                 <Box className={classes.buttons}>
@@ -77,10 +84,10 @@ const Login: React.FC = () => {
                     className={classes.signUp}
                     color="secondary"
                   >
-                    Sign up
+                    {locale('auth:common:signup')}
                   </Button>
                   <FormikSubmitButton loading={loading} color="primary">
-                    Log in
+                    {locale('auth:common:login')}
                   </FormikSubmitButton>
                 </Box>
               </Grid>

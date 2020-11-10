@@ -4,7 +4,7 @@ import { makeStyles, Paper, Box } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
   paper: {
     minHeight: theme.spacing(60),
-    width: theme.spacing(80),
+    width: theme.spacing(90),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

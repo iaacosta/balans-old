@@ -1,3 +1,18 @@
 export type Locale = 'en' | 'es';
 
-export type LocaleKeys = '';
+type AuthKeys =
+  | 'auth:common:login'
+  | 'auth:common:signup'
+  | 'auth:common:username'
+  | 'auth:common:password'
+  | 'auth:loginPage:title'
+  | 'auth:loginPage:subtitle'
+  | 'auth:loginPage:rememberMe'
+  | 'auth:signUpPage:title'
+  | 'auth:signUpPage:subtitle'
+  | 'auth:signUpPage:firstName'
+  | 'auth:signUpPage:lastName'
+  | 'auth:signUpPage:email'
+  | 'auth:signUpPage:confirmPassword';
+
+export type LocaleKeys = AuthKeys;
