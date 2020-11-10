@@ -16,6 +16,7 @@ import DialogFormContext from '../../contexts/DialogFormContext';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { useUpdateUser } from '../../hooks/graphql';
 import { handleError } from '../../utils/errors';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 interface Props {
   user: AllUsersQuery['users'][number];
@@ -33,6 +34,7 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   const { user: me } = useMe();
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
+  const { locale } = useLocale();
   const [updateUser, { loading }] = useUpdateUser();
 
   const initialValues = useMemo(
@@ -62,22 +64,32 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
     >
       {({ dirty }) => (
         <Form>
-          <DialogTitle>Update user @{user.username}</DialogTitle>
+          <DialogTitle>
+            {locale('forms:update')} @{user.username}
+          </DialogTitle>
           <DialogContent>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <FormikTextField name="firstName" label="First name" fullWidth />
+                <FormikTextField
+                  name="firstName"
+                  label={locale('auth:signUpPage:firstName')}
+                  fullWidth
+                />
               </Grid>
               <Grid item xs={12} md={6}>
-                <FormikTextField name="lastName" label="Last name" fullWidth />
+                <FormikTextField
+                  name="lastName"
+                  label={locale('auth:signUpPage:lastName')}
+                  fullWidth
+                />
               </Grid>
               <Grid item xs={12}>
-                <FormikTextField name="email" label="Email" fullWidth />
+                <FormikTextField name="email" label={locale('auth:signUpPage:email')} fullWidth />
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormikSelectField
                   name="role"
-                  label="Role"
+                  label={locale('users:form:role')}
                   disabled={me!.id === user.id}
                   fullWidth
                   options={[
@@ -87,12 +99,17 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <FormikTextField name="password" type="password" label="Password" fullWidth />
+                <FormikTextField
+                  name="password"
+                  type="password"
+                  label={locale('auth:common:password')}
+                  fullWidth
+                />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogFormButtons disabled={!dirty} loading={loading}>
-            Update
+            {locale('forms:update')}
           </DialogFormButtons>
         </Form>
       )}

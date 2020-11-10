@@ -102,6 +102,17 @@ export const en = {
       color: 'Color',
     },
   },
+  users: {
+    title: 'Platform users',
+    tabs: {
+      active: 'Active users',
+      deleted: 'Deleted users',
+    },
+    form: {
+      name: 'Name',
+      role: 'Role',
+    },
+  },
 };
 
 export type LocaleShape = typeof en;

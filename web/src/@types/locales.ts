@@ -78,6 +78,13 @@ type CategoryKeys =
   | 'categories:form:type'
   | 'categories:form:color';
 
+type UserKeys =
+  | 'users:title'
+  | 'users:tabs:active'
+  | 'users:tabs:deleted'
+  | 'users:form:name'
+  | 'users:form:role';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -85,4 +92,5 @@ export type LocaleKeys =
   | AccountKeys
   | TableKeys
   | MovementKeys
-  | CategoryKeys;
+  | CategoryKeys
+  | UserKeys;

@@ -104,4 +104,15 @@ export const es: LocaleShape = {
       color: 'Color',
     },
   },
+  users: {
+    title: 'Usuarios',
+    tabs: {
+      active: 'Usuarios activos',
+      deleted: 'Usuarios inactivos',
+    },
+    form: {
+      name: 'Nombre',
+      role: 'Rol',
+    },
+  },
 };
