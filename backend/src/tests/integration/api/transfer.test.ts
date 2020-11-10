@@ -211,6 +211,7 @@ describe('transfer API calls', () => {
         variables: {
           input: {
             ...testTransfer,
+            issuedAt: testTransfer.issuedAt.valueOf(),
             fromAccountId: testFromAccount.id,
             toAccountId: testToAccount.id,
           },
@@ -219,8 +220,12 @@ describe('transfer API calls', () => {
 
       expect(response).toBeSuccessful();
 
+      const ids: number[] = response.data!.createTransfer.map(
+        ({ id }: any) => id,
+      );
+
       const [fromTransfer, toTransfer] = await getRepository(Transfer).find({
-        id: In(response.data!.createTransfer.map(({ id }: any) => id)),
+        id: In(ids),
       });
 
       expect(fromTransfer.amount).toBe(-testTransfer.amount);
@@ -236,6 +241,7 @@ describe('transfer API calls', () => {
         variables: {
           input: {
             ...testTransfer,
+            issuedAt: testTransfer.issuedAt.valueOf(),
             fromAccountId: testFromAccount.id,
             toAccountId: testToAccount.id,
           },
