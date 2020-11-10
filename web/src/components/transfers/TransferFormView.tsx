@@ -48,11 +48,17 @@ const TransferFormView = <T extends Record<string, unknown>>({
         memo: yup.string(),
         fromAccountId: yup
           .string()
-          .notOneOf([yup.ref('toAccountId')], 'Must be different from origin account')
+          .notOneOf(
+            [yup.ref('toAccountId')],
+            locale('validation:custom:notOneOf', { value: locale('movements:form:fromAccount') }),
+          )
           .required(),
         toAccountId: yup
           .string()
-          .notOneOf([yup.ref('fromAccountId')], 'Must be different from destination account')
+          .notOneOf(
+            [yup.ref('fromAccountId')],
+            locale('validation:custom:notOneOf', { value: locale('movements:form:toAccount') }),
+          )
           .required(),
         issuedAt: yup.date().max(new Date()).required(),
       })}

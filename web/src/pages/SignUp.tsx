@@ -16,22 +16,6 @@ import { useSignUp } from '../hooks/graphql/authentication';
 import { handleError } from '../utils/errors';
 import { useLocale } from '../hooks/utils/useLocale';
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  email: yup.string().email().required(),
-  username: yup
-    .string()
-    .min(6)
-    .matches(/^[\w\d\\-_\\.]+$/i, "Should only contain numbers, letters and '-', '_' or '.'")
-    .required(),
-  password: yup.string().min(6).required(),
-  confirmPassword: yup
-    .string()
-    .equals([yup.ref('password')], "Passwords don't match")
-    .required(),
-});
-
 const useStyles = makeStyles((theme) => ({
   form: { marginTop: theme.spacing(3) },
   buttons: { display: 'flex', justifyContent: 'flex-end' },
@@ -60,7 +44,21 @@ const SignUp: React.FC = () => {
           password: '',
           confirmPassword: '',
         }}
-        validationSchema={schema}
+        validationSchema={yup.object().shape({
+          firstName: yup.string().required(),
+          lastName: yup.string().required(),
+          email: yup.string().email().required(),
+          username: yup
+            .string()
+            .min(6)
+            .matches(/^[\w\d\-_\\.]+$/i, locale('validation:custom:username'))
+            .required(),
+          password: yup.string().min(6).required(),
+          confirmPassword: yup
+            .string()
+            .equals([yup.ref('password')], locale('validation:custom:passwordsDontMatch'))
+            .required(),
+        })}
         onSubmit={async ({ confirmPassword, ...values }) => {
           try {
             const { data } = await signUp(values);

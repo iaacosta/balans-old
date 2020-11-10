@@ -1,9 +1,9 @@
-import { Callback } from 'i18next';
+import { Callback, StringMap, TOptions } from 'i18next';
 import { useTranslation, UseTranslationOptions } from 'react-i18next';
 import { Locale, LocaleKeys } from '../../@types/locales';
 
 type UseLocaleReturn = {
-  locale: (key: LocaleKeys) => string;
+  locale: (key: LocaleKeys, options?: TOptions<StringMap>) => string;
   changeLocale: (language: Locale, callback?: Callback) => void;
 } & Omit<ReturnType<typeof useTranslation>, 't'>;
 

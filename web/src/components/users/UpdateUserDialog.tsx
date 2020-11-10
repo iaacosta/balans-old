@@ -22,14 +22,6 @@ interface Props {
   user: AllUsersQuery['users'][number];
 }
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  email: yup.string().email().required(),
-  role: yup.string().oneOf(_values(roles), 'Invalid option').required(),
-  password: yup.string().min(6),
-});
-
 const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   const { user: me } = useMe();
   const { enqueueSnackbar } = useSnackbar();
@@ -51,7 +43,16 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={schema}
+      validationSchema={yup.object().shape({
+        firstName: yup.string().required(),
+        lastName: yup.string().required(),
+        email: yup.string().email().required(),
+        role: yup
+          .string()
+          .oneOf(_values(roles), locale('validation:custom:invalidOption'))
+          .required(),
+        password: yup.string().min(6),
+      })}
       onSubmit={async (values) => {
         try {
           await updateUser({ id: user.id, ...filterUnchangedValues(values, initialValues) });

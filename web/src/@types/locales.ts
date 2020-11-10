@@ -85,6 +85,17 @@ type UserKeys =
   | 'users:form:name'
   | 'users:form:role';
 
+type ValidationKeys =
+  | 'validation:mixed:required'
+  | 'validation:string:email'
+  | 'validation:string:min'
+  | 'validation:number:min'
+  | 'validation:date:max'
+  | 'validation:custom:notOneOf'
+  | 'validation:custom:invalidOption'
+  | 'validation:custom:username'
+  | 'validation:custom:passwordsDontMatch';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -93,4 +104,5 @@ export type LocaleKeys =
   | TableKeys
   | MovementKeys
   | CategoryKeys
-  | UserKeys;
+  | UserKeys
+  | ValidationKeys;

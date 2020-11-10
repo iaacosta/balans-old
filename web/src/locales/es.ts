@@ -40,6 +40,27 @@ export const es: LocaleShape = {
     go: 'Ir',
     cancel: 'Cancelar',
   },
+  validation: {
+    mixed: {
+      required: 'Este campo es requerido',
+    },
+    string: {
+      email: 'Este campo debe ser un correo',
+      min: 'Debe tener al menos {{value}} caracteres',
+    },
+    number: {
+      min: 'Debe ser mayor que {{value}}',
+    },
+    date: {
+      max: 'Debe ser antes de {{value}}',
+    },
+    custom: {
+      notOneOf: 'Debe ser distinto de {{value}}',
+      invalidOption: 'Opción inválida',
+      passwordsDontMatch: 'Las contraseñas no coinciden',
+      username: "Solo puede contener números, letras, '-', '_' y '.'",
+    },
+  },
   accounts: {
     title: 'Mis cuentas',
     noDebitAccounts: 'No tienes cuentas aún. ¡Crea tu primera!',

@@ -38,6 +38,27 @@ export const en = {
     go: 'Go',
     cancel: 'Cancel',
   },
+  validation: {
+    mixed: {
+      required: 'This field is required',
+    },
+    string: {
+      email: 'Must be an email',
+      min: 'Must be at least {{value}} characters long',
+    },
+    number: {
+      min: 'Must be greater than {{value}}',
+    },
+    date: {
+      max: 'Must be earlier than {{value}}',
+    },
+    custom: {
+      notOneOf: 'Must be different from {{value}}',
+      invalidOption: 'Opción inválida',
+      passwordsDontMatch: "Passwords don't match",
+      username: "Should only contain numbers, letters and '-', '_' or '.'",
+    },
+  },
   accounts: {
     title: 'My accounts',
     noDebitAccounts: 'You have no debit accounts yet. Go ahead and create one!',

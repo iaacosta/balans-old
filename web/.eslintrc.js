@@ -28,5 +28,6 @@ module.exports = {
     'jest/expect-expect': 'off',
     'react/require-default-props': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'no-template-curly-in-string': 'off',
   },
 };
