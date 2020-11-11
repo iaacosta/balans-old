@@ -15,6 +15,8 @@ import { useCreateDebitAccount } from '../../hooks/graphql';
 import { handleError } from '../../utils/errors';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
 import { initialEmptyNumber } from '../../utils/formik';
+import { useLocale } from '../../hooks/utils/useLocale';
+import { localeKeyFromAccountType } from '../../utils/accounts';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -52,6 +54,7 @@ const defaultBanks = [
 const CreateDebitAccountDialog: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
+  const { locale } = useLocale();
   const [createDebitAccount, { loading }] = useCreateDebitAccount();
 
   const initialValues = useMemo(
@@ -85,36 +88,54 @@ const CreateDebitAccountDialog: React.FC = () => {
 
         return (
           <Form>
-            <DialogTitle>Create account</DialogTitle>
+            <DialogTitle>{locale('accounts:form:title')}</DialogTitle>
             <DialogContent>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <FormikTextField name="name" label="Name" fullWidth />
+                  <FormikTextField name="name" label={locale('accounts:form:name')} fullWidth />
                 </Grid>
                 <Grid item xs={12}>
                   <FormikSelectField
                     name="type"
-                    label="Type"
+                    label={locale('accounts:form:type')}
                     fullWidth
                     displayEmpty
                     options={[
-                      { key: AccountType.Cash, label: 'Cash' },
-                      { key: AccountType.Vista, label: 'Vista' },
-                      { key: AccountType.Checking, label: 'Checking' },
+                      {
+                        key: AccountType.Cash,
+                        label: locale(localeKeyFromAccountType(AccountType.Cash)),
+                      },
+                      {
+                        key: AccountType.Vista,
+                        label: locale(localeKeyFromAccountType(AccountType.Vista)),
+                      },
+                      {
+                        key: AccountType.Checking,
+                        label: locale(localeKeyFromAccountType(AccountType.Checking)),
+                      },
                     ]}
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormikCurrencyField name="initialBalance" label="Initial Balance" fullWidth />
+                  <FormikCurrencyField
+                    name="initialBalance"
+                    label={locale('accounts:form:initialBalance')}
+                    fullWidth
+                  />
                 </Grid>
                 {values.type !== 'cash' && (
                   <Grid item xs={12}>
-                    <FormikSelectField name="bank" label="Bank" fullWidth options={defaultBanks} />
+                    <FormikSelectField
+                      name="bank"
+                      label={locale('accounts:form:bank')}
+                      fullWidth
+                      options={defaultBanks}
+                    />
                   </Grid>
                 )}
               </Grid>
             </DialogContent>
-            <DialogFormButtons loading={loading}>Create</DialogFormButtons>
+            <DialogFormButtons loading={loading}>{locale('forms:create')}</DialogFormButtons>
           </Form>
         );
       }}
