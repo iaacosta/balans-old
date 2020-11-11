@@ -7,7 +7,7 @@ import {
   myTransfersQuery,
   deleteTransferMutation,
 } from '../../graphql/transfer';
-import { myAccountsQuery } from '../../graphql/account';
+import { myAccountsQuery } from './accounts';
 import {
   CreateTransferMutationVariables,
   CreateTransferMutation,

@@ -11,3 +11,8 @@ export type InputMutationTuple<TData, TVariables extends { input: any }> = [
   (input: TVariables['input']) => ReturnType<MutationTuple<TData, TVariables>[0]>,
   MutationTuple<TData, TVariables>[1],
 ];
+
+export type InputMutationFunction<TInput> = (
+  input: TInput,
+  callback?: (() => void) | (() => Promise<void>),
+) => Promise<void>;

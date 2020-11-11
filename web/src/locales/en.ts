@@ -134,6 +134,15 @@ export const en = {
       role: 'Role',
     },
   },
+  snackbars: {
+    elements: {
+      account: 'Account',
+    },
+    success: {
+      created: '{{value}} created successfully',
+      deleted: '{{value}} deleted successfully',
+    },
+  },
 };
 
 export type LocaleShape = typeof en;

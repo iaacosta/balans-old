@@ -96,6 +96,11 @@ type ValidationKeys =
   | 'validation:custom:username'
   | 'validation:custom:passwordsDontMatch';
 
+type SnackbarKeys =
+  | 'snackbars:elements:account'
+  | 'snackbars:success:created'
+  | 'snackbars:success:deleted';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -105,4 +110,5 @@ export type LocaleKeys =
   | MovementKeys
   | CategoryKeys
   | UserKeys
-  | ValidationKeys;
+  | ValidationKeys
+  | SnackbarKeys;

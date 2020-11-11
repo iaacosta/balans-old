@@ -16,7 +16,7 @@ import {
   createTransactionMutation,
   updateTransactionMutation,
 } from '../../graphql/transaction';
-import { myAccountsQuery } from '../../graphql/account';
+import { myAccountsQuery } from './accounts';
 import { InputMutationTuple } from '../../@types/helpers';
 
 export const useMyTransactions = (): Omit<

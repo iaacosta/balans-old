@@ -3,7 +3,6 @@
 import React, { useMemo, useEffect, useContext } from 'react';
 import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
-import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
 
 import { AccountType } from '../../@types/graphql';
@@ -12,7 +11,6 @@ import FormikSelectField from '../formik/FormikSelectField';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { useCreateDebitAccount } from '../../hooks/graphql';
-import { handleError } from '../../utils/errors';
 import FormikCurrencyField from '../formik/FormikCurrencyField';
 import { initialEmptyNumber } from '../../utils/formik';
 import { useLocale } from '../../hooks/utils/useLocale';
@@ -52,7 +50,6 @@ const defaultBanks = [
 ];
 
 const CreateDebitAccountDialog: React.FC = () => {
-  const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
   const { locale } = useLocale();
   const [createDebitAccount, { loading }] = useCreateDebitAccount();
@@ -71,15 +68,7 @@ const CreateDebitAccountDialog: React.FC = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={schema}
-      onSubmit={async (values) => {
-        try {
-          await createDebitAccount(values);
-          enqueueSnackbar('Account created successfully', { variant: 'success' });
-          onClose();
-        } catch (err) {
-          handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-        }
-      }}
+      onSubmit={(values) => createDebitAccount(values, onClose)}
     >
       {({ values, setFieldValue }) => {
         useEffect(() => {

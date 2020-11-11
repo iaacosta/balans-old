@@ -136,4 +136,13 @@ export const es: LocaleShape = {
       role: 'Rol',
     },
   },
+  snackbars: {
+    elements: {
+      account: 'Cuenta',
+    },
+    success: {
+      created: '{{value}} creada exitosamente',
+      deleted: '{{value}} borrada exitosamente',
+    },
+  },
 };
