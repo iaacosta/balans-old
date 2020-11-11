@@ -111,3 +111,6 @@ jobs:
           heroku_email: 'iaacosta@uc.cl'
           usedocker: true
           appdir: 'backend'
+      - name: Semantic release
+        if: github.ref == 'refs/heads/release'
+        run: npx semantic-release
