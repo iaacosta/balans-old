@@ -1,5 +1,0 @@
-{
-  "AWSEBDockerrunVersion": "1",
-  "Image": { "Name": "nacho19/balans-backend", "Update": "true" },
-  "Ports": [{ "ContainerPort": "4000", "HostPort": "4000" }]
-}
