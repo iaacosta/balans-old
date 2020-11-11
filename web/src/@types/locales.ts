@@ -111,7 +111,8 @@ type ElementKeys =
 type SnackbarKeys =
   | 'snackbars:success:created'
   | 'snackbars:success:updated'
-  | 'snackbars:success:deleted';
+  | 'snackbars:success:deleted'
+  | 'snackbars:errors:unknown';
 
 export type LocaleKeys =
   | AuthKeys

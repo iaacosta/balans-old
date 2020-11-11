@@ -158,5 +158,8 @@ export const es: LocaleShape = {
       updated: '{{value}} modificada exitosamente',
       deleted: '{{value}} borrada exitosamente',
     },
+    error: {
+      unknown: 'Un error desconocido ha ocurrido',
+    },
   },
 };

@@ -156,6 +156,9 @@ export const en = {
       updated: '{{value}} updated successfully',
       deleted: '{{value}} deleted successfully',
     },
+    error: {
+      unknown: 'An unknown error has occurred',
+    },
   },
 };
 
