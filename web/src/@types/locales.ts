@@ -97,7 +97,10 @@ type ValidationKeys =
   | 'validation:custom:passwordsDontMatch';
 
 type SnackbarKeys =
-  | 'snackbars:elements:account'
+  | 'elements:singular:account'
+  | 'elements:singular:category'
+  | 'elements:plural:account'
+  | 'elements:plural:category'
   | 'snackbars:success:created'
   | 'snackbars:success:deleted';
 

@@ -77,7 +77,7 @@ export const useCreateDebitAccount = (): UseCreateDebitAccountReturn => {
     try {
       await mutate(values);
       enqueueSnackbar(
-        locale('snackbars:success:created', { value: locale('snackbars:elements:account') }),
+        locale('snackbars:success:created', { value: locale('elements:singular:account') }),
         { variant: 'success' },
       );
       if (callback) await callback();
@@ -94,7 +94,7 @@ export const useDeleteDebitAccount = (): UseIdMutationReturn<DeleteDebitAccountM
   return useIdMutation<DeleteDebitAccountMutation>(deleteDebitAccountMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
     snackbarMessage: locale('snackbars:success:deleted', {
-      value: locale('snackbars:elements:account'),
+      value: locale('elements:singular:account'),
     }),
   });
 };

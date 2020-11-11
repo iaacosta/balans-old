@@ -134,10 +134,17 @@ export const en = {
       role: 'Role',
     },
   },
-  snackbars: {
-    elements: {
+  elements: {
+    singular: {
       account: 'Account',
+      category: 'Category',
     },
+    plural: {
+      account: 'Accounts',
+      category: 'Categories',
+    },
+  },
+  snackbars: {
     success: {
       created: '{{value}} created successfully',
       deleted: '{{value}} deleted successfully',
