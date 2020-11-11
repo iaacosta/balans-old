@@ -90,7 +90,7 @@ const TransactionsTable: React.FC<Props> = ({
       loading={loading}
       columns={columns}
       data={transactions}
-      initialState={{ pageSize: 8 }}
+      initialState={{ pageSize: 7 }}
       noEntriesLabel={
         noAccountsCreated
           ? locale('movements:atLeastOneAccount')

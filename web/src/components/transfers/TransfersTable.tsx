@@ -79,7 +79,7 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
       loading={loading}
       columns={columns}
       data={transfers}
-      initialState={{ pageSize: 8 }}
+      initialState={{ pageSize: 7 }}
       noEntriesLabel={
         notEnoughAccounts
           ? locale('movements:atLeastTwoAccounts')
