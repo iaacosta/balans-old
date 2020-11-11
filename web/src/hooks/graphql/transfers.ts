@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { QueryResult, MutationTuple, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
-import { InputMutationTuple } from '../../@types/helpers';
+import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
 import {
   myAccountsQuery,
   createTransferMutation,
@@ -18,6 +18,7 @@ import {
 } from '../../@types/graphql';
 import { useInputMutation, useRedirectedQuery } from './utils';
 import { handleError } from '../../utils/errors';
+import { useLocale } from '../utils/useLocale';
 
 export const useMyTransfers = (): Omit<
   QueryResult<MyTransfersQuery, MyTransfersQueryVariables>,
@@ -28,35 +29,63 @@ export const useMyTransfers = (): Omit<
   return { transfers, loading: loading || !data, ...meta };
 };
 
-export const useCreateTransfer = (): InputMutationTuple<
+type UseCreateTransferMutationReturn = InputMutationTuple<
   CreateTransferMutation,
   CreateTransferMutationVariables
-> =>
-  useInputMutation(createTransferMutation, {
+>;
+
+type UseCreateTransferReturn = [
+  InputMutationFunction<CreateTransferMutationVariables['input']>,
+  UseCreateTransferMutationReturn[1],
+];
+
+export const useCreateTransfer = (): UseCreateTransferReturn => {
+  const { enqueueSnackbar } = useSnackbar();
+  const { locale } = useLocale();
+  const [mutate, meta]: UseCreateTransferMutationReturn = useInputMutation(createTransferMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }],
   });
 
-export const useDeleteTransfer = (): [
+  const createTransfer: UseCreateTransferReturn[0] = async (values, callback) => {
+    try {
+      await mutate({ ...values, issuedAt: values.issuedAt.valueOf() });
+      enqueueSnackbar(
+        locale('snackbars:success:created', { value: locale('elements:singular:transfer') }),
+        { variant: 'success' },
+      );
+      if (callback) callback();
+    } catch (err) {
+      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
+    }
+  };
+
+  return [createTransfer, meta];
+};
+
+type UseDeleteTransferReturn = [
   (operationId: string) => Promise<void>,
   MutationTuple<DeleteTransferMutation, DeleteTransferMutationVariables>[1],
-] => {
+];
+
+export const useDeleteTransfer = (): UseDeleteTransferReturn => {
   const { enqueueSnackbar } = useSnackbar();
+  const { locale } = useLocale();
   const [mutate, meta] = useMutation<DeleteTransferMutation, DeleteTransferMutationVariables>(
     deleteTransferMutation,
     { refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }] },
   );
 
-  return [
-    async (operationId) => {
-      try {
-        await mutate({ variables: { operationId } });
-        enqueueSnackbar('Transfer deleted successfully', {
-          variant: 'success',
-        });
-      } catch (err) {
-        handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-      }
-    },
-    meta,
-  ];
+  const deleteTransfer: UseDeleteTransferReturn[0] = async (operationId) => {
+    try {
+      await mutate({ variables: { operationId } });
+      enqueueSnackbar(
+        locale('snackbars:success:deleted', { value: locale('elements:singular:transfer') }),
+        { variant: 'success' },
+      );
+    } catch (err) {
+      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
+    }
+  };
+
+  return [deleteTransfer, meta];
 };
