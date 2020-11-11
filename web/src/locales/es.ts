@@ -157,6 +157,7 @@ export const es: LocaleShape = {
       created: '{{value}} creada exitosamente',
       updated: '{{value}} modificada exitosamente',
       deleted: '{{value}} borrada exitosamente',
+      restored: '{{value}} restaurada exitosamente',
     },
     error: {
       unknown: 'Un error desconocido ha ocurrido',
