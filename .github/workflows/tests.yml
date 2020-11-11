@@ -1,11 +1,13 @@
-name: E2E tests
+name: Tests
 on:
   push:
     branches:
       - dev
+      - release
   pull_request:
     branches:
       - dev
+      - release
 jobs:
   main:
     runs-on: ubuntu-16.04
@@ -32,8 +34,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
       - name: Setup node ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -45,10 +45,12 @@ jobs:
       - name: Migrate DB
         run: |
           yarn --cwd backend db:test:migrate
-      - name: Run server
+      - name: Run backend tests
+        run: yarn --cwd backend test
+      - name: Run backend
         run: |
           NODE_ENV=cypress yarn --cwd backend dev &
-      - name: Run cypress
+      - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: ./web
@@ -57,3 +59,21 @@ jobs:
           wait-on: http://localhost:3000
           wait-on-timeout: 120
           start: yarn start
+      - name: Staging deploy
+        uses: akhileshns/heroku-deploy@v3.6.8
+        if: github.ref == 'refs/heads/dev'
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'balans-staging'
+          heroku_email: 'iaacosta@uc.cl'
+          usedocker: true
+          appdir: 'backend'
+      - name: Production deploy
+        uses: akhileshns/heroku-deploy@v3.6.8
+        if: github.ref == 'refs/heads/release'
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'balans-production'
+          heroku_email: 'iaacosta@uc.cl'
+          usedocker: true
+          appdir: 'backend'
