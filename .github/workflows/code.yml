@@ -1,0 +1,33 @@
+name: Linters and audit
+on:
+  push:
+    branches:
+      - dev
+      - release
+  pull_request:
+    branches:
+      - dev
+      - release
+jobs:
+  main:
+    runs-on: ubuntu-16.04
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install
+        run: |
+          yarn --cwd backend install
+          yarn --cwd web install
+      - name: Lint backend
+        run: yarn --cwd backend lint
+      - name: Audit backend
+        run: yarn --cwd backend audit
+      - name: Lint frontend
+        run: yarn --cwd web lint
