@@ -1,6 +1,7 @@
-import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
-import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
+import { QueryResult } from '@apollo/client';
+import { useSnackbar } from 'notistack';
+import { useIdMutation, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteTransactionMutation,
   MyTransactionsQuery,
@@ -11,13 +12,19 @@ import {
   UpdateTransactionMutationVariables,
 } from '../../@types/graphql';
 import {
+  myAccountsQuery,
+  createTransactionMutation,
   deleteTransactionMutation,
   myTransactionsQuery,
-  createTransactionMutation,
   updateTransactionMutation,
-} from '../../graphql/transaction';
-import { myAccountsQuery } from '../../graphql/account';
-import { InputMutationTuple } from '../../@types/helpers';
+} from './queries';
+import {
+  IdMutationTuple,
+  InputMutationFunction,
+  InputMutationTuple,
+  UpdateInputMutationFunction,
+} from '../../@types/helpers';
+import { useLocale } from '../utils/useLocale';
 
 export const useMyTransactions = (): Omit<
   QueryResult<MyTransactionsQuery, MyTransactionsQueryVariables>,
@@ -28,25 +35,90 @@ export const useMyTransactions = (): Omit<
   return { transactions, loading: loading || !data, ...meta };
 };
 
-export const useCreateTransaction = (): InputMutationTuple<
+type TExtends = { type: 'income' | 'expense' };
+
+type UseCreateTransactionMutationReturn = InputMutationTuple<
   CreateTransactionMutation,
   CreateTransactionMutationVariables
-> =>
-  useInputMutation(createTransactionMutation, {
-    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-  });
+>;
 
-export const useUpdateTransaction = (): InputMutationTuple<
+type UseCreateTransactionReturn = [
+  InputMutationFunction<CreateTransactionMutationVariables['input'], TExtends>,
+  UseCreateTransactionMutationReturn[1],
+];
+
+export const useCreateTransaction = (): UseCreateTransactionReturn => {
+  const { locale } = useLocale();
+  const { enqueueSnackbar } = useSnackbar();
+  const [mutate, meta]: UseCreateTransactionMutationReturn = useInputMutation(
+    createTransactionMutation,
+    {
+      refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
+    },
+  );
+
+  const createTransaction: UseCreateTransactionReturn[0] = async (
+    { type, amount, issuedAt, ...values },
+    callback,
+  ) => {
+    const response = await mutate({
+      ...values,
+      amount: type === 'expense' ? -amount : amount,
+      issuedAt: issuedAt.valueOf(),
+    });
+
+    if (!response) return;
+
+    enqueueSnackbar(
+      locale('snackbars:success:created', { value: locale('elements:singular:transaction') }),
+      { variant: 'success' },
+    );
+    if (callback) await callback();
+  };
+
+  return [createTransaction, meta];
+};
+
+type UseUpdateTransactionMutationReturn = InputMutationTuple<
   UpdateTransactionMutation,
   UpdateTransactionMutationVariables
-> =>
-  useInputMutation(updateTransactionMutation, {
-    refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-  });
+>;
 
-export const useDeleteTransaction = (): UseIdMutationReturn<DeleteTransactionMutation> => {
+type UseUpdateTransactionReturn = [
+  UpdateInputMutationFunction<UpdateTransactionMutationVariables['input']>,
+  UseUpdateTransactionMutationReturn[1],
+];
+
+export const useUpdateTransaction = (): UseUpdateTransactionReturn => {
+  const { locale } = useLocale();
+  const { enqueueSnackbar } = useSnackbar();
+  const [mutate, meta]: UseUpdateTransactionMutationReturn = useInputMutation(
+    updateTransactionMutation,
+    {
+      refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
+    },
+  );
+
+  const updateTransaction: UseUpdateTransactionReturn[0] = async (id, input, callback) => {
+    const response = await mutate({ id, ...input, issuedAt: input.issuedAt?.valueOf() });
+    if (!response) return;
+    enqueueSnackbar(
+      locale('snackbars:success:updated', { value: locale('elements:singular:transaction') }),
+      { variant: 'success' },
+    );
+    if (callback) await callback();
+  };
+
+  return [updateTransaction, meta];
+};
+
+export const useDeleteTransaction = (): IdMutationTuple<DeleteTransactionMutation> => {
+  const { locale } = useLocale();
+
   return useIdMutation<DeleteTransactionMutation>(deleteTransactionMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-    snackbarMessage: 'Transaction deleted successfully',
+    successMessage: locale('snackbars:success:deleted', {
+      value: locale('elements:singular:transaction'),
+    }),
   });
 };

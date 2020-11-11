@@ -136,4 +136,32 @@ export const es: LocaleShape = {
       role: 'Rol',
     },
   },
+  elements: {
+    singular: {
+      account: 'Cuenta',
+      category: 'Categoría',
+      transaction: 'Transacción',
+      transfer: 'Transferencia',
+      user: 'Usuario',
+    },
+    plural: {
+      account: 'Cuentas',
+      category: 'Categorías',
+      transaction: 'Transacciones',
+      transfer: 'Transferencias',
+      user: 'Usuarios',
+    },
+  },
+  snackbars: {
+    success: {
+      created: '{{value}} creada exitosamente',
+      updated: '{{value}} modificada exitosamente',
+      deleted: '{{value}} borrada exitosamente',
+      restored: '{{value}} restaurada exitosamente',
+      done: 'Acción exitosa',
+    },
+    error: {
+      unknown: 'Un error desconocido ha ocurrido',
+    },
+  },
 };

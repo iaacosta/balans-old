@@ -134,6 +134,34 @@ export const en = {
       role: 'Role',
     },
   },
+  elements: {
+    singular: {
+      account: 'Account',
+      category: 'Category',
+      transaction: 'Transaction',
+      transfer: 'Transfer',
+      user: 'User',
+    },
+    plural: {
+      account: 'Accounts',
+      category: 'Categories',
+      transaction: 'Transaction',
+      transfer: 'Transfers',
+      user: 'Users',
+    },
+  },
+  snackbars: {
+    success: {
+      created: '{{value}} created successfully',
+      updated: '{{value}} updated successfully',
+      deleted: '{{value}} deleted successfully',
+      restored: '{{value}} restored successfully',
+      done: 'Action done successfully',
+    },
+    error: {
+      unknown: 'An unknown error has occurred',
+    },
+  },
 };
 
 export type LocaleShape = typeof en;

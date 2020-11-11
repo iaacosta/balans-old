@@ -96,6 +96,26 @@ type ValidationKeys =
   | 'validation:custom:username'
   | 'validation:custom:passwordsDontMatch';
 
+type ElementKeys =
+  | 'elements:singular:account'
+  | 'elements:singular:category'
+  | 'elements:singular:transaction'
+  | 'elements:singular:transfer'
+  | 'elements:singular:user'
+  | 'elements:plural:account'
+  | 'elements:plural:category'
+  | 'elements:plural:transaction'
+  | 'elements:plural:transfer'
+  | 'elements:plural:user';
+
+type SnackbarKeys =
+  | 'snackbars:success:created'
+  | 'snackbars:success:updated'
+  | 'snackbars:success:deleted'
+  | 'snackbars:success:restored'
+  | 'snackbars:success:done'
+  | 'snackbars:errors:unknown';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -105,4 +125,6 @@ export type LocaleKeys =
   | MovementKeys
   | CategoryKeys
   | UserKeys
-  | ValidationKeys;
+  | ValidationKeys
+  | ElementKeys
+  | SnackbarKeys;

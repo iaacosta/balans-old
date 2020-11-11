@@ -1,6 +1,7 @@
 import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
-import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
+import { useSnackbar } from 'notistack';
+import { useIdMutation, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteUserMutation,
   RestoreUserMutation,
@@ -16,8 +17,13 @@ import {
   deletedUsersQuery,
   restoreUserMutation,
   updateUserMutation,
-} from '../../graphql/users';
-import { InputMutationTuple } from '../../@types/helpers';
+} from './queries';
+import {
+  IdMutationTuple,
+  InputMutationTuple,
+  UpdateInputMutationFunction,
+} from '../../@types/helpers';
+import { useLocale } from '../utils/useLocale';
 
 export const useAllActiveUsers = (): Omit<
   QueryResult<AllUsersQuery, AllUsersQueryVariables>,
@@ -41,21 +47,54 @@ export const useAllDeletedUsers = (): Omit<
   return { users, loading: loading || !data, ...meta };
 };
 
-export const useUpdateUser = (): InputMutationTuple<
+type UseUpdateUserMutationReturn = InputMutationTuple<
   UpdateUserMutation,
   UpdateUserMutationVariables
-> => useInputMutation(updateUserMutation);
+>;
 
-export const useRestoreUser = (): UseIdMutationReturn<RestoreUserMutation> => {
+type UseUpdateUserReturn = [
+  UpdateInputMutationFunction<UpdateUserMutationVariables['input']>,
+  UseUpdateUserMutationReturn[1],
+];
+
+export const useUpdateUser = (): UseUpdateUserReturn => {
+  const { enqueueSnackbar } = useSnackbar();
+  const { locale } = useLocale();
+  const [mutate, meta]: UseUpdateUserMutationReturn = useInputMutation(updateUserMutation);
+
+  const updateUser: UseUpdateUserReturn[0] = async (id, values, callback) => {
+    const response = await mutate({ id, ...values });
+    if (!response) return;
+
+    enqueueSnackbar(
+      locale('snackbars:success:updated', { value: locale('elements:plural:user') }),
+      { variant: 'success' },
+    );
+
+    if (callback) await callback();
+  };
+
+  return [updateUser, meta];
+};
+
+export const useRestoreUser = (): IdMutationTuple<RestoreUserMutation> => {
+  const { locale } = useLocale();
+
   return useIdMutation<RestoreUserMutation>(restoreUserMutation, {
     refetchQueries: [{ query: usersQuery }, { query: deletedUsersQuery }],
-    snackbarMessage: 'User restored successfully',
+    successMessage: locale('snackbars:success:restored', {
+      value: locale('elements:singular:user'),
+    }),
   });
 };
 
-export const useDeleteUser = (): UseIdMutationReturn<DeleteUserMutation> => {
+export const useDeleteUser = (): IdMutationTuple<DeleteUserMutation> => {
+  const { locale } = useLocale();
+
   return useIdMutation<DeleteUserMutation>(deleteUserMutation, {
     refetchQueries: [{ query: usersQuery }, { query: deletedUsersQuery }],
-    snackbarMessage: 'User deleted successfully',
+    successMessage: locale('snackbars:success:deleted', {
+      value: locale('elements:singular:user'),
+    }),
   });
 };

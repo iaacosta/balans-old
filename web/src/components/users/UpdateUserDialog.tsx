@@ -3,7 +3,6 @@ import React, { useMemo, useContext } from 'react';
 import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import _values from 'lodash/values';
 import { Formik, Form } from 'formik';
-import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
 
 import { AllUsersQuery } from '../../@types/graphql';
@@ -15,7 +14,6 @@ import { useMe } from '../../hooks/auth/useMe';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
 import { useUpdateUser } from '../../hooks/graphql';
-import { handleError } from '../../utils/errors';
 import { useLocale } from '../../hooks/utils/useLocale';
 
 interface Props {
@@ -24,7 +22,6 @@ interface Props {
 
 const UpdateUserDialog: React.FC<Props> = ({ user }) => {
   const { user: me } = useMe();
-  const { enqueueSnackbar } = useSnackbar();
   const { onClose } = useContext(DialogFormContext);
   const { locale } = useLocale();
   const [updateUser, { loading }] = useUpdateUser();
@@ -53,15 +50,9 @@ const UpdateUserDialog: React.FC<Props> = ({ user }) => {
           .required(),
         password: yup.string().min(6),
       })}
-      onSubmit={async (values) => {
-        try {
-          await updateUser({ id: user.id, ...filterUnchangedValues(values, initialValues) });
-          enqueueSnackbar('User updated successfully', { variant: 'success' });
-          onClose();
-        } catch (err) {
-          handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-        }
-      }}
+      onSubmit={(values) =>
+        updateUser(user.id, filterUnchangedValues(values, initialValues), onClose)
+      }
     >
       {({ dirty }) => (
         <Form>

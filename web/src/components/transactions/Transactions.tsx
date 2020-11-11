@@ -4,7 +4,7 @@ import { Hidden, Box, makeStyles } from '@material-ui/core';
 import TransactionsTable from './TransactionsTable';
 import TransactionsList from './TransactionsList';
 import { useMyTransactions, useMyDebitAccounts } from '../../hooks/graphql';
-import { useMyCategories } from '../../hooks/graphql/category';
+import { useMyCategories } from '../../hooks/graphql';
 import DialogButton from '../ui/dialogs/DialogButton';
 import CreateTransactionDialog from './CreateTransactionDialog';
 import { useLocale } from '../../hooks/utils/useLocale';

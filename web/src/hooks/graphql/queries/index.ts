@@ -2,6 +2,5 @@ export * from './accounts';
 export * from './authentication';
 export * from './categories';
 export * from './transactions';
-export * from './transfers';
+export * from './transfer';
 export * from './users';
-export * from './utils';

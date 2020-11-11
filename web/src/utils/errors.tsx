@@ -1,10 +1,10 @@
 import React from 'react';
 import { capitalize, map } from 'lodash';
 import { Typography } from '@material-ui/core';
-import { GraphQLError } from 'graphql';
+import { ApolloError } from '@apollo/client';
 
 export const handleError = (
-  error: { graphQLErrors: GraphQLError[]; message: string },
+  error: ApolloError,
   callback: (body: React.ReactNode) => unknown,
 ): void => {
   const [{ extensions }] = error.graphQLErrors;
