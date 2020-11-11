@@ -16,7 +16,7 @@ import {
   deletedUsersQuery,
   restoreUserMutation,
   updateUserMutation,
-} from '../../graphql/users';
+} from './queries';
 import { InputMutationTuple } from '../../@types/helpers';
 
 export const useAllActiveUsers = (): Omit<

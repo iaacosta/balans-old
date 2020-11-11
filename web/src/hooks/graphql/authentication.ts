@@ -6,7 +6,7 @@ import {
   SignUpMutationVariables,
 } from '../../@types/graphql';
 import { useInputMutation } from './utils';
-import { loginMutation, signUpMutation } from '../../graphql/authentication';
+import { loginMutation, signUpMutation } from './queries';
 
 export const useLogin = (): InputMutationTuple<LoginMutation, LoginMutationVariables> =>
   useInputMutation(loginMutation);

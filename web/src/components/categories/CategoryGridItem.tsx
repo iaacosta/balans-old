@@ -4,7 +4,7 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { MyCategoriesQuery } from '../../@types/graphql';
 import CategorySelectItem from '../ui/misc/CategorySelectItem';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useDeleteCategory } from '../../hooks/graphql/category';
+import { useDeleteCategory } from '../../hooks/graphql';
 
 interface Props {
   category: MyCategoriesQuery['income'][number];

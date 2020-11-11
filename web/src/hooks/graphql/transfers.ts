@@ -3,11 +3,11 @@ import { QueryResult, MutationTuple, useMutation } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import { InputMutationTuple } from '../../@types/helpers';
 import {
+  myAccountsQuery,
   createTransferMutation,
   myTransfersQuery,
   deleteTransferMutation,
-} from '../../graphql/transfer';
-import { myAccountsQuery } from './accounts';
+} from './queries';
 import {
   CreateTransferMutationVariables,
   CreateTransferMutation,

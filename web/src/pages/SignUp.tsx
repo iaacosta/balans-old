@@ -12,7 +12,7 @@ import routing from '../constants/routing';
 import AuthWrapper from '../components/authenticate/AuthWrapper';
 import { addToken } from '../slices/authSlice';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
-import { useSignUp } from '../hooks/graphql/authentication';
+import { useSignUp } from '../hooks/graphql';
 import { handleError } from '../utils/errors';
 import { useLocale } from '../hooks/utils/useLocale';
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { QueryResult, gql } from '@apollo/client';
+import { QueryResult } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 import {
   MyCategoriesQuery,
@@ -12,35 +12,7 @@ import { useRedirectedQuery, useInputMutation, UseIdMutationReturn, useIdMutatio
 import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
 import { handleError } from '../../utils/errors';
-
-export const myCategoriesQuery = gql`
-  query MyCategories {
-    income: myCategories(type: income) {
-      id
-      name
-      color
-    }
-    expense: myCategories(type: expense) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-export const createCategoryMutation = gql`
-  mutation CreateCategory($input: CreateCategoryInput!) {
-    createCategory(input: $input) {
-      id
-    }
-  }
-`;
-
-export const deleteCategoryMutation = gql`
-  mutation DeleteCategory($id: ID!) {
-    deleteCategory(id: $id)
-  }
-`;
+import { createCategoryMutation, deleteCategoryMutation, myCategoriesQuery } from './queries';
 
 export const useMyCategories = (): Omit<
   QueryResult<MyCategoriesQuery, MyCategoriesQueryVariables>,

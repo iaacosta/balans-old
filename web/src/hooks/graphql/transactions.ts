@@ -1,5 +1,5 @@
-import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
+import { QueryResult } from '@apollo/client';
 import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteTransactionMutation,
@@ -11,12 +11,12 @@ import {
   UpdateTransactionMutationVariables,
 } from '../../@types/graphql';
 import {
+  myAccountsQuery,
+  createTransactionMutation,
   deleteTransactionMutation,
   myTransactionsQuery,
-  createTransactionMutation,
   updateTransactionMutation,
-} from '../../graphql/transaction';
-import { myAccountsQuery } from './accounts';
+} from './queries';
 import { InputMutationTuple } from '../../@types/helpers';
 
 export const useMyTransactions = (): Omit<

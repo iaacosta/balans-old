@@ -13,7 +13,7 @@ import AuthWrapper from '../components/authenticate/AuthWrapper';
 import { addToken } from '../slices/authSlice';
 import FormikCheckbox from '../components/formik/FormikCheckbox';
 import { UNKNOWN_ERROR } from '../constants/errorMessages';
-import { useLogin } from '../hooks/graphql/authentication';
+import { useLogin } from '../hooks/graphql';
 import { handleError } from '../utils/errors';
 import { useLocale } from '../hooks/utils/useLocale';
 

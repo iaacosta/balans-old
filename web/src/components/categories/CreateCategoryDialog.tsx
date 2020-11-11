@@ -4,7 +4,7 @@ import React, { useMemo, useContext } from 'react';
 import CategoryFormView from './CategoryFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import colors from '../../constants/colors';
-import { useCreateCategory } from '../../hooks/graphql/category';
+import { useCreateCategory } from '../../hooks/graphql';
 import { CategoryType } from '../../@types/graphql';
 
 const CreateCategoryDialog: React.FC = () => {

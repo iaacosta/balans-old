@@ -8,7 +8,7 @@ import { useMyDebitAccounts, useUpdateTransaction } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import { filterUnchangedValues } from '../../utils/formik';
 import DialogFormContext from '../../contexts/DialogFormContext';
-import { useMyCategories } from '../../hooks/graphql/category';
+import { useMyCategories } from '../../hooks/graphql';
 import { handleError } from '../../utils/errors';
 
 interface Props {

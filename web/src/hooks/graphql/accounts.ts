@@ -1,4 +1,4 @@
-import { gql, QueryResult } from '@apollo/client';
+import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 import {
@@ -9,40 +9,15 @@ import {
   CreateDebitAccountMutationVariables,
 } from '../../@types/graphql';
 import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
-import { myTransactionsQuery } from '../../graphql/transaction';
+import {
+  createDebitAccountMutation,
+  deleteDebitAccountMutation,
+  myAccountsQuery,
+  myTransactionsQuery,
+} from './queries';
 import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
 import { handleError } from '../../utils/errors';
 import { useLocale } from '../utils/useLocale';
-
-export const myAccountsQuery = gql`
-  query MyAccounts {
-    accounts: myAccounts {
-      id
-      name
-      bank
-      type
-      balance
-    }
-  }
-`;
-
-export const createDebitAccountMutation = gql`
-  mutation CreateDebitAccount($input: CreateAccountInput!) {
-    createAccount(input: $input) {
-      id
-      name
-      bank
-      type
-      balance
-    }
-  }
-`;
-
-export const deleteDebitAccountMutation = gql`
-  mutation DeleteDebitAccount($id: ID!) {
-    deleteAccount(id: $id)
-  }
-`;
 
 export const useMyDebitAccounts = (): Omit<
   QueryResult<MyAccountsQuery, MyAccountsQueryVariables>,

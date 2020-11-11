@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, makeStyles, Paper, Box, Grid } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import ViewportContainer from '../components/ui/misc/ViewportContainer';
-import { useMyCategories } from '../hooks/graphql/category';
+import { useMyCategories } from '../hooks/graphql';
 import ContainerLoader from '../components/ui/misc/ContainerLoader';
 import CategoriesGrid from '../components/categories/CategoriesGrid';
 import DialogButton from '../components/ui/dialogs/DialogButton';

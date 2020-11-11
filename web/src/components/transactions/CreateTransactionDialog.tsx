@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack';
 import { useMyDebitAccounts, useCreateTransaction } from '../../hooks/graphql';
 import TransactionFormView from './TransactionFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
-import { useMyCategories } from '../../hooks/graphql/category';
+import { useMyCategories } from '../../hooks/graphql';
 import { handleError } from '../../utils/errors';
 import { initialEmptyNumber } from '../../utils/formik';
 
