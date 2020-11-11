@@ -3,6 +3,6 @@ export const validationMatchers = {
   minimumLength: /at least/i,
   minimumNumber: /greater than/i,
   username: /numbers, letters and/i,
-  beEmail: /valid email/i,
+  beEmail: /an email/i,
   confirmPassword: /don't match/i,
 };

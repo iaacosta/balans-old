@@ -8,6 +8,7 @@ import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
 import CategoryIcon from '../ui/misc/CategoryIcon';
 import { longDateFormatter } from '../../utils/date';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -33,11 +34,12 @@ const TransactionsTable: React.FC<Props> = ({
   noAccountsCreated,
 }) => {
   const classes = useStyles();
+  const { locale } = useLocale();
 
   const columns: Column<MyTransactionsQuery['transactions'][number]>[] = useMemo(
     () => [
       {
-        Header: 'Amount',
+        Header: locale('movements:form:amount'),
         accessor: 'amount',
         Cell: ({ value }) => (
           <Typography
@@ -49,17 +51,17 @@ const TransactionsTable: React.FC<Props> = ({
         ),
       },
       {
-        Header: 'Account',
+        Header: locale('movements:form:account'),
         accessor: 'account',
         Cell: ({ value }) => `${value.name} (${value.bank})`,
       },
       {
-        Header: 'Memo',
+        Header: locale('movements:form:memo'),
         accessor: 'memo',
         Cell: ({ value }) => value || '-',
       },
       {
-        Header: 'Category',
+        Header: locale('movements:form:category'),
         accessor: 'category',
         Cell: ({ value }) => (
           <Box className={classes.categoryWrapper}>
@@ -69,17 +71,17 @@ const TransactionsTable: React.FC<Props> = ({
         ),
       },
       {
-        Header: 'Date',
+        Header: locale('movements:form:issuedAt'),
         accessor: 'issuedAt',
         Cell: ({ value }) => longDateFormatter(value),
       },
       {
-        Header: 'Actions',
+        Header: locale('tables:actions'),
         id: 'actions',
         Cell: TransactionActionCell,
       },
     ],
-    [classes],
+    [classes, locale],
   );
 
   return (
@@ -88,11 +90,11 @@ const TransactionsTable: React.FC<Props> = ({
       loading={loading}
       columns={columns}
       data={transactions}
-      initialState={{ pageSize: 7 }}
+      initialState={{ pageSize: 8 }}
       noEntriesLabel={
         noAccountsCreated
-          ? 'You have no accounts yet, so no transactions can be shown or created '
-          : 'No transactions created yet'
+          ? locale('movements:atLeastOneAccount')
+          : locale('movements:noTransactionsCreated')
       }
     >
       {children}

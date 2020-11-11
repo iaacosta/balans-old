@@ -7,6 +7,7 @@ import ContainerLoader from '../components/ui/misc/ContainerLoader';
 import CategoriesGrid from '../components/categories/CategoriesGrid';
 import DialogButton from '../components/ui/dialogs/DialogButton';
 import CreateCategoryDialog from '../components/categories/CreateCategoryDialog';
+import { useLocale } from '../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(1) },
@@ -26,12 +27,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Categories: React.FC = () => {
   const classes = useStyles();
+  const { locale } = useLocale();
   const { income, expense, loading } = useMyCategories();
 
   return (
     <ViewportContainer>
       <Typography className={classes.title} variant="h5">
-        My categories
+        {locale('categories:title')}
       </Typography>
       <Paper elevation={1} className={classes.paper}>
         {loading && <ContainerLoader />}
@@ -39,7 +41,7 @@ const Categories: React.FC = () => {
           {!!expense && (
             <Grid item xs={12} lg={6}>
               <Typography className={classes.title} variant="overline">
-                Expenses
+                {locale('categories:expense')}
               </Typography>
               <CategoriesGrid categories={expense} />
             </Grid>
@@ -47,7 +49,7 @@ const Categories: React.FC = () => {
           {!!income && (
             <Grid item xs={12} lg={6}>
               <Typography className={classes.title} variant="overline">
-                Income
+                {locale('categories:income')}
               </Typography>
               <CategoriesGrid categories={income} />
             </Grid>
@@ -56,7 +58,7 @@ const Categories: React.FC = () => {
       </Paper>
       <Box className={classes.buttonWrapper}>
         <DialogButton
-          buttonLabel="Add new category"
+          buttonLabel={locale('categories:create')}
           data-testid="createCategoryButton"
           startIcon={<AddIcon />}
         >

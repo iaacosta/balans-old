@@ -9,6 +9,7 @@ import { Provider, useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider as DatepickerProvider } from '@material-ui/pickers';
 import DayJsUtils from '@date-io/dayjs';
 
+import './config/i18n';
 import './config/accounting';
 import client from './config/apollo';
 import { lightTheme, darkTheme } from './config/materialUi';

@@ -152,6 +152,7 @@ describe('transaction API calls', () => {
         variables: {
           input: {
             ...testTransaction,
+            issuedAt: testTransaction.issuedAt.valueOf(),
             accountId: testAccount.id,
             categoryId: testCategory.id,
           },
@@ -178,6 +179,7 @@ describe('transaction API calls', () => {
         variables: {
           input: {
             ...testTransaction,
+            issuedAt: testTransaction.issuedAt.valueOf(),
             accountId: testAccount.id,
             categoryId: testCategory.id,
           },

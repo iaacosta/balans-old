@@ -18,6 +18,7 @@ import { useDeleteTransaction } from '../../hooks/graphql';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import UpdateTransactionDialog from './UpdateTransactionDialog';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 type Props = {
   transactions: MyTransactionsQuery['transactions'];
@@ -37,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCreated }) => {
+  const { locale } = useLocale();
   const classes = useStyles();
 
   return (
@@ -46,8 +48,8 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
         loading={loading}
         noEntriesLabel={
           noAccountsCreated
-            ? 'You have no accounts yet, so no transactions can be shown or created'
-            : 'No transactions created yet'
+            ? locale('movements:atLeastOneAccount')
+            : locale('movements:noTransactionsCreated')
         }
       >
         {({ data, index, style }) => {

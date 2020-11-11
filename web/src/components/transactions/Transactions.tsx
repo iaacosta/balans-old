@@ -7,6 +7,7 @@ import { useMyTransactions, useMyDebitAccounts } from '../../hooks/graphql';
 import { useMyCategories } from '../../hooks/graphql/category';
 import DialogButton from '../ui/dialogs/DialogButton';
 import CreateTransactionDialog from './CreateTransactionDialog';
+import { useLocale } from '../../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
   buttonWrapper: {
@@ -18,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Transactions: React.FC = () => {
   const classes = useStyles();
+  const { locale } = useLocale();
   const { transactions, loading: transactionsLoading } = useMyTransactions();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const { loading: loadingCategory } = useMyCategories();
@@ -28,7 +30,7 @@ const Transactions: React.FC = () => {
   const Button = (
     <DialogButton
       disabled={loading || noAccounts}
-      buttonLabel="Add new transaction"
+      buttonLabel={locale('movements:create:transaction')}
       data-testid="createTransactionButton"
       startIcon={<AddIcon />}
     >
