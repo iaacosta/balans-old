@@ -138,15 +138,22 @@ export const en = {
     singular: {
       account: 'Account',
       category: 'Category',
+      transaction: 'Transaction',
+      transfer: 'Transfer',
+      user: 'User',
     },
     plural: {
       account: 'Accounts',
       category: 'Categories',
+      transaction: 'Transaction',
+      transfer: 'Transfers',
+      user: 'Users',
     },
   },
   snackbars: {
     success: {
       created: '{{value}} created successfully',
+      updated: '{{value}} updated successfully',
       deleted: '{{value}} deleted successfully',
     },
   },

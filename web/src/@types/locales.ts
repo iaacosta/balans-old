@@ -96,12 +96,21 @@ type ValidationKeys =
   | 'validation:custom:username'
   | 'validation:custom:passwordsDontMatch';
 
-type SnackbarKeys =
+type ElementKeys =
   | 'elements:singular:account'
   | 'elements:singular:category'
+  | 'elements:singular:transaction'
+  | 'elements:singular:transfer'
+  | 'elements:singular:user'
   | 'elements:plural:account'
   | 'elements:plural:category'
+  | 'elements:plural:transaction'
+  | 'elements:plural:transfer'
+  | 'elements:plural:user';
+
+type SnackbarKeys =
   | 'snackbars:success:created'
+  | 'snackbars:success:updated'
   | 'snackbars:success:deleted';
 
 export type LocaleKeys =
@@ -114,4 +123,5 @@ export type LocaleKeys =
   | CategoryKeys
   | UserKeys
   | ValidationKeys
+  | ElementKeys
   | SnackbarKeys;
