@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { QueryResult } from '@apollo/client';
 import { useSnackbar } from 'notistack';
-import { useIdMutation, UseIdMutationReturn, useRedirectedQuery, useInputMutation } from './utils';
+import { useIdMutation, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteTransactionMutation,
   MyTransactionsQuery,
@@ -19,12 +19,12 @@ import {
   updateTransactionMutation,
 } from './queries';
 import {
+  IdMutationTuple,
   InputMutationFunction,
   InputMutationTuple,
   UpdateInputMutationFunction,
 } from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
-import { handleError } from '../../utils/errors';
 
 export const useMyTransactions = (): Omit<
   QueryResult<MyTransactionsQuery, MyTransactionsQueryVariables>,
@@ -61,20 +61,19 @@ export const useCreateTransaction = (): UseCreateTransactionReturn => {
     { type, amount, issuedAt, ...values },
     callback,
   ) => {
-    try {
-      await mutate({
-        ...values,
-        amount: type === 'expense' ? -amount : amount,
-        issuedAt: issuedAt.valueOf(),
-      });
-      enqueueSnackbar(
-        locale('snackbars:success:created', { value: locale('elements:singular:transaction') }),
-        { variant: 'success' },
-      );
-      if (callback) await callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    const response = await mutate({
+      ...values,
+      amount: type === 'expense' ? -amount : amount,
+      issuedAt: issuedAt.valueOf(),
+    });
+
+    if (!response) return;
+
+    enqueueSnackbar(
+      locale('snackbars:success:created', { value: locale('elements:singular:transaction') }),
+      { variant: 'success' },
+    );
+    if (callback) await callback();
   };
 
   return [createTransaction, meta];
@@ -101,27 +100,24 @@ export const useUpdateTransaction = (): UseUpdateTransactionReturn => {
   );
 
   const updateTransaction: UseUpdateTransactionReturn[0] = async (id, input, callback) => {
-    try {
-      await mutate({ id, ...input, issuedAt: input.issuedAt?.valueOf() });
-      enqueueSnackbar(
-        locale('snackbars:success:updated', { value: locale('elements:singular:transaction') }),
-        { variant: 'success' },
-      );
-      if (callback) await callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    const response = await mutate({ id, ...input, issuedAt: input.issuedAt?.valueOf() });
+    if (!response) return;
+    enqueueSnackbar(
+      locale('snackbars:success:updated', { value: locale('elements:singular:transaction') }),
+      { variant: 'success' },
+    );
+    if (callback) await callback();
   };
 
   return [updateTransaction, meta];
 };
 
-export const useDeleteTransaction = (): UseIdMutationReturn<DeleteTransactionMutation> => {
+export const useDeleteTransaction = (): IdMutationTuple<DeleteTransactionMutation> => {
   const { locale } = useLocale();
 
   return useIdMutation<DeleteTransactionMutation>(deleteTransactionMutation, {
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
-    snackbarMessage: locale('snackbars:success:deleted', {
+    successMessage: locale('snackbars:success:deleted', {
       value: locale('elements:singular:transaction'),
     }),
   });

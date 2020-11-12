@@ -113,6 +113,7 @@ type SnackbarKeys =
   | 'snackbars:success:updated'
   | 'snackbars:success:deleted'
   | 'snackbars:success:restored'
+  | 'snackbars:success:done'
   | 'snackbars:errors:unknown';
 
 export type LocaleKeys =

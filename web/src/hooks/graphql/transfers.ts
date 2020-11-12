@@ -17,7 +17,6 @@ import {
   DeleteTransferMutationVariables,
 } from '../../@types/graphql';
 import { useInputMutation, useRedirectedQuery } from './utils';
-import { handleError } from '../../utils/errors';
 import { useLocale } from '../utils/useLocale';
 
 export const useMyTransfers = (): Omit<
@@ -47,16 +46,14 @@ export const useCreateTransfer = (): UseCreateTransferReturn => {
   });
 
   const createTransfer: UseCreateTransferReturn[0] = async (values, callback) => {
-    try {
-      await mutate({ ...values, issuedAt: values.issuedAt.valueOf() });
-      enqueueSnackbar(
-        locale('snackbars:success:created', { value: locale('elements:singular:transfer') }),
-        { variant: 'success' },
-      );
-      if (callback) callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    const response = await mutate({ ...values, issuedAt: values.issuedAt.valueOf() });
+    if (!response) return;
+
+    enqueueSnackbar(
+      locale('snackbars:success:created', { value: locale('elements:singular:transfer') }),
+      { variant: 'success' },
+    );
+    if (callback) callback();
   };
 
   return [createTransfer, meta];
@@ -76,15 +73,12 @@ export const useDeleteTransfer = (): UseDeleteTransferReturn => {
   );
 
   const deleteTransfer: UseDeleteTransferReturn[0] = async (operationId) => {
-    try {
-      await mutate({ variables: { operationId } });
-      enqueueSnackbar(
-        locale('snackbars:success:deleted', { value: locale('elements:singular:transfer') }),
-        { variant: 'success' },
-      );
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    const response = await mutate({ variables: { operationId } });
+    if (!response) return;
+    enqueueSnackbar(
+      locale('snackbars:success:deleted', { value: locale('elements:singular:transfer') }),
+      { variant: 'success' },
+    );
   };
 
   return [deleteTransfer, meta];

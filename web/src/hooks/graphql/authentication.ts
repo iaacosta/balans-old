@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
 import {
@@ -10,8 +9,6 @@ import {
 import { useInputMutation } from './utils';
 import { loginMutation, signUpMutation } from './queries';
 import { addToken } from '../../slices/authSlice';
-import { handleError } from '../../utils/errors';
-import { useLocale } from '../utils/useLocale';
 
 type UseLoginMutationReturn = InputMutationTuple<LoginMutation, LoginMutationVariables>;
 
@@ -22,25 +19,18 @@ type UseLoginReturn = [
 
 export const useLogin = (): UseLoginReturn => {
   const dispatch = useDispatch();
-  const { locale } = useLocale();
-  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta]: UseLoginMutationReturn = useInputMutation(loginMutation);
 
   const login: UseLoginReturn[0] = async ({ rememberMe, ...values }, callback) => {
-    try {
-      const { data } = await mutate(values);
+    const response = await mutate(values);
+    if (!response) return;
 
-      if (data) {
-        dispatch(addToken({ token: data.token }));
-        if (rememberMe) localStorage.setItem('x-auth', data.token);
-      } else {
-        enqueueSnackbar(locale('snackbars:errors:unknown'), { variant: 'error' });
-      }
-
-      if (callback) await callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
+    if (response.data) {
+      dispatch(addToken({ token: response.data.token }));
+      if (rememberMe) localStorage.setItem('x-auth', response.data.token);
     }
+
+    if (callback) await callback();
   };
 
   return [login, meta];
@@ -55,24 +45,14 @@ type UseSignUpReturn = [
 
 export const useSignUp = (): UseSignUpReturn => {
   const dispatch = useDispatch();
-  const { locale } = useLocale();
-  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta]: UseSignUpMutationReturn = useInputMutation(signUpMutation);
 
   const signUp: UseSignUpReturn[0] = async ({ confirmPassword, ...values }, callback) => {
-    try {
-      const { data } = await mutate(values);
+    const response = await mutate(values);
+    if (!response) return;
 
-      if (data) {
-        dispatch(addToken({ token: data.token }));
-      } else {
-        enqueueSnackbar(locale('snackbars:errors:unknown'), { variant: 'error' });
-      }
-
-      if (callback) await callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    if (response?.data) dispatch(addToken({ token: response.data.token }));
+    if (callback) await callback();
   };
 
   return [signUp, meta];

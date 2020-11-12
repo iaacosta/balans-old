@@ -8,10 +8,9 @@ import {
   CreateCategoryMutationVariables,
   DeleteCategoryMutation,
 } from '../../@types/graphql';
-import { useRedirectedQuery, useInputMutation, UseIdMutationReturn, useIdMutation } from './utils';
-import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
+import { useRedirectedQuery, useInputMutation, useIdMutation } from './utils';
+import { IdMutationTuple, InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
-import { handleError } from '../../utils/errors';
 import { createCategoryMutation, deleteCategoryMutation, myCategoriesQuery } from './queries';
 
 export const useMyCategories = (): Omit<
@@ -47,27 +46,25 @@ export const useCreateCategory = (): UseCreateCategoryReturn => {
   });
 
   const createCategory: UseCreateCategoryReturn[0] = async (values, callback) => {
-    try {
-      await mutate(values);
-      enqueueSnackbar(
-        locale('snackbars:success:created', { value: locale('elements:singular:category') }),
-        { variant: 'success' },
-      );
-      if (callback) await callback();
-    } catch (err) {
-      handleError(err, (message) => enqueueSnackbar(message, { variant: 'error' }));
-    }
+    const response = await mutate(values);
+    if (!response) return;
+
+    enqueueSnackbar(
+      locale('snackbars:success:created', { value: locale('elements:singular:category') }),
+      { variant: 'success' },
+    );
+    if (callback) await callback();
   };
 
   return [createCategory, meta];
 };
 
-export const useDeleteCategory = (): UseIdMutationReturn<DeleteCategoryMutation> => {
+export const useDeleteCategory = (): IdMutationTuple<DeleteCategoryMutation> => {
   const { locale } = useLocale();
 
   return useIdMutation<DeleteCategoryMutation>(deleteCategoryMutation, {
     refetchQueries: [{ query: myCategoriesQuery }],
-    snackbarMessage: locale('snackbars:success:deleted', {
+    successMessage: locale('snackbars:success:deleted', {
       value: locale('elements:singular:category'),
     }),
   });
