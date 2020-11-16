@@ -41,6 +41,19 @@ const CREATE_CATEGORY = gql`
   }
 `;
 
+const UPDATE_CATEGORY = gql`
+  mutation UpdateCategory($input: UpdateCategoryInput!) {
+    updateCategory(input: $input) {
+      id
+      name
+      type
+      color
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 const DELETE_CATEGORY = gql`
   mutation DeleteCategory($id: ID!) {
     deleteCategory(id: $id)
@@ -156,6 +169,56 @@ describe('category API calls', () => {
         variables: { input: testCategory },
       });
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('updateCategory', () => {
+    let createdCategory: Category;
+
+    beforeAll(async () => {
+      createdCategory = (await createCategory(connection, testUser.id))
+        .databaseCategory;
+    });
+
+    it('should update category if mine', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const { name, color } = categoryFactory();
+      const response = await mutate({
+        mutation: UPDATE_CATEGORY,
+        variables: { input: { id: createdCategory.id, name, color } },
+      });
+
+      expect(response).toBeSuccessful();
+      const updatedCategoryname = await getRepository(Category).findOneOrFail(
+        response.data!.updateCategory.id,
+      );
+      expect(updatedCategoryname.name).toBe(name);
+      expect(updatedCategoryname.color).toBe(color);
+    });
+
+    it('should reject if no changes given', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: UPDATE_CATEGORY,
+        variables: { input: { id: createdCategory.id } },
+      });
+
+      expect(response).toBeRejected();
+    });
+
+    it('should not update category if not mine', async () => {
+      const { mutate } = await mountTestClient({
+        currentUser: (await createUser(connection)).databaseUser,
+      });
+
+      const response = await mutate({
+        mutation: UPDATE_CATEGORY,
+        variables: {
+          input: { id: createdCategory.id, name: categoryFactory().name },
+        },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 

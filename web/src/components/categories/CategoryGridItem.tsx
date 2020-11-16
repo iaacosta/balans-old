@@ -5,6 +5,8 @@ import { MyCategoriesQuery } from '../../@types/graphql';
 import CategorySelectItem from '../ui/misc/CategorySelectItem';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useDeleteCategory } from '../../hooks/graphql';
+import DialogIconButton from '../ui/dialogs/DialogIconButton';
+import UpdateCategoryDialog from './UpdateCategoryDialog';
 
 interface Props {
   category: MyCategoriesQuery['income'][number];
@@ -27,9 +29,15 @@ const CategoryGridItem: React.FC<Props> = ({ category }) => {
   return (
     <Paper data-testid={`category${category.id}`} className={classes.paper} elevation={1}>
       <CategorySelectItem className={classes.category} category={category} />
-      <EnhancedIconButton size="small" disabled contained color="info">
-        <EditIcon fontSize="small" />
-      </EnhancedIconButton>
+      <DialogIconButton
+        size="small"
+        contained
+        icon={<EditIcon fontSize="small" />}
+        data-testid={`updateCategory${category.id}`}
+        color="info"
+      >
+        <UpdateCategoryDialog category={category} />
+      </DialogIconButton>
       <EnhancedIconButton
         size="small"
         contained

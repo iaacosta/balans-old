@@ -8,11 +8,18 @@ import {
   ID,
 } from 'type-graphql';
 import { Repository, getRepository } from 'typeorm';
+import { size } from 'lodash';
 
 import Category from '../../models/Category';
 import { Context } from '../../@types';
-import { CategoryType, CreateCategoryInput } from '../helpers';
+import {
+  CategoryType,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from '../helpers';
 import NotFoundError from '../errors/NotFoundError';
+import NoChangesError from '../errors/NoChangesError';
+import { updateEntity } from '../../utils';
 
 @Resolver(Category)
 export default class CategoryResolvers {
@@ -48,6 +55,24 @@ export default class CategoryResolvers {
     );
 
     return category;
+  }
+
+  @Mutation(() => Category)
+  @Authorized()
+  async updateCategory(
+    @Arg('input')
+    { id, ...toChange }: UpdateCategoryInput,
+    @Ctx() { currentUser }: Context,
+  ): Promise<Category> {
+    if (!size(toChange)) throw new NoChangesError();
+
+    const category = await this.repository.findOneOrFail({
+      id,
+      userId: currentUser!.id,
+    });
+
+    updateEntity(category, toChange);
+    return this.repository.save(category);
   }
 
   @Mutation(() => ID)
