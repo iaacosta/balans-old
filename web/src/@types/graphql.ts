@@ -11,33 +11,6 @@ export type Scalars = {
   Timestamp: any;
 };
 
-export type Movement = {
-  __typename?: 'Movement';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  operationId: Scalars['String'];
-  account: Account;
-  issuedAt: Scalars['Timestamp'];
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-};
-
-
-export type Transaction = {
-  __typename?: 'Transaction';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  operationId: Scalars['String'];
-  account: Account;
-  issuedAt: Scalars['Timestamp'];
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-  category?: Maybe<Category>;
-  deletedAt?: Maybe<Scalars['Timestamp']>;
-};
-
 export type Category = {
   __typename?: 'Category';
   id: Scalars['ID'];
@@ -53,19 +26,30 @@ export enum CategoryType {
   Expense = 'expense'
 }
 
-export type User = {
-  __typename?: 'User';
+
+export type Movement = {
+  __typename?: 'Movement';
   id: Scalars['ID'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  role: Scalars['String'];
-  accounts: Array<Account>;
-  categories: Array<Category>;
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: Account;
+  issuedAt: Scalars['Timestamp'];
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
+};
+
+export type Transaction = {
+  __typename?: 'Transaction';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: Account;
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  category?: Maybe<Category>;
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
@@ -99,6 +83,22 @@ export enum AccountType {
   Vista = 'vista',
   Checking = 'checking'
 }
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  role: Scalars['String'];
+  accounts: Array<Account>;
+  categories: Array<Category>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
+};
 
 export type PairedTransfer = {
   __typename?: 'PairedTransfer';
@@ -147,6 +147,13 @@ export type CreateCategoryInput = {
   name: Scalars['String'];
   color: Scalars['String'];
   type: CategoryType;
+};
+
+export type UpdateCategoryInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  type?: Maybe<CategoryType>;
 };
 
 export type CreateTransactionInput = {
@@ -204,6 +211,7 @@ export type Mutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   createCategory: Category;
+  updateCategory: Category;
   deleteCategory: Scalars['ID'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
@@ -241,6 +249,11 @@ export type MutationSignUpArgs = {
 
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
+};
+
+
+export type MutationUpdateCategoryArgs = {
+  input: UpdateCategoryInput;
 };
 
 
@@ -375,10 +388,10 @@ export type MyCategoriesQuery = (
   { __typename?: 'Query' }
   & { income: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name' | 'color'>
+    & Pick<Category, 'id' | 'name' | 'color' | 'type'>
   )>, expense: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name' | 'color'>
+    & Pick<Category, 'id' | 'name' | 'color' | 'type'>
   )> }
 );
 
@@ -392,6 +405,19 @@ export type CreateCategoryMutation = (
   & { createCategory: (
     { __typename?: 'Category' }
     & Pick<Category, 'id'>
+  ) }
+);
+
+export type UpdateCategoryMutationVariables = Exact<{
+  input: UpdateCategoryInput;
+}>;
+
+
+export type UpdateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { updateCategory: (
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name' | 'type' | 'color'>
   ) }
 );
 

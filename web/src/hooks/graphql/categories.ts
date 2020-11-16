@@ -6,11 +6,23 @@ import {
   CreateCategoryMutation,
   CreateCategoryMutationVariables,
   DeleteCategoryMutation,
+  UpdateCategoryMutation,
+  UpdateCategoryMutationVariables,
 } from '../../@types/graphql';
 import { useRedirectedQuery, useInputMutation, useIdMutation } from './utils';
-import { IdMutationTuple, InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
+import {
+  IdMutationTuple,
+  InputMutationFunction,
+  InputMutationTuple,
+  UpdateInputMutationFunction,
+} from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
-import { createCategoryMutation, deleteCategoryMutation, myCategoriesQuery } from './queries';
+import {
+  createCategoryMutation,
+  deleteCategoryMutation,
+  myCategoriesQuery,
+  updateCategoryMutation,
+} from './queries';
 
 export const useMyCategories = (): Omit<
   QueryResult<MyCategoriesQuery, MyCategoriesQueryVariables>,
@@ -53,6 +65,33 @@ export const useCreateCategory = (): UseCreateCategoryReturn => {
   };
 
   return [createCategory, meta];
+};
+
+type UseUpdateCategoryMutationReturn = InputMutationTuple<
+  UpdateCategoryMutation,
+  UpdateCategoryMutationVariables
+>;
+
+type UseUpdateCategoryReturn = [
+  UpdateInputMutationFunction<UpdateCategoryMutationVariables['input']>,
+  UseUpdateCategoryMutationReturn[1],
+];
+
+export const useUpdateCategory = (): UseUpdateCategoryReturn => {
+  const { locale } = useLocale();
+  const [mutate, meta]: UseUpdateCategoryMutationReturn = useInputMutation(updateCategoryMutation, {
+    successMessage: locale('snackbars:success:updated', {
+      value: locale('elements:singular:category'),
+    }),
+  });
+
+  const updateCategory: UseUpdateCategoryReturn[0] = async (id, values, callback) => {
+    const response = await mutate({ id, ...values });
+    if (!response) return;
+    if (callback) await callback();
+  };
+
+  return [updateCategory, meta];
 };
 
 export const useDeleteCategory = (): IdMutationTuple<DeleteCategoryMutation> => {
