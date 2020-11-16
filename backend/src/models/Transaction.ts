@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  DeleteDateColumn,
+  getManager,
+  Not,
+} from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
 import Category from './Category';
 import { IsValidCategory } from '../utils';
@@ -18,6 +25,12 @@ export default class Transaction extends Movement {
   @Field({ nullable: true })
   @DeleteDateColumn()
   deletedAt: Date;
+
+  async getPairedTransaction(): Promise<Transaction> {
+    return getManager()
+      .getRepository(Transaction)
+      .findOneOrFail({ id: Not(this.id), operationId: this.operationId });
+  }
 
   constructor(transaction: {
     amount: number;
