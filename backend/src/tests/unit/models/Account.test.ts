@@ -3,6 +3,7 @@ import { validateOrReject } from 'class-validator';
 
 import { accountModelFactory } from '../../factory/accountFactory';
 import { AccountType } from '../../../graphql/helpers';
+import Account from '../../../models/Account';
 
 describe('Account model test', () => {
   it('should create Account object', () =>
@@ -72,6 +73,25 @@ describe('Account model test', () => {
       });
       account.balance = -1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
+    });
+  });
+
+  describe('static', () => {
+    describe('applyBalanceChanges', () => {
+      it('should apply balance changes', () => {
+        const testFrom = { balance: 0 } as Account;
+        const testTo = { balance: 0 } as Account;
+        const testAmount = 1000;
+
+        Account.applyBalanceChanges({
+          amount: testAmount,
+          from: testFrom,
+          to: testTo,
+        });
+
+        expect(testFrom.balance).toBe(-testAmount);
+        expect(testTo.balance).toBe(testAmount);
+      });
     });
   });
 });

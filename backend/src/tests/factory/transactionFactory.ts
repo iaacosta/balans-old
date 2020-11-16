@@ -5,7 +5,7 @@ import { Connection } from 'typeorm';
 
 import Transaction from '../../models/Transaction';
 import Account from '../../models/Account';
-import TransactionCommands from '../../commands/TransactionCommands';
+import SaveTransactionCommand from '../../commands/SaveTransactionCommand';
 import Category from '../../models/Category';
 
 export type BuildType = Pick<Transaction, 'amount' | 'memo' | 'issuedAt'>;
@@ -58,23 +58,22 @@ export const createTransaction = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
-  const transactionCommands = new TransactionCommands(
-    { id: account.userId! },
-    entityManager,
-  );
+
+  const rootAccount = await entityManager
+    .getRepository(Account)
+    .findOneOrFail({ type: 'root', userId: account.userId });
 
   const { transaction, category, factoryTransaction } = transactionModelFactory(
     { account, categories },
     overrides,
   );
 
-  const [databaseTransaction] = await transactionCommands.create(
-    factoryTransaction,
-    {
-      account,
-      category,
-    },
+  const transactionCommands = new SaveTransactionCommand(
+    { getRootAccount: async () => rootAccount } as any,
+    { account, category, ...factoryTransaction },
+    entityManager,
   );
 
+  const [databaseTransaction] = await transactionCommands.execute();
   return { databaseTransaction, factoryTransaction, transaction };
 };

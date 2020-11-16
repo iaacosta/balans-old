@@ -108,8 +108,10 @@ export const useInputMutation = <TData, TVariables extends { input: any }>(
     async (input) => {
       const response = await mutate({ variables: { input } as any });
       if (!response) return undefined;
-      const successMessage = options?.successMessage || locale('snackbars:success:done');
-      enqueueSnackbar(successMessage, { variant: 'success' });
+      if (!options?.noSnackbar) {
+        const successMessage = options?.successMessage || locale('snackbars:success:done');
+        enqueueSnackbar(successMessage, { variant: 'success' });
+      }
       return response;
     },
     meta,
