@@ -1,11 +1,20 @@
+import { capitalize } from 'lodash';
 import { validationMatchers } from '../../support/matchers';
 import { buildCategory } from '../../support/build/category';
 
 const { requiredField } = validationMatchers;
 
 describe('categories view', () => {
+  let testCategory: GQLCreateCategoryMutation['createCategory'];
+
   beforeEach(() => {
-    cy.fixture('adminUser').then((user) => cy.login(user.username, user.password));
+    cy.fixture('adminUser')
+      .then((user) => cy.login(user.username, user.password))
+      .then(() => cy.createCategory(buildCategory()))
+      .then((category) => {
+        testCategory = category;
+      });
+
     cy.visit('/categories');
   });
 
@@ -26,6 +35,24 @@ describe('categories view', () => {
 
     /* should show created category */
     cy.findByText(newCategory.name).should('exist');
+  });
+
+  it('should be able to update a category', () => {
+    const modifiedCategory = buildCategory();
+
+    cy.findByTestId(`updateCategory${testCategory.id}`).should('exist').click();
+
+    /* change fields and submit */
+    cy.findByTestId(`nameInput`).within(() => cy.get('input').clear().type(modifiedCategory.name));
+    cy.changeSelectOption('typeInput', capitalize(modifiedCategory.type));
+    cy.changeColor('colorInput');
+    cy.submitForm();
+
+    /* should notify changes */
+    cy.findByText(/category updated/i).should('exist');
+
+    // /* should show created category */
+    cy.findByText(modifiedCategory.name).should('exist');
   });
 
   it('should validate category fields', () => {
