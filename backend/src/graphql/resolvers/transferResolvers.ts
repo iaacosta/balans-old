@@ -17,8 +17,9 @@ import Transfer from '../../models/Transfer';
 import { CreateTransferInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
-import TransferCommands from '../../commands/TransferCommands';
 import NotFoundError from '../errors/NotFoundError';
+import SaveTransferCommand from '../../commands/SaveTransferCommand';
+import DeleteTransferCommand from '../../commands/DeleteTransferCommand';
 
 @ObjectType()
 class PairedTransfer {
@@ -79,8 +80,6 @@ export default class TransferResolvers {
     { fromAccountId, toAccountId, ...transferInput }: CreateTransferInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transfer[]> {
-    const transferCommands = new TransferCommands(currentUser!);
-
     const fromAccount = await this.manager
       .getRepository(Account)
       .findOneOrFail({
@@ -93,7 +92,15 @@ export default class TransferResolvers {
       userId: currentUser!.id,
     });
 
-    return transferCommands.create(transferInput, { fromAccount, toAccount });
+    return this.manager.transaction((transactionManager) => {
+      const command = new SaveTransferCommand(
+        currentUser!,
+        { fromAccount, toAccount, ...transferInput },
+        transactionManager,
+      );
+
+      return command.execute();
+    });
   }
 
   @Mutation(() => String)
@@ -102,8 +109,7 @@ export default class TransferResolvers {
     @Arg('operationId') operationId: string,
     @Ctx() { currentUser }: Context,
   ): Promise<string> {
-    const transferCommands = new TransferCommands(currentUser!);
-    const transfers = await this.manager
+    const [toTransfer, fromTransfer] = await this.manager
       .getRepository(Transfer)
       .createQueryBuilder('transfer')
       .select()
@@ -113,8 +119,18 @@ export default class TransferResolvers {
       .orderBy('transfer.amount', 'ASC')
       .getMany();
 
-    if (transfers.length < 2) throw new NotFoundError('transfer');
-    await transferCommands.delete(transfers);
+    if (!toTransfer || !fromTransfer) throw new NotFoundError('transfer');
+
+    await this.manager.transaction((transactionManager) => {
+      const transferCommands = new DeleteTransferCommand(
+        currentUser!,
+        { toTransfer, fromTransfer },
+        transactionManager,
+      );
+
+      return transferCommands.execute();
+    });
+
     return operationId;
   }
 
