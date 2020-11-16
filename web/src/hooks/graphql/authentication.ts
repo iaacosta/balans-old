@@ -19,7 +19,9 @@ type UseLoginReturn = [
 
 export const useLogin = (): UseLoginReturn => {
   const dispatch = useDispatch();
-  const [mutate, meta]: UseLoginMutationReturn = useInputMutation(loginMutation);
+  const [mutate, meta]: UseLoginMutationReturn = useInputMutation(loginMutation, {
+    noSnackbar: true,
+  });
 
   const login: UseLoginReturn[0] = async ({ rememberMe, ...values }, callback) => {
     const response = await mutate(values);
@@ -45,7 +47,9 @@ type UseSignUpReturn = [
 
 export const useSignUp = (): UseSignUpReturn => {
   const dispatch = useDispatch();
-  const [mutate, meta]: UseSignUpMutationReturn = useInputMutation(signUpMutation);
+  const [mutate, meta]: UseSignUpMutationReturn = useInputMutation(signUpMutation, {
+    noSnackbar: true,
+  });
 
   const signUp: UseSignUpReturn[0] = async ({ confirmPassword, ...values }, callback) => {
     const response = await mutate(values);

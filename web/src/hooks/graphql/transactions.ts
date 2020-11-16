@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { QueryResult } from '@apollo/client';
-import { useSnackbar } from 'notistack';
 import { useIdMutation, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteTransactionMutation,
@@ -49,10 +48,12 @@ type UseCreateTransactionReturn = [
 
 export const useCreateTransaction = (): UseCreateTransactionReturn => {
   const { locale } = useLocale();
-  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta]: UseCreateTransactionMutationReturn = useInputMutation(
     createTransactionMutation,
     {
+      successMessage: locale('snackbars:success:created', {
+        value: locale('elements:singular:transaction'),
+      }),
       refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
     },
   );
@@ -68,11 +69,6 @@ export const useCreateTransaction = (): UseCreateTransactionReturn => {
     });
 
     if (!response) return;
-
-    enqueueSnackbar(
-      locale('snackbars:success:created', { value: locale('elements:singular:transaction') }),
-      { variant: 'success' },
-    );
     if (callback) await callback();
   };
 
@@ -91,10 +87,12 @@ type UseUpdateTransactionReturn = [
 
 export const useUpdateTransaction = (): UseUpdateTransactionReturn => {
   const { locale } = useLocale();
-  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta]: UseUpdateTransactionMutationReturn = useInputMutation(
     updateTransactionMutation,
     {
+      successMessage: locale('snackbars:success:updated', {
+        value: locale('elements:singular:transaction'),
+      }),
       refetchQueries: [{ query: myAccountsQuery }, { query: myTransactionsQuery }],
     },
   );
@@ -102,10 +100,6 @@ export const useUpdateTransaction = (): UseUpdateTransactionReturn => {
   const updateTransaction: UseUpdateTransactionReturn[0] = async (id, input, callback) => {
     const response = await mutate({ id, ...input, issuedAt: input.issuedAt?.valueOf() });
     if (!response) return;
-    enqueueSnackbar(
-      locale('snackbars:success:updated', { value: locale('elements:singular:transaction') }),
-      { variant: 'success' },
-    );
     if (callback) await callback();
   };
 

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { QueryResult } from '@apollo/client';
-import { useSnackbar } from 'notistack';
 import {
   MyCategoriesQuery,
   MyCategoriesQueryVariables,
@@ -40,19 +39,16 @@ type UseCreateCategoryReturn = [
 
 export const useCreateCategory = (): UseCreateCategoryReturn => {
   const { locale } = useLocale();
-  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta]: UseCreateCategoryMutationReturn = useInputMutation(createCategoryMutation, {
+    successMessage: locale('snackbars:success:created', {
+      value: locale('elements:singular:category'),
+    }),
     refetchQueries: [{ query: myCategoriesQuery }],
   });
 
   const createCategory: UseCreateCategoryReturn[0] = async (values, callback) => {
     const response = await mutate(values);
     if (!response) return;
-
-    enqueueSnackbar(
-      locale('snackbars:success:created', { value: locale('elements:singular:category') }),
-      { variant: 'success' },
-    );
     if (callback) await callback();
   };
 

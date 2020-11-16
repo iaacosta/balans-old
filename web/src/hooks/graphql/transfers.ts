@@ -39,9 +39,11 @@ type UseCreateTransferReturn = [
 ];
 
 export const useCreateTransfer = (): UseCreateTransferReturn => {
-  const { enqueueSnackbar } = useSnackbar();
   const { locale } = useLocale();
   const [mutate, meta]: UseCreateTransferMutationReturn = useInputMutation(createTransferMutation, {
+    successMessage: locale('snackbars:success:created', {
+      value: locale('elements:singular:transfer'),
+    }),
     refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }],
   });
 
@@ -49,10 +51,6 @@ export const useCreateTransfer = (): UseCreateTransferReturn => {
     const response = await mutate({ ...values, issuedAt: values.issuedAt.valueOf() });
     if (!response) return;
 
-    enqueueSnackbar(
-      locale('snackbars:success:created', { value: locale('elements:singular:transfer') }),
-      { variant: 'success' },
-    );
     if (callback) callback();
   };
 
@@ -65,11 +63,13 @@ type UseDeleteTransferReturn = [
 ];
 
 export const useDeleteTransfer = (): UseDeleteTransferReturn => {
-  const { enqueueSnackbar } = useSnackbar();
   const { locale } = useLocale();
+  const { enqueueSnackbar } = useSnackbar();
   const [mutate, meta] = useMutation<DeleteTransferMutation, DeleteTransferMutationVariables>(
     deleteTransferMutation,
-    { refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }] },
+    {
+      refetchQueries: [{ query: myAccountsQuery }, { query: myTransfersQuery }],
+    },
   );
 
   const deleteTransfer: UseDeleteTransferReturn[0] = async (operationId) => {

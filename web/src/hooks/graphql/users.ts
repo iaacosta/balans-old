@@ -1,6 +1,5 @@
 import { QueryResult } from '@apollo/client';
 import { useMemo } from 'react';
-import { useSnackbar } from 'notistack';
 import { useIdMutation, useRedirectedQuery, useInputMutation } from './utils';
 import {
   DeleteUserMutation,
@@ -58,19 +57,14 @@ type UseUpdateUserReturn = [
 ];
 
 export const useUpdateUser = (): UseUpdateUserReturn => {
-  const { enqueueSnackbar } = useSnackbar();
   const { locale } = useLocale();
-  const [mutate, meta]: UseUpdateUserMutationReturn = useInputMutation(updateUserMutation);
+  const [mutate, meta]: UseUpdateUserMutationReturn = useInputMutation(updateUserMutation, {
+    successMessage: locale('snackbars:success:updated', { value: locale('elements:plural:user') }),
+  });
 
   const updateUser: UseUpdateUserReturn[0] = async (id, values, callback) => {
     const response = await mutate({ id, ...values });
     if (!response) return;
-
-    enqueueSnackbar(
-      locale('snackbars:success:updated', { value: locale('elements:plural:user') }),
-      { variant: 'success' },
-    );
-
     if (callback) await callback();
   };
 

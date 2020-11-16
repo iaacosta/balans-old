@@ -15,6 +15,7 @@ export type MutationHandlerOptions = {
 };
 
 export type MutationSnackbarOptions = {
+  noSnackbar?: boolean;
   successMessage?: ReactNode;
 };
 
