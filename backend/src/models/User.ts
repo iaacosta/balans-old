@@ -6,6 +6,8 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  EntityManager,
+  getManager,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { compare } from 'bcrypt';
@@ -96,6 +98,13 @@ export default class User {
     } catch (err) {
       throw error;
     }
+  }
+
+  getRootAccount(options?: { manager?: EntityManager }): Promise<Account> {
+    const manager = options?.manager || getManager();
+    return manager
+      .getRepository(Account)
+      .findOneOrFail({ userId: this.id, type: 'root' });
   }
 
   constructor(user: {
