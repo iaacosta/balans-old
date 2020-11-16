@@ -4,6 +4,8 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  EntityManager,
+  getManager,
 } from 'typeorm';
 import { NotEquals } from 'class-validator';
 import { v4 as uuid } from 'uuid';
@@ -47,6 +49,24 @@ export default abstract class Movement {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  static async saveMovementPair<T extends Movement>(
+    movements: [T, T],
+    options?: { manager?: EntityManager },
+  ): Promise<[T, T]> {
+    const manager = options?.manager || getManager();
+    const savedMovements = await manager.save(movements);
+    return savedMovements as [T, T];
+  }
+
+  static async removeMovementPair<T extends Movement>(
+    movements: [T, T],
+    options?: { manager?: EntityManager },
+  ): Promise<[T, T]> {
+    const manager = options?.manager || getManager();
+    const removedMovements = await manager.remove(movements);
+    return removedMovements as [T, T];
+  }
 
   constructor(movement: {
     amount: number;
