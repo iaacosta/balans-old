@@ -79,6 +79,15 @@ export default class Account {
   @DeleteDateColumn()
   deletedAt: Date;
 
+  static applyBalanceChanges(args: {
+    amount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    args.to.balance += args.amount;
+    args.from.balance -= args.amount;
+  }
+
   constructor(account: {
     type: AccountType | 'root';
     name: string;
