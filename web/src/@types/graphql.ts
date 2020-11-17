@@ -65,6 +65,18 @@ export type Transfer = {
   updatedAt: Scalars['Timestamp'];
 };
 
+export type Passive = {
+  __typename?: 'Passive';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: Account;
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+};
+
 export type Account = {
   __typename?: 'Account';
   id: Scalars['ID'];
@@ -72,6 +84,7 @@ export type Account = {
   name: Scalars['String'];
   bank: Scalars['String'];
   balance: Scalars['Int'];
+  unliquidatedBalance: Scalars['Int'];
   user: User;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
@@ -156,6 +169,13 @@ export type UpdateCategoryInput = {
   type?: Maybe<CategoryType>;
 };
 
+export type CreatePassiveInput = {
+  amount: Scalars['Int'];
+  accountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
+  issuedAt: Scalars['Timestamp'];
+};
+
 export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -213,6 +233,7 @@ export type Mutation = {
   createCategory: Category;
   updateCategory: Category;
   deleteCategory: Scalars['ID'];
+  createPassive: Passive;
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -259,6 +280,11 @@ export type MutationUpdateCategoryArgs = {
 
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationCreatePassiveArgs = {
+  input: CreatePassiveInput;
 };
 
 
@@ -429,6 +455,19 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteCategory'>
+);
+
+export type CreatePassiveMutationVariables = Exact<{
+  input: CreatePassiveInput;
+}>;
+
+
+export type CreatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { createPassive: (
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id'>
+  ) }
 );
 
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
