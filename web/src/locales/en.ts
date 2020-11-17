@@ -95,15 +95,17 @@ export const en = {
     create: {
       transaction: 'Create new transaction',
       transfer: 'Create new transfer',
+      passive: 'Create new passive',
     },
     tabs: {
       transactions: 'Transactions',
       transfers: 'Transfers',
-      passive: 'Passive',
+      passives: 'Passive',
     },
     form: {
       amount: 'Amount',
       transactionType: 'Transaction type',
+      passiveType: 'Passive type',
       category: 'Category',
       memo: 'Memo',
       account: 'Account',
@@ -138,6 +140,9 @@ export const en = {
     singular: {
       account: 'Account',
       category: 'Category',
+      passive: 'Passive',
+      debt: 'Debt',
+      loan: 'Loan',
       transaction: 'Transaction',
       transfer: 'Transfer',
       user: 'User',
@@ -145,7 +150,10 @@ export const en = {
     plural: {
       account: 'Accounts',
       category: 'Categories',
-      transaction: 'Transaction',
+      passive: 'Passives',
+      debt: 'Debts',
+      loan: 'Loans',
+      transaction: 'Transactions',
       transfer: 'Transfers',
       user: 'Users',
     },

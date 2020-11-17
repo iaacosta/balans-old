@@ -97,15 +97,17 @@ export const es: LocaleShape = {
     create: {
       transaction: 'Crear nueva transacción',
       transfer: 'Crear nueva transferencia',
+      passive: 'Crear nuevo pasivo',
     },
     tabs: {
       transactions: 'Transacciones',
       transfers: 'Transferencias',
-      passive: 'Pasivos',
+      passives: 'Pasivos',
     },
     form: {
       amount: 'Monto',
       transactionType: 'Tipo de transacción',
+      passiveType: 'Tipo de pasivo',
       category: 'Categoría',
       memo: 'Nota',
       account: 'Cuenta',
@@ -140,6 +142,9 @@ export const es: LocaleShape = {
     singular: {
       account: 'Cuenta',
       category: 'Categoría',
+      passive: 'Pasivo',
+      debt: 'Deuda',
+      loan: 'Préstamo',
       transaction: 'Transacción',
       transfer: 'Transferencia',
       user: 'Usuario',
@@ -147,6 +152,9 @@ export const es: LocaleShape = {
     plural: {
       account: 'Cuentas',
       category: 'Categorías',
+      passive: 'Pasivos',
+      debt: 'Deudas',
+      loan: 'Préstamos',
       transaction: 'Transacciones',
       transfer: 'Transferencias',
       user: 'Usuarios',
