@@ -7,6 +7,7 @@ import colors from '../../../constants/colors';
 
 jest.mock('../../../models/Transfer');
 jest.mock('../../../models/Transaction');
+jest.mock('../../../models/Passive');
 
 describe('Category model test', () => {
   it('should create Category object', () =>

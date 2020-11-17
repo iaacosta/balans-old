@@ -4,4 +4,4 @@ import Movement from './Movement';
 
 @Entity()
 @ObjectType()
-export default class Transfer extends Movement {}
+export default class Passive extends Movement {}

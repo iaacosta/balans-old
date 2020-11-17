@@ -93,5 +93,24 @@ describe('Account model test', () => {
         expect(testTo.balance).toBe(testAmount);
       });
     });
+
+    describe('applyPassiveBalanceChanges', () => {
+      it('should apply balance changes', () => {
+        const testFrom = { balance: 0, unliquidatedBalance: 0 } as Account;
+        const testTo = { balance: 0, unliquidatedBalance: 0 } as Account;
+        const testAmount = 1000;
+
+        Account.applyPassiveBalanceChanges({
+          amount: testAmount,
+          from: testFrom,
+          to: testTo,
+        });
+
+        expect(testFrom.balance).toBe(testAmount);
+        expect(testFrom.unliquidatedBalance).toBe(-testAmount);
+        expect(testTo.balance).toBe(-testAmount);
+        expect(testTo.unliquidatedBalance).toBe(testAmount);
+      });
+    });
   });
 });
