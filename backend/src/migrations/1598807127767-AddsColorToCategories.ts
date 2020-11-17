@@ -16,7 +16,12 @@ export class AddsColorToCategories1598807127767 implements MigrationInterface {
       'SELECT id, name FROM "category"',
     );
 
-    if (categories.length === 0) return;
+    if (categories.length === 0) {
+      await queryRunner.query(
+        `ALTER TABLE "category" ALTER COLUMN "color" DROP DEFAULT`,
+      );
+      return;
+    }
 
     const groupedCategories = groupBy(categories, 'name');
     const groupedDefaultCategories = keyBy(defaultCategories, 'name');
