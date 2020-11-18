@@ -1,7 +1,16 @@
 import { useInputMutation } from './utils';
-import { CreatePassiveMutation, CreatePassiveMutationVariables } from '../../@types/graphql';
-import { myAccountsQuery, createPassiveMutation } from './queries';
-import { InputMutationFunction, InputMutationTuple } from '../../@types/helpers';
+import {
+  CreatePassiveMutation,
+  CreatePassiveMutationVariables,
+  LiquidatePassiveMutation,
+  LiquidatePassiveMutationVariables,
+} from '../../@types/graphql';
+import { myAccountsQuery, createPassiveMutation, liquidatePassiveMutation } from './queries';
+import {
+  InputMutationFunction,
+  InputMutationTuple,
+  UpdateInputMutationFunction,
+} from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
 
 type TExtends = { type: 'debt' | 'loan' };
@@ -40,4 +49,35 @@ export const useCreatePassive = (): UseCreatePassiveReturn => {
   };
 
   return [createPassive, meta];
+};
+
+type UseLiquidatePassiveMutationReturn = InputMutationTuple<
+  LiquidatePassiveMutation,
+  LiquidatePassiveMutationVariables
+>;
+
+type UseLiquidatePassiveReturn = [
+  UpdateInputMutationFunction<LiquidatePassiveMutationVariables['input']>,
+  UseLiquidatePassiveMutationReturn[1],
+];
+
+export const useLiquidatePassive = (): UseLiquidatePassiveReturn => {
+  const { locale } = useLocale();
+  const [mutate, meta]: UseLiquidatePassiveMutationReturn = useInputMutation(
+    liquidatePassiveMutation,
+    {
+      successMessage: locale('snackbars:success:liquidated', {
+        value: locale('elements:singular:passive'),
+      }),
+      refetchQueries: [{ query: myAccountsQuery }],
+    },
+  );
+
+  const liquidatePassive: UseLiquidatePassiveReturn[0] = async (id, input, callback) => {
+    const response = await mutate({ id, ...input });
+    if (!response) return;
+    if (callback) await callback();
+  };
+
+  return [liquidatePassive, meta];
 };

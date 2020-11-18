@@ -7,3 +7,22 @@ export const createPassiveMutation = gql`
     }
   }
 `;
+
+export const liquidatePassiveMutation = gql`
+  mutation LiquidatePassive($input: LiquidatePassiveInput!) {
+    liquidatePassive(input: $input) {
+      id
+      liquidated
+      account {
+        id
+        name
+        bank
+      }
+      liquidatedAccount {
+        id
+        name
+        bank
+      }
+    }
+  }
+`;
