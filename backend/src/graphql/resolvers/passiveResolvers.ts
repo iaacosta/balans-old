@@ -12,8 +12,9 @@ import { Repository, getRepository, getManager, Not } from 'typeorm';
 import Passive from '../../models/Passive';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
-import { CreatePassiveInput } from '../helpers/inputs';
+import { CreatePassiveInput, LiquidatePassiveInput } from '../helpers/inputs';
 import SavePassiveCommand from '../../commands/SavePassiveCommand';
+import LiquidatePassiveCommand from '../../commands/LiquidatePassiveCommand';
 
 @Resolver(Passive)
 export default class PassiveResolvers {
@@ -46,6 +47,33 @@ export default class PassiveResolvers {
 
       const [passive] = await command.execute();
       return passive;
+    });
+  }
+
+  @Mutation(() => Passive)
+  @Authorized()
+  async liquidatePassive(
+    @Arg('input')
+    { liquidatedAccountId, ...input }: LiquidatePassiveInput,
+    @Ctx() { currentUser }: Context,
+  ): Promise<Passive> {
+    const liquidatedAccount = await this.accountRepository.findOneOrFail({
+      where: {
+        id: liquidatedAccountId,
+        userId: currentUser!.id,
+        type: Not('root'),
+      },
+    });
+
+    return getManager().transaction(async (passiveManager) => {
+      const command = new LiquidatePassiveCommand(
+        currentUser!,
+        { liquidatedAccount, ...input },
+        passiveManager,
+      );
+
+      const [liquidatedPassive] = await command.execute();
+      return liquidatedPassive;
     });
   }
 

@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, getManager, ManyToOne, Not } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 import Movement from './Movement';
 import Account from './Account';
@@ -16,6 +16,12 @@ export default class Passive extends Movement {
   @Field(() => Account, { nullable: true })
   @ManyToOne(() => Account, { eager: false, onDelete: 'CASCADE' })
   liquidatedAccount?: Account;
+
+  async getPairedPassive(): Promise<Passive> {
+    return getManager()
+      .getRepository(Passive)
+      .findOneOrFail({ id: Not(this.id), operationId: this.operationId });
+  }
 
   constructor(passive: {
     amount: number;
