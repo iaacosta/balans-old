@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Passive from '../../../models/Passive';
-import { passiveFactory } from '../../factory/passiveFactory';
+import { createPassive, passiveFactory } from '../../factory/passiveFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
@@ -17,7 +17,31 @@ const CREATE_PASSIVE = gql`
       amount
       memo
       operationId
+      liquidated
       account {
+        id
+      }
+      liquidatedAccount {
+        id
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const LIQUIDATE_PASSIVE = gql`
+  mutation LiquidatePassive($input: LiquidatePassiveInput!) {
+    liquidatePassive(input: $input) {
+      id
+      amount
+      memo
+      operationId
+      liquidated
+      account {
+        id
+      }
+      liquidatedAccount {
         id
       }
       createdAt
@@ -88,6 +112,45 @@ describe('passive API calls', () => {
             issuedAt: testPassive.issuedAt.valueOf(),
             accountId: testAccount.id,
           },
+        },
+      });
+
+      expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('liquidatePassive', () => {
+    let testPassive: Passive;
+
+    beforeAll(async () => {
+      testPassive = (await createPassive(connection, { account: testAccount }))
+        .databasePassive;
+    });
+
+    it('should liquidate passive', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: LIQUIDATE_PASSIVE,
+        variables: {
+          input: { id: testPassive.id, liquidatedAccountId: testAccount.id },
+        },
+      });
+
+      expect(response).toBeSuccessful();
+
+      const passive = await getRepository(Passive).findOneOrFail(
+        response.data!.liquidatePassive.id,
+      );
+
+      expect(passive.liquidatedAccountId).toBe(testAccount.id);
+    });
+
+    it('should not authorize unauthenticated users', async () => {
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: LIQUIDATE_PASSIVE,
+        variables: {
+          input: { id: testPassive.id, liquidatedAccountId: testAccount.id },
         },
       });
 
