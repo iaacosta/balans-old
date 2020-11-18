@@ -27,7 +27,7 @@ type NavbarKeys =
   | 'navbar:en'
   | 'navbar:es';
 
-type FormKeys = 'forms:create' | 'forms:update' | 'forms:go' | 'forms:cancel';
+type FormKeys = 'forms:create' | 'forms:update' | 'forms:liquidate' | 'forms:go' | 'forms:cancel';
 
 type TableKeys = 'tables:actions';
 
@@ -121,6 +121,7 @@ type SnackbarKeys =
   | 'snackbars:success:updated'
   | 'snackbars:success:deleted'
   | 'snackbars:success:restored'
+  | 'snackbars:success:liquidated'
   | 'snackbars:success:done'
   | 'snackbars:errors:unknown';
 
