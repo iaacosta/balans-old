@@ -37,6 +37,7 @@ export const es: LocaleShape = {
   forms: {
     create: 'Crear',
     update: 'Modificar',
+    liquidate: 'Liquidar',
     go: 'Ir',
     cancel: 'Cancelar',
   },
@@ -166,6 +167,7 @@ export const es: LocaleShape = {
       updated: '{{value}} modificada exitosamente',
       deleted: '{{value}} borrada exitosamente',
       restored: '{{value}} restaurada exitosamente',
+      liquidated: '{{value}} liquidada exitosamente',
       done: 'Acción exitosa',
     },
     error: {

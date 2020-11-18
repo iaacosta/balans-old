@@ -14,3 +14,11 @@ export class CreatePassiveInput {
   @Field(() => Date)
   issuedAt: Date;
 }
+@InputType()
+export class LiquidatePassiveInput {
+  @Field(() => ID)
+  id: number;
+
+  @Field(() => ID)
+  liquidatedAccountId: number;
+}

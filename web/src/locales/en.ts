@@ -35,6 +35,7 @@ export const en = {
   forms: {
     create: 'Create',
     update: 'Update',
+    liquidate: 'Liquidate',
     go: 'Go',
     cancel: 'Cancel',
   },
@@ -164,6 +165,7 @@ export const en = {
       updated: '{{value}} updated successfully',
       deleted: '{{value}} deleted successfully',
       restored: '{{value}} restored successfully',
+      liquidated: '{{value}} liquidated successfully',
       done: 'Action done successfully',
     },
     error: {

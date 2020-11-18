@@ -75,6 +75,8 @@ export type Passive = {
   issuedAt: Scalars['Timestamp'];
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
+  liquidated: Scalars['Boolean'];
+  liquidatedAccount?: Maybe<Account>;
 };
 
 export type Account = {
@@ -176,6 +178,11 @@ export type CreatePassiveInput = {
   issuedAt: Scalars['Timestamp'];
 };
 
+export type LiquidatePassiveInput = {
+  id: Scalars['ID'];
+  liquidatedAccountId: Scalars['ID'];
+};
+
 export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -234,6 +241,7 @@ export type Mutation = {
   updateCategory: Category;
   deleteCategory: Scalars['ID'];
   createPassive: Passive;
+  liquidatePassive: Passive;
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -285,6 +293,11 @@ export type MutationDeleteCategoryArgs = {
 
 export type MutationCreatePassiveArgs = {
   input: CreatePassiveInput;
+};
+
+
+export type MutationLiquidatePassiveArgs = {
+  input: LiquidatePassiveInput;
 };
 
 
@@ -467,6 +480,26 @@ export type CreatePassiveMutation = (
   & { createPassive: (
     { __typename?: 'Passive' }
     & Pick<Passive, 'id'>
+  ) }
+);
+
+export type LiquidatePassiveMutationVariables = Exact<{
+  input: LiquidatePassiveInput;
+}>;
+
+
+export type LiquidatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { liquidatePassive: (
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id' | 'liquidated'>
+    & { account: (
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    ), liquidatedAccount?: Maybe<(
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    )> }
   ) }
 );
 
