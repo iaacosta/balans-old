@@ -10,14 +10,13 @@ import {
   Paper,
 } from '@material-ui/core';
 import { Delete as DeleteIcon, Edit as EditIcon, Payment as PaymentIcon } from '@material-ui/icons';
-import { formatMoney } from 'accounting';
-import clsx from 'clsx';
 import { MyPassivesQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import { useLocale } from '../../hooks/utils/useLocale';
 import LiquidatePassiveDialog from './LiquidatePassiveDialog';
+import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 type Props = {
   passives: MyPassivesQuery['passives'];
@@ -53,13 +52,11 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
       >
         {({ data, index, style }) => {
           const { id, amount, account } = data[index];
-          const cls = clsx(amount > 0 && classes.income, amount < 0 && classes.expense);
           return (
             <Box style={style} key={index}>
               <ListItem classes={{ container: classes.container }} component="div">
                 <ListItemText
-                  className={cls}
-                  primary={formatMoney(amount)}
+                  primary={<AmountTypography>{amount}</AmountTypography>}
                   secondary={`${account.name} (${account.bank})`}
                 />
                 <ListItemSecondaryAction className={classes.secondaryActions}>

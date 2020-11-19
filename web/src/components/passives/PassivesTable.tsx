@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { Column } from 'react-table';
-import { formatMoney } from 'accounting';
-import clsx from 'clsx';
 import { MyPassivesQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import { longDateFormatter } from '../../utils/date';
 import { useLocale } from '../../hooks/utils/useLocale';
 import PassiveActionCell from './PassiveActionCell';
+import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -35,14 +34,7 @@ const PassivesTable: React.FC<Props> = ({ children, passives, loading, noAccount
       {
         Header: locale('movements:form:amount'),
         accessor: 'amount',
-        Cell: ({ value }) => (
-          <Typography
-            className={clsx(value < 0 && classes.expense, value > 0 && classes.income)}
-            variant="body2"
-          >
-            {formatMoney(value)}
-          </Typography>
-        ),
+        Cell: ({ value }) => <AmountTypography variant="body2">{value}</AmountTypography>,
       },
       {
         Header: locale('others:passiveStatus'),
@@ -76,7 +68,7 @@ const PassivesTable: React.FC<Props> = ({ children, passives, loading, noAccount
         Cell: PassiveActionCell,
       },
     ],
-    [classes, locale],
+    [locale],
   );
 
   return (

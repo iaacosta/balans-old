@@ -363,7 +363,7 @@ export type MyAccountsQuery = (
   { __typename?: 'Query' }
   & { accounts: Array<(
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
   )> }
 );
 
@@ -376,7 +376,7 @@ export type CreateDebitAccountMutation = (
   { __typename?: 'Mutation' }
   & { createAccount: (
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
   ) }
 );
 
