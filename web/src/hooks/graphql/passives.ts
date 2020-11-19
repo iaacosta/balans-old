@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { QueryResult } from '@apollo/client';
-import { useInputMutation, useRedirectedQuery } from './utils';
+import { useIdMutation, useInputMutation, useRedirectedQuery } from './utils';
 import {
   CreatePassiveMutation,
   CreatePassiveMutationVariables,
@@ -8,14 +8,17 @@ import {
   LiquidatePassiveMutationVariables,
   MyPassivesQuery,
   MyPassivesQueryVariables,
+  DeletePassiveMutation,
 } from '../../@types/graphql';
 import {
   myAccountsQuery,
   createPassiveMutation,
   liquidatePassiveMutation,
   myPassivesQuery,
+  deletePassiveMutation,
 } from './queries';
 import {
+  IdMutationTuple,
   InputMutationFunction,
   InputMutationTuple,
   UpdateInputMutationFunction,
@@ -98,4 +101,15 @@ export const useLiquidatePassive = (): UseLiquidatePassiveReturn => {
   };
 
   return [liquidatePassive, meta];
+};
+
+export const useDeletePassive = (): IdMutationTuple<DeletePassiveMutation> => {
+  const { locale } = useLocale();
+
+  return useIdMutation<DeletePassiveMutation>(deletePassiveMutation, {
+    refetchQueries: [{ query: myAccountsQuery }, { query: myPassivesQuery }],
+    successMessage: locale('snackbars:success:deleted', {
+      value: locale('elements:singular:passive'),
+    }),
+  });
 };

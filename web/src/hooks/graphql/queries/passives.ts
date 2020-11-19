@@ -43,3 +43,9 @@ export const liquidatePassiveMutation = gql`
     }
   }
 `;
+
+export const deletePassiveMutation = gql`
+  mutation DeletePassive($id: ID!) {
+    deletePassive(id: $id)
+  }
+`;
