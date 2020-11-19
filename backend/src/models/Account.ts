@@ -99,19 +99,22 @@ export default class Account {
     data.to.balance += data.amount;
   }
 
+  static applyUnliquidatedBalanceChanges(data: {
+    amount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    data.from.unliquidatedBalance -= data.amount;
+    data.to.unliquidatedBalance += data.amount;
+  }
+
   static applyPassiveBalanceChanges(data: {
     amount: number;
     from: Account;
     to: Account;
   }): void {
-    Account.applyBalanceChanges({
-      amount: -data.amount,
-      from: data.from,
-      to: data.to,
-    });
-
-    data.from.unliquidatedBalance -= data.amount;
-    data.to.unliquidatedBalance += data.amount;
+    Account.applyBalanceChanges({ ...data, amount: -data.amount });
+    Account.applyUnliquidatedBalanceChanges(data);
   }
 
   constructor(account: {

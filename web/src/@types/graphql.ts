@@ -243,6 +243,7 @@ export type Mutation = {
   deleteCategory: Scalars['ID'];
   createPassive: Passive;
   liquidatePassive: Passive;
+  deletePassive: Scalars['ID'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -299,6 +300,11 @@ export type MutationCreatePassiveArgs = {
 
 export type MutationLiquidatePassiveArgs = {
   input: LiquidatePassiveInput;
+};
+
+
+export type MutationDeletePassiveArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -517,6 +523,16 @@ export type LiquidatePassiveMutation = (
       & Pick<Account, 'id' | 'name' | 'bank'>
     )> }
   ) }
+);
+
+export type DeletePassiveMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeletePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deletePassive'>
 );
 
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;

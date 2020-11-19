@@ -10,6 +10,7 @@ import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
 import { AccountType } from '../../../graphql/helpers';
+import LiquidatePassiveCommand from '../../../commands/LiquidatePassiveCommand';
 
 const MY_PASSIVES = gql`
   query MyPassives {
@@ -72,6 +73,12 @@ const LIQUIDATE_PASSIVE = gql`
       createdAt
       updatedAt
     }
+  }
+`;
+
+const DELETE_PASSIVE = gql`
+  mutation DeletePassive($id: ID!) {
+    deletePassive(id: $id)
   }
 `;
 
@@ -210,6 +217,83 @@ describe('passive API calls', () => {
       });
 
       expect(response).toBeRejectedByAuth();
+    });
+  });
+
+  describe('deletePassive', () => {
+    const createTestPassive = async (liquidate?: boolean) => {
+      const { databasePassive } = await createPassive(connection, {
+        account: testAccount,
+      });
+
+      if (liquidate) {
+        databasePassive.account = testAccount;
+        await new LiquidatePassiveCommand(testUser, {
+          liquidatedAccount: testAccount,
+          passive: databasePassive,
+        }).execute();
+      }
+
+      return databasePassive;
+    };
+
+    it('should delete a passive if mine and not liquidated', async () => {
+      const createdPassive = await createTestPassive();
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_PASSIVE,
+        variables: { id: createdPassive.id },
+      });
+
+      expect(response).toBeSuccessful();
+
+      const databasePassive = getRepository(Passive).findOneOrFail(
+        response.data!.deletePassive,
+      );
+
+      await expect(databasePassive).rejects.toBeTruthy();
+    });
+
+    it('should delete a passive if mine and liquidated', async () => {
+      const createdPassive = await createTestPassive(true);
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_PASSIVE,
+        variables: { id: createdPassive.id },
+      });
+
+      expect(response).toBeSuccessful();
+
+      const databasePassive = getRepository(Passive).findOneOrFail(
+        response.data!.deletePassive,
+      );
+
+      await expect(databasePassive).rejects.toBeTruthy();
+    });
+
+    it('should not delete a passive if not mine', async () => {
+      const otherUser = (await createUser(connection)).databaseUser;
+
+      const { databaseAccount: othersAccount } = await createAccount(
+        connection,
+        otherUser.id,
+        { type: AccountType.checking },
+      );
+
+      const { databasePassive: othersPassive } = await createPassive(
+        connection,
+        { account: othersAccount },
+      );
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_PASSIVE,
+        variables: { id: othersPassive.id },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 });

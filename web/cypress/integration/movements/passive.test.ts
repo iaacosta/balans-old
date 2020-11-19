@@ -91,5 +91,48 @@ describe('passives table', () => {
     /* expect changes to be there */
     cy.findByTestId(rowId).children().should('contain', `Paid`).and('contain', liquidatedAccName);
     cy.findByTestId(liquidateId).should('not.exist');
+
+    /* should notify changes */
+    cy.findByText(/passive liquidated/i).should('exist');
+  });
+
+  describe('delete passive', () => {
+    let testToDeletePassive: GQLCreatePassiveMutation['createPassive'];
+
+    beforeEach(() => {
+      cy.createPassive({
+        ...buildPassive({ amount: -1000 }),
+        accountId: testAccount.id,
+      }).then((passive) => {
+        testToDeletePassive = passive;
+        cy.findByTestId('passivesTab').click();
+      });
+    });
+
+    it('should be able to delete an unliquidated passive', () => {
+      cy.findByTestId(`deletePassive${testToDeletePassive.id}`)
+        .should('exist')
+        .should('not.be.disabled')
+        .click();
+
+      cy.findByTestId(`row${testToDeletePassive.id}`).should('not.exist');
+      cy.findByText(/passive deleted/i).should('exist');
+    });
+
+    it('should be able to delete a liquidated passive', () => {
+      // eslint-disable-next-line jest/valid-expect-in-promise
+      cy.liquidatePassive({
+        id: testToDeletePassive.id,
+        liquidatedAccountId: testAccount.id,
+      }).then(() => {
+        cy.findByTestId(`deletePassive${testToDeletePassive.id}`)
+          .should('exist')
+          .should('not.be.disabled')
+          .click();
+
+        cy.findByTestId(`row${testToDeletePassive.id}`).should('not.exist');
+        cy.findByText(/passive deleted/i).should('exist');
+      });
+    });
   });
 });

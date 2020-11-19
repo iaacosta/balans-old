@@ -7,6 +7,7 @@ import { MyPassivesQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import LiquidatePassiveDialog from './LiquidatePassiveDialog';
+import { useDeletePassive } from '../../hooks/graphql';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -18,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PassiveActionCell: React.FC<CellProps<MyPassivesQuery['passives'][number]>> = ({ row }) => {
   const classes = useStyles();
+  const [deletePassive, { loading }] = useDeletePassive();
   const { id, liquidated } = row.original;
 
   return (
@@ -35,7 +37,13 @@ const PassiveActionCell: React.FC<CellProps<MyPassivesQuery['passives'][number]>
       <EnhancedIconButton contained disabled data-testid={`updatePassive${id}`} color="info">
         <EditIcon />
       </EnhancedIconButton>
-      <EnhancedIconButton contained disabled data-testid={`deletePassive${id}`} color="error">
+      <EnhancedIconButton
+        contained
+        disabled={loading}
+        data-testid={`deletePassive${id}`}
+        color="error"
+        onClick={() => deletePassive(row.original.id)}
+      >
         <DeleteIcon />
       </EnhancedIconButton>
     </Box>

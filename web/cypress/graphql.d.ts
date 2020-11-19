@@ -74,6 +74,8 @@ type GQLPassive = {
   issuedAt: Scalars['Timestamp'];
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
+  liquidated: Scalars['Boolean'];
+  liquidatedAccount?: Maybe<GQLAccount>;
 };
 
 type GQLAccount = {
@@ -174,6 +176,11 @@ type GQLCreatePassiveInput = {
   issuedAt: Scalars['Timestamp'];
 };
 
+type GQLLiquidatePassiveInput = {
+  id: Scalars['ID'];
+  liquidatedAccountId: Scalars['ID'];
+};
+
 type GQLCreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -203,6 +210,7 @@ type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
   myCategories: Array<GQLCategory>;
+  myPassives: Array<GQLPassive>;
   myTransactions: Array<GQLTransaction>;
   myTransfers: Array<GQLTransfer>;
   myPairedTransfers: Array<GQLPairedTransfer>;
@@ -232,6 +240,8 @@ type GQLMutation = {
   updateCategory: GQLCategory;
   deleteCategory: Scalars['ID'];
   createPassive: GQLPassive;
+  liquidatePassive: GQLPassive;
+  deletePassive: Scalars['ID'];
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
   updateTransaction: GQLTransaction;
@@ -283,6 +293,16 @@ type GQLMutationDeleteCategoryArgs = {
 
 type GQLMutationCreatePassiveArgs = {
   input: GQLCreatePassiveInput;
+};
+
+
+type GQLMutationLiquidatePassiveArgs = {
+  input: GQLLiquidatePassiveInput;
+};
+
+
+type GQLMutationDeletePassiveArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -374,6 +394,19 @@ type GQLCreatePassiveMutationVariables = Exact<{
 type GQLCreatePassiveMutation = (
   { __typename?: 'Mutation' }
   & { createPassive: (
+    { __typename?: 'Passive' }
+    & Pick<GQLPassive, 'id'>
+  ) }
+);
+
+type GQLLiquidatePassiveMutationVariables = Exact<{
+  input: GQLLiquidatePassiveInput;
+}>;
+
+
+type GQLLiquidatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { liquidatePassive: (
     { __typename?: 'Passive' }
     & Pick<GQLPassive, 'id'>
   ) }
