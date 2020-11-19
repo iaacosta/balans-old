@@ -111,6 +111,9 @@ jobs:
           heroku_email: 'iaacosta@uc.cl'
           usedocker: true
           appdir: 'backend'
-      - name: Semantic release
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
         if: github.ref == 'refs/heads/release'
-        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
