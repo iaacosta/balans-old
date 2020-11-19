@@ -49,7 +49,7 @@ export const useCreatePassive = (): UseCreatePassiveReturn => {
     successMessage: locale('snackbars:success:created', {
       value: locale('elements:singular:passive'),
     }),
-    refetchQueries: [{ query: myAccountsQuery }],
+    refetchQueries: [{ query: myAccountsQuery }, { query: myPassivesQuery }],
   });
 
   const createPassive: UseCreatePassiveReturn[0] = async (
