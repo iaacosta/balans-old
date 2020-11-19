@@ -49,7 +49,9 @@ describe('passive helper tests', () => {
 
     const liquidateCommand = new LiquidatePassiveCommand(user, {
       liquidatedAccount,
-      id: passive.id,
+      passive: await getManager()
+        .getRepository(Passive)
+        .findOneOrFail(passive.id, { relations: ['account'] }),
     });
 
     await liquidateCommand.execute();

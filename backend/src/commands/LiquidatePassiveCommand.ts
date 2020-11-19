@@ -1,17 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { EntityManager, getManager } from 'typeorm';
 
-import { LiquidatePassiveInput } from '../graphql/helpers';
 import Passive from '../models/Passive';
 import Account from '../models/Account';
 import { CurrentUser } from '../@types';
 import IMovementCommand from './MovementCommand';
 
 type PassiveTuple = [Passive, Passive];
-type Data = { liquidatedAccount: Account } & Omit<
-  LiquidatePassiveInput,
-  'liquidatedAccountId'
->;
+type Data = { liquidatedAccount: Account; passive: Passive };
 
 export default class LiquidatePassiveCommand
   implements IMovementCommand<PassiveTuple, Data> {
@@ -31,18 +27,9 @@ export default class LiquidatePassiveCommand
     this.manager = manager || getManager();
   }
 
-  private findPassive() {
-    const { id } = this.data;
-    return this.manager.getRepository(Passive).findOneOrFail(id);
-  }
-
-  private findOriginalAccount(passive: Passive) {
-    return this.manager.getRepository(Account).findOneOrFail(passive.accountId);
-  }
-
-  private async findAccounts(passive: Passive) {
+  private async findAccounts() {
     const { liquidatedAccount } = this.data;
-    const originalAccount = await this.findOriginalAccount(passive);
+    const originalAccount = this.data.passive.account;
     const rootAccount = await this.user.getRootAccount({
       manager: this.manager,
     });
@@ -55,7 +42,7 @@ export default class LiquidatePassiveCommand
   }
 
   private async findPassives() {
-    const passive = await this.findPassive();
+    const { passive } = this.data;
     const rootPassive = await passive.getPairedPassive();
 
     return {
@@ -103,7 +90,7 @@ export default class LiquidatePassiveCommand
       originalAccount,
       rootAccount,
       liquidatedAccount,
-    } = await this.findAccounts(passive);
+    } = await this.findAccounts();
 
     this.applyBalanceChanges({
       amount: passive.amount,

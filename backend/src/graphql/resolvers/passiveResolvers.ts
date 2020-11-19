@@ -16,6 +16,7 @@ import Account from '../../models/Account';
 import { CreatePassiveInput, LiquidatePassiveInput } from '../helpers/inputs';
 import SavePassiveCommand from '../../commands/SavePassiveCommand';
 import LiquidatePassiveCommand from '../../commands/LiquidatePassiveCommand';
+import NotFoundError from '../errors/NotFoundError';
 
 @Resolver(Passive)
 export default class PassiveResolvers {
@@ -68,9 +69,19 @@ export default class PassiveResolvers {
   @Authorized()
   async liquidatePassive(
     @Arg('input')
-    { liquidatedAccountId, ...input }: LiquidatePassiveInput,
+    { id, liquidatedAccountId }: LiquidatePassiveInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Passive> {
+    const passive = await this.repository
+      .createQueryBuilder('passive')
+      .select()
+      .leftJoinAndSelect('passive.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('passive.id = :id', { id })
+      .getOne();
+
+    if (!passive) throw new NotFoundError('passive');
+
     const liquidatedAccount = await this.accountRepository.findOneOrFail({
       where: {
         id: liquidatedAccountId,
@@ -82,7 +93,7 @@ export default class PassiveResolvers {
     return getManager().transaction(async (passiveManager) => {
       const command = new LiquidatePassiveCommand(
         currentUser!,
-        { liquidatedAccount, ...input },
+        { passive, liquidatedAccount },
         passiveManager,
       );
 
