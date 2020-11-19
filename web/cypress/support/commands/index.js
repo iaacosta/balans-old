@@ -3,6 +3,7 @@ import './helpers';
 import './database';
 import './users';
 import './account';
+import './passive';
 import './transaction';
 import './transfer';
 import './category';
