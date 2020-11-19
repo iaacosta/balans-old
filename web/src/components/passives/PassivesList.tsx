@@ -17,6 +17,7 @@ import DialogIconButton from '../ui/dialogs/DialogIconButton';
 import { useLocale } from '../../hooks/utils/useLocale';
 import LiquidatePassiveDialog from './LiquidatePassiveDialog';
 import AmountTypography from '../ui/dataDisplay/AmountTypography';
+import { useDeletePassive } from '../../hooks/graphql';
 
 type Props = {
   passives: MyPassivesQuery['passives'];
@@ -37,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated }) => {
   const { locale } = useLocale();
+  const [deletePassive, { loading: deleteLoading }] = useDeletePassive();
   const classes = useStyles();
 
   return (
@@ -79,9 +81,10 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
                   </EnhancedIconButton>
                   <EnhancedIconButton
                     contained
-                    disabled
+                    disabled={deleteLoading}
                     data-testid={`deletePassive${id}`}
                     color="error"
+                    onClick={() => deletePassive(id)}
                   >
                     <DeleteIcon fontSize="small" />
                   </EnhancedIconButton>
