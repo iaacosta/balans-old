@@ -1,17 +1,35 @@
-import { useInputMutation } from './utils';
+import { useMemo } from 'react';
+import { QueryResult } from '@apollo/client';
+import { useInputMutation, useRedirectedQuery } from './utils';
 import {
   CreatePassiveMutation,
   CreatePassiveMutationVariables,
   LiquidatePassiveMutation,
   LiquidatePassiveMutationVariables,
+  MyPassivesQuery,
+  MyPassivesQueryVariables,
 } from '../../@types/graphql';
-import { myAccountsQuery, createPassiveMutation, liquidatePassiveMutation } from './queries';
+import {
+  myAccountsQuery,
+  createPassiveMutation,
+  liquidatePassiveMutation,
+  myPassivesQuery,
+} from './queries';
 import {
   InputMutationFunction,
   InputMutationTuple,
   UpdateInputMutationFunction,
 } from '../../@types/helpers';
 import { useLocale } from '../utils/useLocale';
+
+export const useMyPassives = (): Omit<
+  QueryResult<MyPassivesQuery, MyPassivesQueryVariables>,
+  'data'
+> & { passives: MyPassivesQuery['passives'] } => {
+  const { data, loading, ...meta } = useRedirectedQuery(myPassivesQuery);
+  const passives = useMemo(() => data?.passives || [], [data]);
+  return { passives, loading: loading || !data, ...meta };
+};
 
 type TExtends = { type: 'debt' | 'loan' };
 

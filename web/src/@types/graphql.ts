@@ -212,6 +212,7 @@ export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
   myCategories: Array<Category>;
+  myPassives: Array<Passive>;
   myTransactions: Array<Transaction>;
   myTransfers: Array<Transfer>;
   myPairedTransfers: Array<PairedTransfer>;
@@ -470,6 +471,24 @@ export type DeleteCategoryMutation = (
   & Pick<Mutation, 'deleteCategory'>
 );
 
+export type MyPassivesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyPassivesQuery = (
+  { __typename?: 'Query' }
+  & { passives: Array<(
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id' | 'amount' | 'memo' | 'liquidated' | 'issuedAt'>
+    & { account: (
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    ), liquidatedAccount?: Maybe<(
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    )> }
+  )> }
+);
+
 export type CreatePassiveMutationVariables = Exact<{
   input: CreatePassiveInput;
 }>;
@@ -493,10 +512,7 @@ export type LiquidatePassiveMutation = (
   & { liquidatePassive: (
     { __typename?: 'Passive' }
     & Pick<Passive, 'id' | 'liquidated'>
-    & { account: (
-      { __typename?: 'Account' }
-      & Pick<Account, 'id' | 'name' | 'bank'>
-    ), liquidatedAccount?: Maybe<(
+    & { liquidatedAccount?: Maybe<(
       { __typename?: 'Account' }
       & Pick<Account, 'id' | 'name' | 'bank'>
     )> }
