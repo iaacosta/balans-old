@@ -1,19 +1,16 @@
 import React, { useMemo } from 'react';
 import { makeStyles, Typography, Box } from '@material-ui/core';
 import { Column } from 'react-table';
-import { formatMoney } from 'accounting';
-import clsx from 'clsx';
 import { MyTransactionsQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransactionActionCell from './TransactionActionCell';
 import CategoryIcon from '../ui/misc/CategoryIcon';
 import { longDateFormatter } from '../../utils/date';
 import { useLocale } from '../../hooks/utils/useLocale';
+import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
-  expense: { color: theme.palette.error.main },
-  income: { color: theme.palette.success.main },
   categoryWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -41,14 +38,7 @@ const TransactionsTable: React.FC<Props> = ({
       {
         Header: locale('movements:form:amount'),
         accessor: 'amount',
-        Cell: ({ value }) => (
-          <Typography
-            className={clsx(value < 0 && classes.expense, value > 0 && classes.income)}
-            variant="body2"
-          >
-            {formatMoney(value)}
-          </Typography>
-        ),
+        Cell: ({ value }) => <AmountTypography variant="body2">{value}</AmountTypography>,
       },
       {
         Header: locale('movements:form:account'),

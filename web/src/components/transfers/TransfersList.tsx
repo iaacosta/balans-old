@@ -15,12 +15,12 @@ import {
   Edit as EditIcon,
   TrendingFlat as TransferIcon,
 } from '@material-ui/icons';
-import { formatMoney } from 'accounting';
 import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import { useDeleteTransfer } from '../../hooks/graphql';
 import { useLocale } from '../../hooks/utils/useLocale';
+import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 type Props = {
   transfers: MyTransfersQuery['transfers'];
@@ -31,7 +31,6 @@ type Props = {
 const useStyles = makeStyles((theme) => ({
   paper: { flex: 1 },
   container: { listStyle: 'none' },
-  amount: { color: theme.palette.info.main },
   icon: { color: theme.palette.action.disabled },
   secondaryActions: {
     display: 'flex',
@@ -67,8 +66,17 @@ const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts 
             <Box style={style} key={index}>
               <ListItem classes={{ container: classes.container }} component="div">
                 <ListItemText
-                  className={classes.amount}
-                  primary={formatMoney(amount)}
+                  primary={
+                    <AmountTypography
+                      formattingConditions={{
+                        neutral: () => true,
+                        expense: () => false,
+                        income: () => false,
+                      }}
+                    >
+                      {amount}
+                    </AmountTypography>
+                  }
                   secondaryTypographyProps={{ component: 'div', className: classes.transfer }}
                   secondary={
                     <>
