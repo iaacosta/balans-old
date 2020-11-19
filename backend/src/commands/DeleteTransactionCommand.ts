@@ -1,6 +1,7 @@
 import { EntityManager, getManager } from 'typeorm';
 
 import { CurrentUser } from '../@types';
+import Account from '../models/Account';
 import Transaction from '../models/Transaction';
 import IMovementCommand from './MovementCommand';
 
@@ -30,8 +31,11 @@ export default class DeleteTransactionCommand
     const rootAccount = await this.user.getRootAccount();
     const rootTransaction = await transaction.getPairedTransaction();
 
-    transaction.account.balance -= transaction.amount;
-    rootAccount.balance += transaction.amount;
+    Account.applyBalanceChanges({
+      amount: transaction.amount,
+      from: transaction.account,
+      to: rootAccount,
+    });
 
     await this.manager.save([transaction.account, rootAccount]);
     return Transaction.removeMovementPair([transaction, rootTransaction], {
