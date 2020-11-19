@@ -99,6 +99,7 @@ type ValidationKeys =
 
 type ElementKeys =
   | 'elements:singular:account'
+  | 'elements:singular:liquidatedAccount'
   | 'elements:singular:category'
   | 'elements:singular:passive'
   | 'elements:singular:debt'
@@ -107,6 +108,7 @@ type ElementKeys =
   | 'elements:singular:transfer'
   | 'elements:singular:user'
   | 'elements:plural:account'
+  | 'elements:plural:liquidatedAccount'
   | 'elements:plural:category'
   | 'elements:plural:passive'
   | 'elements:plural:debt'
@@ -124,6 +126,13 @@ type SnackbarKeys =
   | 'snackbars:success:done'
   | 'snackbars:errors:unknown';
 
+type OtherKeys =
+  | 'others:passiveStatus'
+  | 'others:passivePaid'
+  | 'others:passivePending'
+  | 'others:liquidated'
+  | 'others:unliquidated';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -135,4 +144,5 @@ export type LocaleKeys =
   | UserKeys
   | ValidationKeys
   | ElementKeys
-  | SnackbarKeys;
+  | SnackbarKeys
+  | OtherKeys;

@@ -139,6 +139,7 @@ export const en = {
   elements: {
     singular: {
       account: 'Account',
+      liquidatedAccount: 'Liquidated account',
       category: 'Category',
       passive: 'Passive',
       debt: 'Debt',
@@ -149,6 +150,7 @@ export const en = {
     },
     plural: {
       account: 'Accounts',
+      liquidatedAccount: 'Liquidated accounts',
       category: 'Categories',
       passive: 'Passives',
       debt: 'Debts',
@@ -170,6 +172,13 @@ export const en = {
     error: {
       unknown: 'An unknown error has occurred',
     },
+  },
+  others: {
+    passiveStatus: 'Status',
+    passivePaid: 'Paid',
+    passivePending: 'Pending',
+    liquidated: 'Liquidated',
+    unliquidated: 'Unliquidated',
   },
 };
 

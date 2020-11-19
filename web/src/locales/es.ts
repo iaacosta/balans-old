@@ -141,6 +141,7 @@ export const es: LocaleShape = {
   elements: {
     singular: {
       account: 'Cuenta',
+      liquidatedAccount: 'Cuenta liquidada',
       category: 'Categoría',
       passive: 'Pasivo',
       debt: 'Deuda',
@@ -151,6 +152,7 @@ export const es: LocaleShape = {
     },
     plural: {
       account: 'Cuentas',
+      liquidatedAccount: 'Cuentas liquidadas',
       category: 'Categorías',
       passive: 'Pasivos',
       debt: 'Deudas',
@@ -172,5 +174,12 @@ export const es: LocaleShape = {
     error: {
       unknown: 'Un error desconocido ha ocurrido',
     },
+  },
+  others: {
+    passiveStatus: 'Estado',
+    passivePaid: 'Pagado',
+    passivePending: 'Pendiente',
+    liquidated: 'Liquidado',
+    unliquidated: 'No liquidado',
   },
 };
