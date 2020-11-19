@@ -56,7 +56,7 @@ const TransfersList: React.FC<Props> = ({ transfers, loading, notEnoughAccounts 
         noEntriesLabel={
           notEnoughAccounts
             ? locale('movements:atLeastTwoAccounts')
-            : locale('movements:noTransfersCreated')
+            : locale('movements:noneCreated', { value: locale('elements:plural:transfer') })
         }
       >
         {({ data, index, style }) => {

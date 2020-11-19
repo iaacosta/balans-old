@@ -83,7 +83,7 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
       noEntriesLabel={
         notEnoughAccounts
           ? locale('movements:atLeastTwoAccounts')
-          : locale('movements:noTransfersCreated')
+          : locale('movements:noneCreated', { value: locale('elements:plural:transfer') })
       }
     >
       {children}

@@ -49,7 +49,7 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
         noEntriesLabel={
           noAccountsCreated
             ? locale('movements:atLeastOneAccount')
-            : locale('movements:noTransactionsCreated')
+            : locale('movements:noneCreated', { value: locale('elements:plural:transaction') })
         }
       >
         {({ data, index, style }) => {

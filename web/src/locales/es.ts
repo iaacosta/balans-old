@@ -93,8 +93,7 @@ export const es: LocaleShape = {
     transfer: 'Transferencia',
     atLeastOneAccount: 'Necesitas al menos una cuenta para ver esto',
     atLeastTwoAccounts: 'Necesitas al menos dos cuentas para ver esto',
-    noTransactionsCreated: 'Aún no creas transacciones',
-    noTransfersCreated: 'Aún no creas transferencias',
+    noneCreated: 'Aún no creas {{value}}',
     create: {
       transaction: 'Crear nueva transacción',
       transfer: 'Crear nueva transferencia',

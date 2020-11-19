@@ -91,8 +91,7 @@ export const en = {
     transfer: 'Transfer',
     atLeastOneAccount: 'You need at least one account to see this',
     atLeastTwoAccounts: 'You need at least two accounts to see this',
-    noTransactionsCreated: 'No transactions created yet',
-    noTransfersCreated: 'No transfers created yet',
+    noneCreated: 'No {{value}} created yet',
     create: {
       transaction: 'Create new transaction',
       transfer: 'Create new transfer',
