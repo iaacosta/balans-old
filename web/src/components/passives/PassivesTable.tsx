@@ -1,16 +1,17 @@
 import React, { useMemo } from 'react';
-import { makeStyles, Typography, Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { Column } from 'react-table';
-import { MyTransactionsQuery } from '../../@types/graphql';
+import { MyPassivesQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
-import TransactionActionCell from './TransactionActionCell';
-import CategoryIcon from '../ui/misc/CategoryIcon';
 import { longDateFormatter } from '../../utils/date';
 import { useLocale } from '../../hooks/utils/useLocale';
+import PassiveActionCell from './PassiveActionCell';
 import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
+  expense: { color: theme.palette.error.main },
+  income: { color: theme.palette.success.main },
   categoryWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -19,21 +20,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  transactions: MyTransactionsQuery['transactions'];
+  passives: MyPassivesQuery['passives'];
   loading: boolean;
   noAccountsCreated: boolean;
 };
 
-const TransactionsTable: React.FC<Props> = ({
-  children,
-  transactions,
-  loading,
-  noAccountsCreated,
-}) => {
+const PassivesTable: React.FC<Props> = ({ children, passives, loading, noAccountsCreated }) => {
   const classes = useStyles();
   const { locale } = useLocale();
 
-  const columns: Column<MyTransactionsQuery['transactions'][number]>[] = useMemo(
+  const columns: Column<MyPassivesQuery['passives'][number]>[] = useMemo(
     () => [
       {
         Header: locale('movements:form:amount'),
@@ -41,24 +37,25 @@ const TransactionsTable: React.FC<Props> = ({
         Cell: ({ value }) => <AmountTypography variant="body2">{value}</AmountTypography>,
       },
       {
+        Header: locale('others:passiveStatus'),
+        accessor: 'liquidated',
+        Cell: ({ value }) =>
+          value ? locale('others:passivePaid') : locale('others:passivePending'),
+      },
+      {
         Header: locale('movements:form:account'),
         accessor: 'account',
         Cell: ({ value }) => `${value.name} (${value.bank})`,
       },
       {
+        Header: locale('elements:singular:liquidatedAccount'),
+        accessor: 'liquidatedAccount',
+        Cell: ({ value }) => (value ? `${value.name} (${value.bank})` : '-'),
+      },
+      {
         Header: locale('movements:form:memo'),
         accessor: 'memo',
         Cell: ({ value }) => value || '-',
-      },
-      {
-        Header: locale('movements:form:category'),
-        accessor: 'category',
-        Cell: ({ value }) => (
-          <Box className={classes.categoryWrapper}>
-            <CategoryIcon color={value?.color} />
-            <Typography variant="body2">{value?.name || 'None'}</Typography>
-          </Box>
-        ),
       },
       {
         Header: locale('movements:form:issuedAt'),
@@ -68,10 +65,10 @@ const TransactionsTable: React.FC<Props> = ({
       {
         Header: locale('tables:actions'),
         id: 'actions',
-        Cell: TransactionActionCell,
+        Cell: PassiveActionCell,
       },
     ],
-    [classes, locale],
+    [locale],
   );
 
   return (
@@ -79,12 +76,12 @@ const TransactionsTable: React.FC<Props> = ({
       className={classes.table}
       loading={loading}
       columns={columns}
-      data={transactions}
+      data={passives}
       initialState={{ pageSize: 7 }}
       noEntriesLabel={
         noAccountsCreated
           ? locale('movements:atLeastOneAccount')
-          : locale('movements:noneCreated', { value: locale('elements:plural:transaction') })
+          : locale('movements:noneCreated', { value: locale('elements:plural:passive') })
       }
     >
       {children}
@@ -92,4 +89,4 @@ const TransactionsTable: React.FC<Props> = ({
   );
 };
 
-export default TransactionsTable;
+export default PassivesTable;

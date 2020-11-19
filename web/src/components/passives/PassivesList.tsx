@@ -9,18 +9,17 @@ import {
   Box,
   Paper,
 } from '@material-ui/core';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
-import { MyTransactionsQuery } from '../../@types/graphql';
+import { Delete as DeleteIcon, Edit as EditIcon, Payment as PaymentIcon } from '@material-ui/icons';
+import { MyPassivesQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
-import { useDeleteTransaction } from '../../hooks/graphql';
 import VirtualizedList from '../ui/dataDisplay/VirtualizedList';
 import DialogIconButton from '../ui/dialogs/DialogIconButton';
-import UpdateTransactionDialog from './UpdateTransactionDialog';
 import { useLocale } from '../../hooks/utils/useLocale';
+import LiquidatePassiveDialog from './LiquidatePassiveDialog';
 import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 type Props = {
-  transactions: MyTransactionsQuery['transactions'];
+  passives: MyPassivesQuery['passives'];
   loading: boolean;
   noAccountsCreated: boolean;
 };
@@ -28,29 +27,30 @@ type Props = {
 const useStyles = makeStyles((theme) => ({
   paper: { flex: 1 },
   container: { listStyle: 'none' },
+  expense: { color: theme.palette.error.main },
+  income: { color: theme.palette.success.main },
   secondaryActions: {
     display: 'flex',
     '& > *:not(:last-child)': { marginRight: theme.spacing(1) },
   },
 }));
 
-const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCreated }) => {
+const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated }) => {
   const { locale } = useLocale();
   const classes = useStyles();
 
   return (
     <Paper className={classes.paper} elevation={1}>
       <VirtualizedList
-        data={transactions}
+        data={passives}
         loading={loading}
         noEntriesLabel={
           noAccountsCreated
             ? locale('movements:atLeastOneAccount')
-            : locale('movements:noneCreated', { value: locale('elements:plural:transaction') })
+            : locale('movements:noneCreated', { value: locale('elements:plural:passive') })
         }
       >
         {({ data, index, style }) => {
-          const [deleteTransaction, { loading: deleteLoading }] = useDeleteTransaction();
           const { id, amount, account } = data[index];
           return (
             <Box style={style} key={index}>
@@ -61,17 +61,26 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
                 />
                 <ListItemSecondaryAction className={classes.secondaryActions}>
                   <DialogIconButton
-                    data-testid={`updateTransaction${id}`}
-                    icon={<EditIcon />}
                     contained
+                    disabled
+                    data-testid={`updatePassive${id}`}
                     color="info"
+                    icon={<PaymentIcon />}
                   >
-                    <UpdateTransactionDialog transaction={data[index]} />
+                    <LiquidatePassiveDialog passive={data[index]} />
                   </DialogIconButton>
                   <EnhancedIconButton
-                    onClick={() => deleteTransaction(id)}
                     contained
-                    disabled={deleteLoading}
+                    disabled
+                    data-testid={`updatePassive${id}`}
+                    color="info"
+                  >
+                    <EditIcon />
+                  </EnhancedIconButton>
+                  <EnhancedIconButton
+                    contained
+                    disabled
+                    data-testid={`deletePassive${id}`}
                     color="error"
                   >
                     <DeleteIcon fontSize="small" />
@@ -87,4 +96,4 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, noAccountsCr
   );
 };
 
-export default TransactionsList;
+export default PassivesList;

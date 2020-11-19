@@ -6,6 +6,7 @@ import {
   Authorized,
   FieldResolver,
   Root,
+  Query,
 } from 'type-graphql';
 import { Repository, getRepository, getManager, Not } from 'typeorm';
 
@@ -25,6 +26,19 @@ export default class PassiveResolvers {
   constructor() {
     this.repository = getRepository(Passive);
     this.accountRepository = getRepository(Account);
+  }
+
+  @Query(() => [Passive])
+  @Authorized()
+  myPassives(@Ctx() { currentUser }: Context): Promise<Passive[]> {
+    return this.repository
+      .createQueryBuilder('passive')
+      .select()
+      .leftJoin('passive.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('account.type != :type', { type: 'root' })
+      .orderBy('passive.issuedAt', 'DESC')
+      .getMany();
   }
 
   @Mutation(() => Passive)
@@ -84,5 +98,14 @@ export default class PassiveResolvers {
   ): Promise<Account | null> {
     if (!accountId) return null;
     return loaders.accounts.byId.load(accountId);
+  }
+
+  @FieldResolver(() => Account)
+  async liquidatedAccount(
+    @Root() { liquidatedAccountId }: Passive,
+    @Ctx() { loaders }: Context,
+  ): Promise<Account | null> {
+    if (!liquidatedAccountId) return null;
+    return loaders.accounts.byId.load(liquidatedAccountId);
   }
 }

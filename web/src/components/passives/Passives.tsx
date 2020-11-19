@@ -1,10 +1,12 @@
 import React from 'react';
 import { Add as AddIcon } from '@material-ui/icons';
-import { Box, makeStyles } from '@material-ui/core';
-import { useMyDebitAccounts } from '../../hooks/graphql';
+import { Box, Hidden, makeStyles } from '@material-ui/core';
+import { useMyDebitAccounts, useMyPassives } from '../../hooks/graphql';
 import DialogButton from '../ui/dialogs/DialogButton';
 import CreatePassiveDialog from './CreatePassiveDialog';
 import { useLocale } from '../../hooks/utils/useLocale';
+import PassivesTable from './PassivesTable';
+import PassivesList from './PassivesList';
 
 const useStyles = makeStyles((theme) => ({
   buttonWrapper: {
@@ -18,8 +20,10 @@ const Passives: React.FC = () => {
   const classes = useStyles();
   const { locale } = useLocale();
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
+  const { passives, loading: passivesLoading } = useMyPassives();
 
   const noAccounts = accounts.length === 0;
+  const loading = accountsLoading || passivesLoading;
 
   const Button = (
     <DialogButton
@@ -32,7 +36,19 @@ const Passives: React.FC = () => {
     </DialogButton>
   );
 
-  return <Box className={classes.buttonWrapper}>{Button}</Box>;
+  return (
+    <>
+      <Hidden smDown>
+        <PassivesTable passives={passives} loading={loading} noAccountsCreated={noAccounts}>
+          {Button}
+        </PassivesTable>
+      </Hidden>
+      <Hidden mdUp>
+        <PassivesList passives={passives} loading={loading} noAccountsCreated={noAccounts} />
+        <Box className={classes.buttonWrapper}>{Button}</Box>
+      </Hidden>
+    </>
+  );
 };
 
 export default Passives;

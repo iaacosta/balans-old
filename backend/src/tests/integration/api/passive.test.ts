@@ -1,5 +1,6 @@
 import { createConnection, Connection, getRepository } from 'typeorm';
 import { gql } from 'apollo-server-express';
+import { keyBy } from 'lodash';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
 import Passive from '../../../models/Passive';
@@ -9,6 +10,30 @@ import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
 import { AccountType } from '../../../graphql/helpers';
+
+const MY_PASSIVES = gql`
+  query MyPassives {
+    passives: myPassives {
+      id
+      amount
+      memo
+      operationId
+      liquidated
+      account {
+        id
+        name
+        bank
+      }
+      liquidatedAccount {
+        id
+        name
+        bank
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 const CREATE_PASSIVE = gql`
   mutation CreatePassive($input: CreatePassiveInput!) {
@@ -54,6 +79,7 @@ describe('passive API calls', () => {
   let connection: Connection;
   let testUser: User;
   let testAccount: Account;
+  let testPassives: Passive[];
 
   const pgClient = createPgClient();
 
@@ -68,11 +94,40 @@ describe('passive API calls', () => {
         type: AccountType.checking,
       })
     ).databaseAccount;
+
+    testPassives = await Promise.all(
+      Array.from(Array(5).keys()).map(() =>
+        createPassive(connection, {
+          account: testAccount,
+        }).then(({ databasePassive }) => databasePassive),
+      ),
+    );
   });
 
   afterAll(() => {
     connection.close();
     pgClient.end();
+  });
+
+  describe('myPassives', () => {
+    it('should get correct passives for the user', async () => {
+      const { query } = await mountTestClient({ currentUser: testUser });
+      const response = await query({ query: MY_PASSIVES });
+
+      expect(response).toBeSuccessful();
+      expect(response.data!.passives).toHaveLength(testPassives.length);
+
+      const passivesById = keyBy(response.data!.passives, 'id');
+      testPassives.forEach((passive) =>
+        expect(passivesById[passive.id].id).toBe(`${passive.id}`),
+      );
+    });
+
+    it('should not authorize unauthenticated users', async () => {
+      const { query } = await mountTestClient();
+      const response = await query({ query: MY_PASSIVES });
+      expect(response).toBeRejectedByAuth();
+    });
   });
 
   describe('createPassive', () => {

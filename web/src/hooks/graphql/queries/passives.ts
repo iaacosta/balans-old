@@ -1,5 +1,27 @@
 import { gql } from '@apollo/client';
 
+export const myPassivesQuery = gql`
+  query MyPassives {
+    passives: myPassives {
+      id
+      amount
+      memo
+      liquidated
+      account {
+        id
+        name
+        bank
+      }
+      liquidatedAccount {
+        id
+        name
+        bank
+      }
+      issuedAt
+    }
+  }
+`;
+
 export const createPassiveMutation = gql`
   mutation CreatePassive($input: CreatePassiveInput!) {
     createPassive(input: $input) {
@@ -13,11 +35,6 @@ export const liquidatePassiveMutation = gql`
     liquidatePassive(input: $input) {
       id
       liquidated
-      account {
-        id
-        name
-        bank
-      }
       liquidatedAccount {
         id
         name

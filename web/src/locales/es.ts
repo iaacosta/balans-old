@@ -93,8 +93,7 @@ export const es: LocaleShape = {
     transfer: 'Transferencia',
     atLeastOneAccount: 'Necesitas al menos una cuenta para ver esto',
     atLeastTwoAccounts: 'Necesitas al menos dos cuentas para ver esto',
-    noTransactionsCreated: 'Aún no creas transacciones',
-    noTransfersCreated: 'Aún no creas transferencias',
+    noneCreated: 'Aún no creas {{value}}',
     create: {
       transaction: 'Crear nueva transacción',
       transfer: 'Crear nueva transferencia',
@@ -142,6 +141,7 @@ export const es: LocaleShape = {
   elements: {
     singular: {
       account: 'Cuenta',
+      liquidatedAccount: 'Cuenta liquidada',
       category: 'Categoría',
       passive: 'Pasivo',
       debt: 'Deuda',
@@ -152,6 +152,7 @@ export const es: LocaleShape = {
     },
     plural: {
       account: 'Cuentas',
+      liquidatedAccount: 'Cuentas liquidadas',
       category: 'Categorías',
       passive: 'Pasivos',
       debt: 'Deudas',
@@ -173,5 +174,12 @@ export const es: LocaleShape = {
     error: {
       unknown: 'Un error desconocido ha ocurrido',
     },
+  },
+  others: {
+    passiveStatus: 'Estado',
+    passivePaid: 'Pagado',
+    passivePending: 'Pendiente',
+    liquidated: 'Liquidado',
+    unliquidated: 'No liquidado',
   },
 };

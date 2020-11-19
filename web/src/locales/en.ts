@@ -91,8 +91,7 @@ export const en = {
     transfer: 'Transfer',
     atLeastOneAccount: 'You need at least one account to see this',
     atLeastTwoAccounts: 'You need at least two accounts to see this',
-    noTransactionsCreated: 'No transactions created yet',
-    noTransfersCreated: 'No transfers created yet',
+    noneCreated: 'No {{value}} created yet',
     create: {
       transaction: 'Create new transaction',
       transfer: 'Create new transfer',
@@ -140,6 +139,7 @@ export const en = {
   elements: {
     singular: {
       account: 'Account',
+      liquidatedAccount: 'Liquidated account',
       category: 'Category',
       passive: 'Passive',
       debt: 'Debt',
@@ -150,6 +150,7 @@ export const en = {
     },
     plural: {
       account: 'Accounts',
+      liquidatedAccount: 'Liquidated accounts',
       category: 'Categories',
       passive: 'Passives',
       debt: 'Debts',
@@ -171,6 +172,13 @@ export const en = {
     error: {
       unknown: 'An unknown error has occurred',
     },
+  },
+  others: {
+    passiveStatus: 'Status',
+    passivePaid: 'Paid',
+    passivePending: 'Pending',
+    liquidated: 'Liquidated',
+    unliquidated: 'Unliquidated',
   },
 };
 
