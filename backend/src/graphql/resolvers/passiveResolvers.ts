@@ -7,6 +7,7 @@ import {
   FieldResolver,
   Root,
   Query,
+  ID,
 } from 'type-graphql';
 import { Repository, getRepository, getManager, Not } from 'typeorm';
 
@@ -17,6 +18,7 @@ import { CreatePassiveInput, LiquidatePassiveInput } from '../helpers/inputs';
 import SavePassiveCommand from '../../commands/SavePassiveCommand';
 import LiquidatePassiveCommand from '../../commands/LiquidatePassiveCommand';
 import NotFoundError from '../errors/NotFoundError';
+import DeletePassiveCommand from '../../commands/DeletePassiveCommand';
 
 @Resolver(Passive)
 export default class PassiveResolvers {
@@ -100,6 +102,41 @@ export default class PassiveResolvers {
       const [liquidatedPassive] = await command.execute();
       return liquidatedPassive;
     });
+  }
+
+  @Mutation(() => ID)
+  @Authorized()
+  async deletePassive(
+    @Arg('id', () => ID) id: string,
+    @Ctx() { currentUser }: Context,
+  ): Promise<string> {
+    const passive = await this.repository
+      .createQueryBuilder('passive')
+      .select()
+      .leftJoinAndSelect('passive.account', 'account')
+      .where('account.userId = :userId', { userId: currentUser!.id })
+      .andWhere('passive.id = :id', { id })
+      .getOne();
+
+    if (!passive) throw new NotFoundError('passive');
+
+    if (passive.liquidated) {
+      passive.liquidatedAccount = await getManager()
+        .getRepository(Account)
+        .findOneOrFail(passive.liquidatedAccountId);
+    }
+
+    await getManager().transaction((transactionManager) => {
+      const command = new DeletePassiveCommand(
+        currentUser!,
+        { passive },
+        transactionManager,
+      );
+
+      return command.execute();
+    });
+
+    return id;
   }
 
   @FieldResolver(() => Account)
