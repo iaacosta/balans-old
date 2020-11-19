@@ -1,9 +1,11 @@
 import {
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  EntityManager,
+  getManager,
+  ManyToOne,
 } from 'typeorm';
 import { NotEquals } from 'class-validator';
 import { v4 as uuid } from 'uuid';
@@ -21,9 +23,6 @@ export default abstract class Movement {
   @NotEquals(0)
   amount: number;
 
-  @Column()
-  accountId: number;
-
   @Field({ nullable: true })
   @Column({ nullable: true })
   memo?: string;
@@ -31,6 +30,9 @@ export default abstract class Movement {
   @Field()
   @Column('uuid', { generated: 'uuid' })
   operationId: string;
+
+  @Column()
+  accountId: number;
 
   @Field(() => Account)
   @ManyToOne(() => Account, { eager: false, onDelete: 'CASCADE' })
@@ -48,6 +50,24 @@ export default abstract class Movement {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  static async saveMovementPair<T extends Movement>(
+    movements: [T, T],
+    options?: { manager?: EntityManager },
+  ): Promise<[T, T]> {
+    const manager = options?.manager || getManager();
+    const savedMovements = await manager.save(movements);
+    return savedMovements as [T, T];
+  }
+
+  static async removeMovementPair<T extends Movement>(
+    movements: [T, T],
+    options?: { manager?: EntityManager },
+  ): Promise<[T, T]> {
+    const manager = options?.manager || getManager();
+    const removedMovements = await manager.remove(movements);
+    return removedMovements as [T, T];
+  }
+
   constructor(movement: {
     amount: number;
     accountId: number;
@@ -57,8 +77,8 @@ export default abstract class Movement {
   }) {
     if (movement) {
       this.amount = movement.amount;
-      this.accountId = movement.accountId;
       this.issuedAt = movement.issuedAt || new Date();
+      this.accountId = movement.accountId;
       this.memo = movement.memo === '' ? undefined : movement.memo;
       this.operationId = movement.operationId || uuid();
     }

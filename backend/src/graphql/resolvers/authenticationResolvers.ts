@@ -17,9 +17,11 @@ export default class AuthenticationResolvers {
   }
 
   static generateToken(user: User): string {
-    return jwt.sign({ user }, process.env.SECRET!, {
-      expiresIn: 3600 * 24 * 14, // two weeks
-    });
+    return jwt.sign(
+      { user: { id: user.id, role: user.role } },
+      process.env.SECRET!,
+      { expiresIn: 3600 * 24 * 14 },
+    );
   }
 
   @Mutation(() => String)

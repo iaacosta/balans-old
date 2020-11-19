@@ -27,7 +27,7 @@ type NavbarKeys =
   | 'navbar:en'
   | 'navbar:es';
 
-type FormKeys = 'forms:create' | 'forms:update' | 'forms:go' | 'forms:cancel';
+type FormKeys = 'forms:create' | 'forms:update' | 'forms:liquidate' | 'forms:go' | 'forms:cancel';
 
 type TableKeys = 'tables:actions';
 
@@ -53,15 +53,16 @@ type MovementKeys =
   | 'movements:transfer'
   | 'movements:atLeastOneAccount'
   | 'movements:atLeastTwoAccounts'
-  | 'movements:noTransactionsCreated'
-  | 'movements:noTransfersCreated'
+  | 'movements:noneCreated'
+  | 'movements:create:passive'
   | 'movements:create:transaction'
   | 'movements:create:transfer'
   | 'movements:tabs:transactions'
   | 'movements:tabs:transfers'
-  | 'movements:tabs:passive'
+  | 'movements:tabs:passives'
   | 'movements:form:amount'
   | 'movements:form:transactionType'
+  | 'movements:form:passiveType'
   | 'movements:form:category'
   | 'movements:form:memo'
   | 'movements:form:account'
@@ -96,6 +97,42 @@ type ValidationKeys =
   | 'validation:custom:username'
   | 'validation:custom:passwordsDontMatch';
 
+type ElementKeys =
+  | 'elements:singular:account'
+  | 'elements:singular:liquidatedAccount'
+  | 'elements:singular:category'
+  | 'elements:singular:passive'
+  | 'elements:singular:debt'
+  | 'elements:singular:loan'
+  | 'elements:singular:transaction'
+  | 'elements:singular:transfer'
+  | 'elements:singular:user'
+  | 'elements:plural:account'
+  | 'elements:plural:liquidatedAccount'
+  | 'elements:plural:category'
+  | 'elements:plural:passive'
+  | 'elements:plural:debt'
+  | 'elements:plural:loan'
+  | 'elements:plural:transaction'
+  | 'elements:plural:transfer'
+  | 'elements:plural:user';
+
+type SnackbarKeys =
+  | 'snackbars:success:created'
+  | 'snackbars:success:updated'
+  | 'snackbars:success:deleted'
+  | 'snackbars:success:restored'
+  | 'snackbars:success:liquidated'
+  | 'snackbars:success:done'
+  | 'snackbars:errors:unknown';
+
+type OtherKeys =
+  | 'others:passiveStatus'
+  | 'others:passivePaid'
+  | 'others:passivePending'
+  | 'others:liquidated'
+  | 'others:unliquidated';
+
 export type LocaleKeys =
   | AuthKeys
   | NavbarKeys
@@ -105,4 +142,7 @@ export type LocaleKeys =
   | MovementKeys
   | CategoryKeys
   | UserKeys
-  | ValidationKeys;
+  | ValidationKeys
+  | ElementKeys
+  | SnackbarKeys
+  | OtherKeys;

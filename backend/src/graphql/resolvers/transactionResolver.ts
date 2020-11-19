@@ -9,7 +9,7 @@ import {
   Query,
   ID,
 } from 'type-graphql';
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, getManager } from 'typeorm';
 import { size } from 'lodash';
 
 import Transaction from '../../models/Transaction';
@@ -17,9 +17,11 @@ import { CreateTransactionInput, UpdateTransactionInput } from '../helpers';
 import { Context } from '../../@types';
 import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
-import TransactionCommands from '../../commands/TransactionCommands';
 import NoChangesError from '../errors/NoChangesError';
 import Category from '../../models/Category';
+import SaveTransactionCommand from '../../commands/SaveTransactionCommand';
+import UpdateTransactionCommand from '../../commands/UpdateTransactionCommand';
+import DeleteTransactionCommand from '../../commands/DeleteTransactionCommand';
 
 @Resolver(Transaction)
 export default class TransactionResolvers {
@@ -52,8 +54,6 @@ export default class TransactionResolvers {
     { accountId, categoryId, ...transactionInput }: CreateTransactionInput,
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
-    const transactionCommands = new TransactionCommands(currentUser!);
-
     const account = await this.accountRepository.findOneOrFail({
       id: accountId,
       userId: currentUser!.id,
@@ -64,12 +64,16 @@ export default class TransactionResolvers {
       userId: currentUser!.id,
     });
 
-    const [transaction] = await transactionCommands.create(transactionInput, {
-      account,
-      category,
-    });
+    return getManager().transaction(async (transactionManager) => {
+      const command = new SaveTransactionCommand(
+        currentUser!,
+        { account, category, ...transactionInput },
+        transactionManager,
+      );
 
-    return transaction;
+      const [transaction] = await command.execute();
+      return transaction;
+    });
   }
 
   @Mutation(() => Transaction)
@@ -80,7 +84,6 @@ export default class TransactionResolvers {
     @Ctx() { currentUser }: Context,
   ): Promise<Transaction> {
     if (!size(toChange)) throw new NoChangesError();
-    const transactionCommands = new TransactionCommands(currentUser!);
 
     const transaction = await this.repository
       .createQueryBuilder('transaction')
@@ -91,12 +94,17 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    const [updatedTransaction] = await transactionCommands.update(
-      transaction,
-      toChange,
-    );
 
-    return updatedTransaction;
+    return getManager().transaction(async (transactionManager) => {
+      const command = new UpdateTransactionCommand(
+        currentUser!,
+        { transaction, ...toChange },
+        transactionManager,
+      );
+
+      const [updatedTransaction] = await command.execute();
+      return updatedTransaction;
+    });
   }
 
   @Mutation(() => ID)
@@ -105,7 +113,6 @@ export default class TransactionResolvers {
     @Arg('id', () => ID) id: string,
     @Ctx() { currentUser }: Context,
   ): Promise<string> {
-    const transactionCommands = new TransactionCommands(currentUser!);
     const transaction = await this.repository
       .createQueryBuilder('transaction')
       .select()
@@ -115,7 +122,17 @@ export default class TransactionResolvers {
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
-    await transactionCommands.delete(transaction);
+
+    await getManager().transaction((transactionManager) => {
+      const command = new DeleteTransactionCommand(
+        currentUser!,
+        { transaction },
+        transactionManager,
+      );
+
+      return command.execute();
+    });
+
     return id;
   }
 

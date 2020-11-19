@@ -6,7 +6,7 @@ import { capitalize } from 'lodash';
 import { store } from './redux';
 import { expireToken } from '../slices/authSlice';
 import { logoutHof } from '../hooks/auth/useLogout';
-import cache from '../graphql/cache';
+import cache from './cache';
 
 const baseLink = new HttpLink({
   uri: process.env.REACT_APP_API_URL || 'http://localhost:5000/graphql',

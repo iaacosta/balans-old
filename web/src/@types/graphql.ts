@@ -11,6 +11,22 @@ export type Scalars = {
   Timestamp: any;
 };
 
+export type Category = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: CategoryType;
+  color: Scalars['String'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+};
+
+export enum CategoryType {
+  Income = 'income',
+  Expense = 'expense'
+}
+
+
 export type Movement = {
   __typename?: 'Movement';
   id: Scalars['ID'];
@@ -22,7 +38,6 @@ export type Movement = {
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
-
 
 export type Transaction = {
   __typename?: 'Transaction';
@@ -38,19 +53,50 @@ export type Transaction = {
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
-export type Category = {
-  __typename?: 'Category';
+export type Transfer = {
+  __typename?: 'Transfer';
   id: Scalars['ID'];
-  name: Scalars['String'];
-  type: CategoryType;
-  color: Scalars['String'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: Account;
+  issuedAt: Scalars['Timestamp'];
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
 
-export enum CategoryType {
-  Income = 'income',
-  Expense = 'expense'
+export type Passive = {
+  __typename?: 'Passive';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: Account;
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  liquidated: Scalars['Boolean'];
+  liquidatedAccount?: Maybe<Account>;
+};
+
+export type Account = {
+  __typename?: 'Account';
+  id: Scalars['ID'];
+  type: AccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  balance: Scalars['Int'];
+  unliquidatedBalance: Scalars['Int'];
+  user: User;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
+};
+
+export enum AccountType {
+  Cash = 'cash',
+  Vista = 'vista',
+  Checking = 'checking'
 }
 
 export type User = {
@@ -68,37 +114,6 @@ export type User = {
   updatedAt: Scalars['Timestamp'];
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
-
-export type Transfer = {
-  __typename?: 'Transfer';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  operationId: Scalars['String'];
-  account: Account;
-  issuedAt: Scalars['Timestamp'];
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-};
-
-export type Account = {
-  __typename?: 'Account';
-  id: Scalars['ID'];
-  type: AccountType;
-  name: Scalars['String'];
-  bank: Scalars['String'];
-  balance: Scalars['Int'];
-  user: User;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-  deletedAt?: Maybe<Scalars['Timestamp']>;
-};
-
-export enum AccountType {
-  Cash = 'cash',
-  Vista = 'vista',
-  Checking = 'checking'
-}
 
 export type PairedTransfer = {
   __typename?: 'PairedTransfer';
@@ -149,6 +164,25 @@ export type CreateCategoryInput = {
   type: CategoryType;
 };
 
+export type UpdateCategoryInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  type?: Maybe<CategoryType>;
+};
+
+export type CreatePassiveInput = {
+  amount: Scalars['Int'];
+  accountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
+  issuedAt: Scalars['Timestamp'];
+};
+
+export type LiquidatePassiveInput = {
+  id: Scalars['ID'];
+  liquidatedAccountId: Scalars['ID'];
+};
+
 export type CreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -178,6 +212,7 @@ export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
   myCategories: Array<Category>;
+  myPassives: Array<Passive>;
   myTransactions: Array<Transaction>;
   myTransfers: Array<Transfer>;
   myPairedTransfers: Array<PairedTransfer>;
@@ -204,7 +239,11 @@ export type Mutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   createCategory: Category;
+  updateCategory: Category;
   deleteCategory: Scalars['ID'];
+  createPassive: Passive;
+  liquidatePassive: Passive;
+  deletePassive: Scalars['ID'];
   setupDatabase?: Maybe<User>;
   createTransaction: Transaction;
   updateTransaction: Transaction;
@@ -244,7 +283,27 @@ export type MutationCreateCategoryArgs = {
 };
 
 
+export type MutationUpdateCategoryArgs = {
+  input: UpdateCategoryInput;
+};
+
+
 export type MutationDeleteCategoryArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreatePassiveArgs = {
+  input: CreatePassiveInput;
+};
+
+
+export type MutationLiquidatePassiveArgs = {
+  input: LiquidatePassiveInput;
+};
+
+
+export type MutationDeletePassiveArgs = {
   id: Scalars['ID'];
 };
 
@@ -310,7 +369,7 @@ export type MyAccountsQuery = (
   { __typename?: 'Query' }
   & { accounts: Array<(
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
   )> }
 );
 
@@ -323,7 +382,7 @@ export type CreateDebitAccountMutation = (
   { __typename?: 'Mutation' }
   & { createAccount: (
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
   ) }
 );
 
@@ -375,10 +434,10 @@ export type MyCategoriesQuery = (
   { __typename?: 'Query' }
   & { income: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name' | 'color'>
+    & Pick<Category, 'id' | 'name' | 'color' | 'type'>
   )>, expense: Array<(
     { __typename?: 'Category' }
-    & Pick<Category, 'id' | 'name' | 'color'>
+    & Pick<Category, 'id' | 'name' | 'color' | 'type'>
   )> }
 );
 
@@ -395,6 +454,19 @@ export type CreateCategoryMutation = (
   ) }
 );
 
+export type UpdateCategoryMutationVariables = Exact<{
+  input: UpdateCategoryInput;
+}>;
+
+
+export type UpdateCategoryMutation = (
+  { __typename?: 'Mutation' }
+  & { updateCategory: (
+    { __typename?: 'Category' }
+    & Pick<Category, 'id' | 'name' | 'type' | 'color'>
+  ) }
+);
+
 export type DeleteCategoryMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -403,6 +475,64 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteCategory'>
+);
+
+export type MyPassivesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyPassivesQuery = (
+  { __typename?: 'Query' }
+  & { passives: Array<(
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id' | 'amount' | 'memo' | 'liquidated' | 'issuedAt'>
+    & { account: (
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    ), liquidatedAccount?: Maybe<(
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    )> }
+  )> }
+);
+
+export type CreatePassiveMutationVariables = Exact<{
+  input: CreatePassiveInput;
+}>;
+
+
+export type CreatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { createPassive: (
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id'>
+  ) }
+);
+
+export type LiquidatePassiveMutationVariables = Exact<{
+  input: LiquidatePassiveInput;
+}>;
+
+
+export type LiquidatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { liquidatePassive: (
+    { __typename?: 'Passive' }
+    & Pick<Passive, 'id' | 'liquidated'>
+    & { liquidatedAccount?: Maybe<(
+      { __typename?: 'Account' }
+      & Pick<Account, 'id' | 'name' | 'bank'>
+    )> }
+  ) }
+);
+
+export type DeletePassiveMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeletePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deletePassive'>
 );
 
 export type MyTransactionsQueryVariables = Exact<{ [key: string]: never; }>;

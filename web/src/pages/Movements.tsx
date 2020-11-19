@@ -6,6 +6,7 @@ import { useTabs } from '../hooks/utils/useTabs';
 import Transactions from '../components/transactions/Transactions';
 import Transfers from '../components/transfers/Transfers';
 import { useLocale } from '../hooks/utils/useLocale';
+import Passives from '../components/passives/Passives';
 
 const useStyles = makeStyles((theme) => ({
   title: { marginBottom: theme.spacing(2) },
@@ -19,7 +20,7 @@ const Movements: React.FC = () => {
     () => [
       { key: 'transactions' as const, label: locale('movements:tabs:transactions') },
       { key: 'transfers' as const, label: locale('movements:tabs:transfers') },
-      { key: 'passive' as const, label: locale('movements:tabs:passive'), disabled: true },
+      { key: 'passives' as const, label: locale('movements:tabs:passives') },
     ],
     [locale],
   );
@@ -37,6 +38,7 @@ const Movements: React.FC = () => {
       <CustomTabs tabs={tabs} selected={selected} change={change} />
       {selected === 'transactions' && <Transactions />}
       {selected === 'transfers' && <Transfers />}
+      {selected === 'passives' && <Passives />}
     </ViewportContainer>
   );
 };

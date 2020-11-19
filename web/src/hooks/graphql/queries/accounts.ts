@@ -8,6 +8,7 @@ export const myAccountsQuery = gql`
       bank
       type
       balance
+      unliquidatedBalance
     }
   }
 `;
@@ -20,6 +21,7 @@ export const createDebitAccountMutation = gql`
       bank
       type
       balance
+      unliquidatedBalance
     }
   }
 `;

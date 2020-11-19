@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { makeStyles, Typography, Box } from '@material-ui/core';
 import { Column, CellProps } from 'react-table';
-import { formatMoney } from 'accounting';
 import { TrendingFlat as TransferIcon } from '@material-ui/icons';
 import { MyTransfersQuery } from '../../@types/graphql';
 import EnhancedTable from '../ui/dataDisplay/EnhancedTable';
 import TransferActionCell from './TransferActionCell';
 import { longDateFormatter } from '../../utils/date';
 import { useLocale } from '../../hooks/utils/useLocale';
+import AmountTypography from '../ui/dataDisplay/AmountTypography';
 
 const useStyles = makeStyles((theme) => ({
   table: { flex: 1 },
@@ -38,9 +38,16 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
         Header: locale('movements:form:amount'),
         id: 'amount',
         Cell: ({ row }: CustomCellProps) => (
-          <Typography variant="body2" className={classes.amount}>
-            {formatMoney(row.original.to.amount)}
-          </Typography>
+          <AmountTypography
+            variant="body2"
+            formattingConditions={{
+              neutral: () => true,
+              expense: () => false,
+              income: () => false,
+            }}
+          >
+            {row.original.to.amount}
+          </AmountTypography>
         ),
       },
       {
@@ -79,11 +86,11 @@ const TransfersTable: React.FC<Props> = ({ children, transfers, loading, notEnou
       loading={loading}
       columns={columns}
       data={transfers}
-      initialState={{ pageSize: 8 }}
+      initialState={{ pageSize: 7 }}
       noEntriesLabel={
         notEnoughAccounts
           ? locale('movements:atLeastTwoAccounts')
-          : locale('movements:noTransfersCreated')
+          : locale('movements:noneCreated', { value: locale('elements:plural:transfer') })
       }
     >
       {children}

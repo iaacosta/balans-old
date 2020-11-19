@@ -8,7 +8,7 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { IsIn } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
 import { ObjectType, Field, ID } from 'type-graphql';
 import Transaction from './Transaction';
 import User from './User';
@@ -25,6 +25,7 @@ export default class Category {
 
   @Field()
   @Column()
+  @IsNotEmpty()
   name: string;
 
   @Field(() => CategoryType)

@@ -1,19 +1,14 @@
 /* eslint-disable no-multi-assign */
 import { validateOrReject } from 'class-validator';
 
-/*
-  NOTE: this line prevents a circular dependency from generating.
-  I have no clue why it works, but since it's a minor issue, I'm
-  not putting resources into investigating it.
-*/
-import '../../factory/transactionFactory';
-
 import {
   transferModelFactory,
   transferFactory,
 } from '../../factory/transferFactory';
 import { accountModelFactory } from '../../factory/accountFactory';
 import Transfer from '../../../models/Transfer';
+
+jest.mock('../../../models/Account');
 
 describe('Transfer model test', () => {
   const customTransferFactory = (

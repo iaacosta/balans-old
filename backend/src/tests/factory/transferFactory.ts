@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 import Transfer from '../../models/Transfer';
 import Account from '../../models/Account';
-import TransferCommands from '../../commands/TransferCommands';
+import SaveTransferCommand from '../../commands/SaveTransferCommand';
 
 export type BuildType = Pick<Transfer, 'amount' | 'memo' | 'issuedAt'>;
 
@@ -57,23 +57,25 @@ export const createTransfer = async (
   overrides?: Partial<BuildType>,
 ) => {
   const entityManager = connection.createEntityManager();
-  const transferCommands = new TransferCommands(
-    { id: fromAccount.userId! },
-    entityManager,
-  );
+  const rootAccount = await entityManager
+    .getRepository(Account)
+    .findOneOrFail({ type: 'root', userId: fromAccount.userId });
 
   const { factoryTransfer, fromTransfer, toTransfer } = transferModelFactory(
     { fromAccount, toAccount },
     overrides,
   );
 
+  const transferCommands = new SaveTransferCommand(
+    { getRootAccount: async () => rootAccount } as any,
+    { fromAccount, toAccount, ...factoryTransfer },
+    entityManager,
+  );
+
   const [
     fromDatabaseTransfer,
     toDatabaseTransfer,
-  ] = await transferCommands.create(factoryTransfer, {
-    fromAccount,
-    toAccount,
-  });
+  ] = await transferCommands.execute();
 
   return {
     fromDatabaseTransfer,

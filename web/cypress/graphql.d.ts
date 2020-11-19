@@ -11,6 +11,21 @@ type Scalars = {
   Timestamp: any;
 };
 
+type GQLCategory = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: GQLCategoryType;
+  color: Scalars['String'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+};
+
+type GQLCategoryType = 
+  | 'income'
+  | 'expense';
+
+
 type GQLMovement = {
   __typename?: 'Movement';
   id: Scalars['ID'];
@@ -22,7 +37,6 @@ type GQLMovement = {
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
-
 
 type GQLTransaction = {
   __typename?: 'Transaction';
@@ -38,19 +52,50 @@ type GQLTransaction = {
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
-type GQLCategory = {
-  __typename?: 'Category';
+type GQLTransfer = {
+  __typename?: 'Transfer';
   id: Scalars['ID'];
-  name: Scalars['String'];
-  type: GQLCategoryType;
-  color: Scalars['String'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: GQLAccount;
+  issuedAt: Scalars['Timestamp'];
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
 
-type GQLCategoryType = 
-  | 'income'
-  | 'expense';
+type GQLPassive = {
+  __typename?: 'Passive';
+  id: Scalars['ID'];
+  amount: Scalars['Int'];
+  memo?: Maybe<Scalars['String']>;
+  operationId: Scalars['String'];
+  account: GQLAccount;
+  issuedAt: Scalars['Timestamp'];
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  liquidated: Scalars['Boolean'];
+  liquidatedAccount?: Maybe<GQLAccount>;
+};
+
+type GQLAccount = {
+  __typename?: 'Account';
+  id: Scalars['ID'];
+  type: GQLAccountType;
+  name: Scalars['String'];
+  bank: Scalars['String'];
+  balance: Scalars['Int'];
+  unliquidatedBalance: Scalars['Int'];
+  user: GQLUser;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  deletedAt?: Maybe<Scalars['Timestamp']>;
+};
+
+type GQLAccountType = 
+  | 'cash'
+  | 'vista'
+  | 'checking';
 
 type GQLUser = {
   __typename?: 'User';
@@ -67,36 +112,6 @@ type GQLUser = {
   updatedAt: Scalars['Timestamp'];
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
-
-type GQLTransfer = {
-  __typename?: 'Transfer';
-  id: Scalars['ID'];
-  amount: Scalars['Int'];
-  memo?: Maybe<Scalars['String']>;
-  operationId: Scalars['String'];
-  account: GQLAccount;
-  issuedAt: Scalars['Timestamp'];
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-};
-
-type GQLAccount = {
-  __typename?: 'Account';
-  id: Scalars['ID'];
-  type: GQLAccountType;
-  name: Scalars['String'];
-  bank: Scalars['String'];
-  balance: Scalars['Int'];
-  user: GQLUser;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
-  deletedAt?: Maybe<Scalars['Timestamp']>;
-};
-
-type GQLAccountType = 
-  | 'cash'
-  | 'vista'
-  | 'checking';
 
 type GQLPairedTransfer = {
   __typename?: 'PairedTransfer';
@@ -147,6 +162,25 @@ type GQLCreateCategoryInput = {
   type: GQLCategoryType;
 };
 
+type GQLUpdateCategoryInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  type?: Maybe<GQLCategoryType>;
+};
+
+type GQLCreatePassiveInput = {
+  amount: Scalars['Int'];
+  accountId: Scalars['ID'];
+  memo?: Maybe<Scalars['String']>;
+  issuedAt: Scalars['Timestamp'];
+};
+
+type GQLLiquidatePassiveInput = {
+  id: Scalars['ID'];
+  liquidatedAccountId: Scalars['ID'];
+};
+
 type GQLCreateTransactionInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -176,6 +210,7 @@ type GQLQuery = {
   __typename?: 'Query';
   myAccounts: Array<GQLAccount>;
   myCategories: Array<GQLCategory>;
+  myPassives: Array<GQLPassive>;
   myTransactions: Array<GQLTransaction>;
   myTransfers: Array<GQLTransfer>;
   myPairedTransfers: Array<GQLPairedTransfer>;
@@ -202,7 +237,11 @@ type GQLMutation = {
   login: Scalars['String'];
   signUp: Scalars['String'];
   createCategory: GQLCategory;
+  updateCategory: GQLCategory;
   deleteCategory: Scalars['ID'];
+  createPassive: GQLPassive;
+  liquidatePassive: GQLPassive;
+  deletePassive: Scalars['ID'];
   setupDatabase?: Maybe<GQLUser>;
   createTransaction: GQLTransaction;
   updateTransaction: GQLTransaction;
@@ -242,7 +281,27 @@ type GQLMutationCreateCategoryArgs = {
 };
 
 
+type GQLMutationUpdateCategoryArgs = {
+  input: GQLUpdateCategoryInput;
+};
+
+
 type GQLMutationDeleteCategoryArgs = {
+  id: Scalars['ID'];
+};
+
+
+type GQLMutationCreatePassiveArgs = {
+  input: GQLCreatePassiveInput;
+};
+
+
+type GQLMutationLiquidatePassiveArgs = {
+  input: GQLLiquidatePassiveInput;
+};
+
+
+type GQLMutationDeletePassiveArgs = {
   id: Scalars['ID'];
 };
 
@@ -324,6 +383,32 @@ type GQLCreateCategoryMutation = (
   & { createCategory: (
     { __typename?: 'Category' }
     & Pick<GQLCategory, 'id' | 'name' | 'type' | 'color'>
+  ) }
+);
+
+type GQLCreatePassiveMutationVariables = Exact<{
+  input: GQLCreatePassiveInput;
+}>;
+
+
+type GQLCreatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { createPassive: (
+    { __typename?: 'Passive' }
+    & Pick<GQLPassive, 'id'>
+  ) }
+);
+
+type GQLLiquidatePassiveMutationVariables = Exact<{
+  input: GQLLiquidatePassiveInput;
+}>;
+
+
+type GQLLiquidatePassiveMutation = (
+  { __typename?: 'Mutation' }
+  & { liquidatePassive: (
+    { __typename?: 'Passive' }
+    & Pick<GQLPassive, 'id'>
   ) }
 );
 

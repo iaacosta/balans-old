@@ -1,39 +1,59 @@
 import jwt from 'jsonwebtoken';
+import * as typeorm from 'typeorm';
 
 import { authenticateUser, getUserFromToken } from '../../../services/passport';
 import { userFactory } from '../../factory/userFactory';
 import TokenExpiredError from '../../../errors/TokenExpiredError';
 
-const foundUser = userFactory();
+const testUser = userFactory();
+const tokenUser = { id: 1, role: testUser.role };
 const token = 'mockToken';
 
 describe('passport', () => {
   let verify: jest.SpyInstance;
+  const getManager = jest.spyOn(typeorm, 'getManager').mockImplementation(
+    () =>
+      ({
+        getRepository: () => ({
+          findOne: async (id: number) => ({ ...testUser, id }),
+        }),
+      } as any),
+  );
 
   beforeEach(() => {
     verify = jest
       .spyOn(jwt, 'verify')
-      .mockImplementation(() => ({ user: foundUser }));
+      .mockImplementation(() => ({ user: tokenUser }));
+    getManager.mockClear();
   });
 
   describe('getUserFromToken', () => {
-    it('should call verify', () => {
-      getUserFromToken(token, () => null);
+    it('should call verify', async () => {
+      await getUserFromToken(token, () => null);
       expect(verify).toHaveBeenCalledTimes(1);
       expect(verify).toHaveBeenCalledWith(token, expect.anything());
     });
 
-    it('should call done with found user', () => {
+    it('should call getManager', async () => {
+      await getUserFromToken(token, () => null);
+      expect(getManager).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call done with found user', async () => {
       const done = jest.fn();
-      getUserFromToken(token, done);
+      await getUserFromToken(token, done);
       expect(done).toHaveBeenCalledTimes(1);
-      expect(done).toHaveBeenCalledWith(null, foundUser);
+      expect(done).toHaveBeenCalledWith(null, {
+        id: tokenUser.id,
+        ...testUser,
+      });
     });
 
     it('should call done with error', async () => {
       jest.spyOn(jwt, 'verify').mockImplementation(() => {
         throw new Error('noop');
       });
+
       const done = jest.fn();
       await getUserFromToken(token, done);
       expect(done).toHaveBeenCalledTimes(1);
@@ -47,7 +67,7 @@ describe('passport', () => {
         await authenticateUser({
           headers: { authorization: 'Bearer example' },
         } as any),
-      ).toMatchObject(foundUser);
+      ).toMatchObject(tokenUser);
     });
 
     it('should not authenticate if no token given', async () => {

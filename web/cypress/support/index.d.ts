@@ -83,6 +83,22 @@ declare namespace Cypress {
       transfer: GQLCreateTransferMutationVariables['input'],
     ): Chainable<GQLCreateTransferMutation['createTransfer']>;
 
+    /* Passives */
+    /**
+     * Creates a passive
+     * @example cy.createPassive(buildPassive())
+     */
+    createPassive(
+      passive: GQLCreatePassiveMutationVariables['input'],
+    ): Chainable<GQLCreatePassiveMutation['createPassive']>;
+    /**
+     * Liquidates a passive
+     * @example cy.liquidatePassive(buildPassive())
+     */
+    liquidatePassive(
+      input: GQLLiquidatePassiveMutationVariables['input'],
+    ): Chainable<GQLLiquidatePassiveMutation['liquidatePassive']>;
+
     /* Categories */
     /**
      * Creates an category

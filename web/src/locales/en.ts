@@ -35,6 +35,7 @@ export const en = {
   forms: {
     create: 'Create',
     update: 'Update',
+    liquidate: 'Liquidate',
     go: 'Go',
     cancel: 'Cancel',
   },
@@ -90,20 +91,21 @@ export const en = {
     transfer: 'Transfer',
     atLeastOneAccount: 'You need at least one account to see this',
     atLeastTwoAccounts: 'You need at least two accounts to see this',
-    noTransactionsCreated: 'No transactions created yet',
-    noTransfersCreated: 'No transfers created yet',
+    noneCreated: 'No {{value}} created yet',
     create: {
       transaction: 'Create new transaction',
       transfer: 'Create new transfer',
+      passive: 'Create new passive',
     },
     tabs: {
       transactions: 'Transactions',
       transfers: 'Transfers',
-      passive: 'Passive',
+      passives: 'Passive',
     },
     form: {
       amount: 'Amount',
       transactionType: 'Transaction type',
+      passiveType: 'Passive type',
       category: 'Category',
       memo: 'Memo',
       account: 'Account',
@@ -133,6 +135,50 @@ export const en = {
       name: 'Name',
       role: 'Role',
     },
+  },
+  elements: {
+    singular: {
+      account: 'Account',
+      liquidatedAccount: 'Liquidated account',
+      category: 'Category',
+      passive: 'Passive',
+      debt: 'Debt',
+      loan: 'Loan',
+      transaction: 'Transaction',
+      transfer: 'Transfer',
+      user: 'User',
+    },
+    plural: {
+      account: 'Accounts',
+      liquidatedAccount: 'Liquidated accounts',
+      category: 'Categories',
+      passive: 'Passives',
+      debt: 'Debts',
+      loan: 'Loans',
+      transaction: 'Transactions',
+      transfer: 'Transfers',
+      user: 'Users',
+    },
+  },
+  snackbars: {
+    success: {
+      created: '{{value}} created successfully',
+      updated: '{{value}} updated successfully',
+      deleted: '{{value}} deleted successfully',
+      restored: '{{value}} restored successfully',
+      liquidated: '{{value}} liquidated successfully',
+      done: 'Action done successfully',
+    },
+    error: {
+      unknown: 'An unknown error has occurred',
+    },
+  },
+  others: {
+    passiveStatus: 'Status',
+    passivePaid: 'Paid',
+    passivePending: 'Pending',
+    liquidated: 'Liquidated',
+    unliquidated: 'Unliquidated',
   },
 };
 

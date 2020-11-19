@@ -19,6 +19,7 @@ import { AccountType } from '../graphql/helpers';
 import User from './User';
 import Transaction from './Transaction';
 import Transfer from './Transfer';
+import Passive from './Passive';
 
 @ObjectType()
 @Unique(['name', 'bank', 'userId'])
@@ -48,6 +49,10 @@ export default class Account {
   @IsValidBalance()
   balance: number;
 
+  @Field(() => Int)
+  @Column()
+  unliquidatedBalance: number;
+
   @Column({ nullable: true })
   userId?: number;
 
@@ -67,6 +72,12 @@ export default class Account {
   })
   transfers: Transfer[];
 
+  @OneToMany(() => Passive, (passive) => passive.account, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
+  passives: Passive[];
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -78,6 +89,33 @@ export default class Account {
   @Field({ nullable: true })
   @DeleteDateColumn()
   deletedAt: Date;
+
+  static applyBalanceChanges(data: {
+    amount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    data.from.balance -= data.amount;
+    data.to.balance += data.amount;
+  }
+
+  static applyUnliquidatedBalanceChanges(data: {
+    amount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    data.from.unliquidatedBalance -= data.amount;
+    data.to.unliquidatedBalance += data.amount;
+  }
+
+  static applyPassiveBalanceChanges(data: {
+    amount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    Account.applyBalanceChanges({ ...data, amount: -data.amount });
+    Account.applyUnliquidatedBalanceChanges(data);
+  }
 
   constructor(account: {
     type: AccountType | 'root';
@@ -91,5 +129,6 @@ export default class Account {
     this.bank = account.bank;
     this.userId = account.userId;
     this.balance = 0;
+    this.unliquidatedBalance = 0;
   }
 }
