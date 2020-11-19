@@ -99,4 +99,13 @@ export default class PassiveResolvers {
     if (!accountId) return null;
     return loaders.accounts.byId.load(accountId);
   }
+
+  @FieldResolver(() => Account)
+  async liquidatedAccount(
+    @Root() { liquidatedAccountId }: Passive,
+    @Ctx() { loaders }: Context,
+  ): Promise<Account | null> {
+    if (!liquidatedAccountId) return null;
+    return loaders.accounts.byId.load(liquidatedAccountId);
+  }
 }
