@@ -13,6 +13,9 @@ export default class Passive extends Movement {
   @Column({ nullable: true })
   liquidatedAccountId?: number;
 
+  @Column()
+  root: boolean;
+
   @Field(() => Account, { nullable: true })
   @ManyToOne(() => Account, { eager: false, onDelete: 'CASCADE' })
   liquidatedAccount?: Account;
@@ -29,8 +32,12 @@ export default class Passive extends Movement {
     memo?: string;
     issuedAt?: Date;
     operationId?: string;
+    root?: boolean;
   }) {
     super(passive);
-    if (passive) this.liquidated = false;
+    if (passive) {
+      this.liquidated = false;
+      this.root = passive.root || false;
+    }
   }
 }

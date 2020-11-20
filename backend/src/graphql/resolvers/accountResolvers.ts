@@ -9,7 +9,7 @@ import {
   Query,
   ID,
 } from 'type-graphql';
-import { Repository, getRepository, getConnection } from 'typeorm';
+import { Repository, getRepository, getConnection, Not } from 'typeorm';
 
 import Account from '../../models/Account';
 import { CreateAccountInput } from '../helpers';
@@ -78,8 +78,7 @@ export default class AccountResolvers {
     @Ctx() { currentUser }: Context,
   ): Promise<number> {
     const account = await this.repository.findOneOrFail({
-      id,
-      userId: currentUser!.id,
+      where: { id, userId: currentUser!.id, type: Not('root') },
     });
     await this.repository.remove(account);
     return id;
