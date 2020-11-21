@@ -64,9 +64,8 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
                 <ListItemSecondaryAction className={classes.secondaryActions}>
                   <DialogIconButton
                     contained
-                    disabled
-                    data-testid={`updatePassive${id}`}
-                    color="info"
+                    data-testid={`liquidatePassive${id}`}
+                    color="warning"
                     icon={<PaymentIcon />}
                   >
                     <LiquidatePassiveDialog passive={data[index]} />
