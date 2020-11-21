@@ -49,7 +49,7 @@ const LiquidatePassiveDialog: React.FC<Props> = ({ passive }) => {
                 <Grid item xs={12}>
                   <FormikSelectField
                     name="liquidatedAccountId"
-                    label={locale('movements:form:account')}
+                    label={locale('elements:singular:liquidatedAccount')}
                     fullWidth
                     displayEmpty
                     options={accounts.map(({ id, name, bank }) => ({
