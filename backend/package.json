@@ -73,7 +73,7 @@
     "lodash": "^4.17.20",
     "passport": "^0.4.1",
     "passport-http-bearer": "^1.0.1",
-    "pg": "^8.3.3",
+    "pg": "^8.5.1",
     "pluralize": "^8.0.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.0.0",
