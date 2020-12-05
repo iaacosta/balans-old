@@ -53,7 +53,7 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
         }
       >
         {({ data, index, style }) => {
-          const { id, amount, account } = data[index];
+          const { id, amount, account, liquidated } = data[index];
           return (
             <Box style={style} key={index}>
               <ListItem classes={{ container: classes.container }} component="div">
@@ -62,14 +62,16 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
                   secondary={`${account.name} (${account.bank})`}
                 />
                 <ListItemSecondaryAction className={classes.secondaryActions}>
-                  <DialogIconButton
-                    contained
-                    data-testid={`liquidatePassive${id}`}
-                    color="warning"
-                    icon={<PaymentIcon />}
-                  >
-                    <LiquidatePassiveDialog passive={data[index]} />
-                  </DialogIconButton>
+                  {!liquidated && (
+                    <DialogIconButton
+                      contained
+                      data-testid={`liquidatePassive${id}`}
+                      color="warning"
+                      icon={<PaymentIcon />}
+                    >
+                      <LiquidatePassiveDialog passive={data[index]} />
+                    </DialogIconButton>
+                  )}
                   <EnhancedIconButton
                     contained
                     disabled
