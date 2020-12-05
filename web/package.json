@@ -32,7 +32,7 @@
     "lodash": "^4.17.20",
     "notistack": "^1.0.0",
     "react": "^16.13.1",
-    "react-color": "^2.18.1",
+    "react-color": "^2.19.3",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.3",
     "react-number-format": "^4.4.1",
