@@ -6,7 +6,6 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  withStyles,
   Typography,
   TableContainer,
   Paper,
@@ -26,13 +25,13 @@ type Props<T extends Record<string, unknown>> = {
   children?: ReactNode;
 };
 
-const EnhancedCell = withStyles((theme) => ({
+const useCellStyles = makeStyles((theme) => ({
   head: {
     ...theme.typography.subtitle2,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
-}))(TableCell);
+}));
 
 const usePaginationStyles = makeStyles(() => ({
   root: { flex: 1 },
@@ -57,6 +56,7 @@ const EnhancedTable = <T extends Record<string, unknown>>({
   initialState,
   children,
 }: Props<T>): React.ReactElement => {
+  const cellClasses = useCellStyles();
   const classes = useStyles();
   const paginationClasses = usePaginationStyles();
   const {
@@ -87,9 +87,9 @@ const EnhancedTable = <T extends Record<string, unknown>>({
           return (
             <TableRow {...row.getRowProps()} data-testid={`row${row.original.id}`}>
               {row.cells.map(({ getCellProps, render }) => (
-                <EnhancedCell {...getCellProps()} variant="body">
+                <TableCell {...getCellProps()} classes={cellClasses} variant="body">
                   {render('Cell')}
-                </EnhancedCell>
+                </TableCell>
               ))}
             </TableRow>
           );
@@ -115,9 +115,9 @@ const EnhancedTable = <T extends Record<string, unknown>>({
           <TableHead>
             <TableRow>
               {headers.map(({ getHeaderProps, render }) => (
-                <EnhancedCell {...getHeaderProps()} variant="head">
+                <TableCell {...getHeaderProps()} classes={cellClasses} variant="head">
                   {render('Header')}
-                </EnhancedCell>
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
