@@ -13,6 +13,9 @@ export default class Passive extends Movement {
   @Column({ nullable: true })
   liquidatedAccountId?: number;
 
+  @Column()
+  root: boolean;
+
   @Field(() => Account, { nullable: true })
   @ManyToOne(() => Account, { eager: false, onDelete: 'CASCADE' })
   liquidatedAccount?: Account;
@@ -20,7 +23,11 @@ export default class Passive extends Movement {
   async getPairedPassive(): Promise<Passive> {
     return getManager()
       .getRepository(Passive)
-      .findOneOrFail({ id: Not(this.id), operationId: this.operationId });
+      .findOneOrFail({
+        id: Not(this.id),
+        operationId: this.operationId,
+        root: true,
+      });
   }
 
   constructor(passive: {
@@ -29,8 +36,12 @@ export default class Passive extends Movement {
     memo?: string;
     issuedAt?: Date;
     operationId?: string;
+    root?: boolean;
   }) {
     super(passive);
-    if (passive) this.liquidated = false;
+    if (passive) {
+      this.liquidated = false;
+      this.root = passive.root || false;
+    }
   }
 }
