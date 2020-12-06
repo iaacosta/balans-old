@@ -10,6 +10,7 @@ import {
   ID,
 } from 'type-graphql';
 import { Repository, getRepository, getManager, Not } from 'typeorm';
+import { ApolloError } from 'apollo-server-express';
 
 import Passive from '../../models/Passive';
 import { Context } from '../../@types';
@@ -83,6 +84,9 @@ export default class PassiveResolvers {
       .getOne();
 
     if (!passive) throw new NotFoundError('passive');
+    if (passive.liquidated) {
+      throw new ApolloError('passive was already liquidated');
+    }
 
     const liquidatedAccount = await this.accountRepository.findOneOrFail({
       where: {
