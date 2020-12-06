@@ -20,7 +20,7 @@ const schema = yup.object().shape({
   name: yup.string().required(),
   bank: yup.string().required(),
   initialBalance: yup.number().when('type', {
-    is: (value) => value !== 'checking',
+    is: (value: string) => value !== 'checking',
     then: yup.number().required().min(0),
     otherwise: yup.number().required(),
   }),
