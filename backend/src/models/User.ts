@@ -9,6 +9,7 @@ import {
   EntityManager,
   getManager,
 } from 'typeorm';
+import { randomBytes } from 'crypto';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { MinLength, IsEmail, IsIn, Matches, IsNotEmpty } from 'class-validator';
 import { AuthenticationError } from 'apollo-server-express';
@@ -21,7 +22,7 @@ import {
 } from '../errors/validationErrorMessages';
 import Account from './Account';
 import Category from './Category';
-import CryptoHelper from '../utils/cryptoHelper';
+import { CryptoUtil } from '../utils';
 
 @ObjectType()
 @Entity()
@@ -79,6 +80,15 @@ export default class User {
   })
   categories: Category[];
 
+  @Column()
+  initVector: string;
+
+  @Column({ nullable: true })
+  fintualEmail?: string;
+
+  @Column({ nullable: true })
+  fintualToken?: string;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -122,6 +132,7 @@ export default class User {
       this.email = user.email;
       this.username = user.username;
       this.role = user.role || 'user';
+      this.initVector = randomBytes(16).toString('hex');
     }
   }
 }
