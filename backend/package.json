@@ -61,6 +61,7 @@
     "@types/uuid": "^8.3.0",
     "apollo-server-express": "^2.18.0",
     "aws-sdk": "^2.758.0",
+    "axios": "^0.21.0",
     "bcrypt": "^5.0.0",
     "class-validator": "^0.12.2",
     "dataloader": "^2.0.0",
