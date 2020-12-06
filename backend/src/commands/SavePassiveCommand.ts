@@ -50,6 +50,7 @@ export default class SavePassiveCommand
         accountId: rootAccount.id,
         operationId,
         issuedAt,
+        root: true,
       }),
     };
   }

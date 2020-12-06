@@ -21,7 +21,7 @@ describe('passive helper tests', () => {
   let testUser: User;
   let testAccount: Account;
   let testPassive: Passive;
-  let rootPassive: Passive;
+  let testRootPassive: Passive;
 
   const testPassives: Passive[] = [];
   const testAmounts: number[] = [];
@@ -66,11 +66,11 @@ describe('passive helper tests', () => {
   });
 
   const getPassivePair = async (operationId: string) => {
-    const [passive, _rootPassive] = await getRepository(Passive).find({
+    const [passive, rootPassive] = await getRepository(Passive).find({
       operationId,
     });
 
-    return { passive, rootPassive: _rootPassive };
+    return { passive, rootPassive };
   };
 
   it('should change account balances', async () => {
@@ -98,18 +98,23 @@ describe('passive helper tests', () => {
         const passives = await getPassivePair(testPassives[idx].operationId);
 
         testPassive = passives.passive;
-        rootPassive = passives.rootPassive;
+        testRootPassive = passives.rootPassive;
       });
 
       it('should create passive pairs', async () => {
         expect(testPassive).toBeDefined();
-        expect(rootPassive).toBeDefined();
+        expect(testRootPassive).toBeDefined();
+      });
+
+      it('should have correct root flags', async () => {
+        expect(testPassive.root).toBe(false);
+        expect(testRootPassive.root).toBe(true);
       });
 
       it('should have correct values', async () => {
         const expectedAmount = testPassives[idx].amount;
         expect(testPassive.amount).toBe(expectedAmount);
-        expect(rootPassive.amount).toBe(-expectedAmount);
+        expect(testRootPassive.amount).toBe(-expectedAmount);
       });
     });
   });

@@ -201,6 +201,18 @@ describe('account API calls', () => {
       ).rejects.toBeTruthy();
     });
 
+    it('should not delete an account if root', async () => {
+      const rootAccount = await testUser.getRootAccount();
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_ACCOUNT,
+        variables: { id: rootAccount.id },
+      });
+
+      expect(response).toBeRejected();
+    });
+
     it('should not delete an account if not mine', async () => {
       const otherUser = (await createUser(connection)).databaseUser;
       const createdAccount = (await createAccount(connection, otherUser.id))

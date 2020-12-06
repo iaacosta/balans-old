@@ -59,6 +59,7 @@ export default class SaveTransactionCommand
         accountId: rootAccount.id,
         operationId,
         issuedAt,
+        root: true,
       }),
     };
   }

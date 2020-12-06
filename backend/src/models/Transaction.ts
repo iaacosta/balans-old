@@ -22,6 +22,9 @@ export default class Transaction extends Movement {
   @IsValidCategory()
   category?: Category;
 
+  @Column()
+  root: boolean;
+
   @Field({ nullable: true })
   @DeleteDateColumn()
   deletedAt: Date;
@@ -29,7 +32,11 @@ export default class Transaction extends Movement {
   async getPairedTransaction(): Promise<Transaction> {
     return getManager()
       .getRepository(Transaction)
-      .findOneOrFail({ id: Not(this.id), operationId: this.operationId });
+      .findOneOrFail({
+        id: Not(this.id),
+        operationId: this.operationId,
+        root: true,
+      });
   }
 
   constructor(transaction: {
@@ -39,10 +46,12 @@ export default class Transaction extends Movement {
     memo?: string;
     operationId?: string;
     category?: Category;
+    root?: boolean;
   }) {
     super(transaction);
     if (transaction) {
       this.category = transaction.category;
+      this.root = transaction.root || false;
     }
   }
 }
