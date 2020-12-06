@@ -7,10 +7,10 @@ import {
   UpdateEvent,
   InsertEvent,
 } from 'typeorm';
-import { genSalt, hash } from 'bcrypt';
 
 import User from '../models/User';
 import Account from '../models/Account';
+import { CryptoUtil } from '../utils';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
@@ -19,13 +19,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     return User;
   }
 
-  async hashPassword(password: string): Promise<string> {
-    const salt = await genSalt(10);
-    return hash(password, salt);
-  }
-
   async beforeInsert({ entity }: InsertEvent<User>): Promise<void> {
-    entity.password = await this.hashPassword(entity.password);
+    entity.password = await CryptoUtil.hashData(entity.password);
   }
 
   async afterInsert({ entity, manager }: InsertEvent<User>): Promise<void> {
@@ -44,6 +39,6 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     databaseEntity,
   }: UpdateEvent<User>): Promise<void> {
     if (entity.password === databaseEntity.password) return;
-    entity.password = await this.hashPassword(entity.password);
+    entity.password = await CryptoUtil.hashData(entity.password);
   }
 }

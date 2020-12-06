@@ -10,7 +10,6 @@ import {
   getManager,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { compare } from 'bcrypt';
 import { MinLength, IsEmail, IsIn, Matches, IsNotEmpty } from 'class-validator';
 import { AuthenticationError } from 'apollo-server-express';
 
@@ -22,6 +21,7 @@ import {
 } from '../errors/validationErrorMessages';
 import Account from './Account';
 import Category from './Category';
+import CryptoHelper from '../utils/cryptoHelper';
 
 @ObjectType()
 @Entity()
@@ -92,12 +92,12 @@ export default class User {
   deletedAt?: Date;
 
   async verifyPassword(password: string): Promise<void> {
-    const error = new AuthenticationError('incorrect username or password');
-    try {
-      if (!(await compare(password, this.password))) throw error;
-    } catch (err) {
-      throw error;
-    }
+    const equal = await CryptoUtil.verifyHash({
+      data: password,
+      hashed: this.password,
+    });
+
+    if (!equal) throw new AuthenticationError('incorrect username or password');
   }
 
   getRootAccount(options?: { manager?: EntityManager }): Promise<Account> {
