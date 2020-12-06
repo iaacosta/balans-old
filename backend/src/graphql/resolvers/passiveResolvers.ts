@@ -81,6 +81,7 @@ export default class PassiveResolvers {
       .leftJoinAndSelect('passive.account', 'account')
       .where('account.userId = :userId', { userId: currentUser!.id })
       .andWhere('passive.id = :id', { id })
+      .andWhere('passive.root = false')
       .getOne();
 
     if (!passive) throw new NotFoundError('passive');
