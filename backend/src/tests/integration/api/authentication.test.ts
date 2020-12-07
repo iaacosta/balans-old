@@ -3,7 +3,11 @@ import { gql } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 
 import { mountTestClient, seedTestDatabase, createPgClient } from '../../utils';
-import { createUser, userBuilder } from '../../factory/userFactory';
+import {
+  createUser,
+  userBuilder,
+  userFactory,
+} from '../../factory/userFactory';
 import User from '../../../models/User';
 
 const LOGIN = gql`
@@ -79,8 +83,13 @@ describe('authentication API calls', () => {
     };
 
     beforeEach(() => {
-      testUser = userBuilder();
+      testUser = userFactory();
       delete testUser.role;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete testUser.initVector;
+      delete testUser.fintualToken;
+      delete testUser.fintualEmail;
     });
 
     it('should return a token', async () => {

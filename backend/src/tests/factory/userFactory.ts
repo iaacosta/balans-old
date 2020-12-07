@@ -5,10 +5,25 @@ import { Connection } from 'typeorm';
 
 import User from '../../models/User';
 
-export type BuildType = Pick<
+export type BuildType = Omit<
   User,
-  'firstName' | 'lastName' | 'email' | 'password' | 'username' | 'role'
+  | 'name'
+  | 'id'
+  | 'accounts'
+  | 'categories'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'verifyPassword'
+  | 'getRootAccount'
 >;
+
+const randomHex = (length: number, faker: any) =>
+  Buffer.from(
+    Array.from({ length }, () =>
+      faker.random.number({ min: 0, max: 255, precision: 1 }),
+    ),
+  ).toString('hex');
 
 export const userBuilder = build<BuildType>('User', {
   fields: {
@@ -17,6 +32,7 @@ export const userBuilder = build<BuildType>('User', {
     email: fake((faker) => faker.internet.email()),
     password: fake((faker) => faker.internet.password()),
     username: fake((faker) => faker.internet.userName().padStart(7, '_')),
+    initVector: fake((faker) => randomHex(16, faker)),
     role: oneOf('admin', 'user'),
   },
 });
@@ -42,6 +58,10 @@ export const createUser = async (
 ) => {
   const factoryUser = userFactory(overrides);
   const user = new User(factoryUser);
+
+  if (overrides?.fintualEmail) user.fintualEmail = overrides.fintualEmail;
+  if (overrides?.fintualToken) user.fintualToken = overrides.fintualToken;
+
   const databaseUser = await connection.getRepository(User).save(user);
 
   return {
