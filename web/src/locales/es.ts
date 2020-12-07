@@ -149,6 +149,7 @@ export const es: LocaleShape = {
       transaction: 'Transacción',
       transfer: 'Transferencia',
       user: 'Usuario',
+      investment: 'Inversión',
     },
     plural: {
       account: 'Cuentas',
@@ -160,6 +161,7 @@ export const es: LocaleShape = {
       transaction: 'Transacciones',
       transfer: 'Transferencias',
       user: 'Usuarios',
+      investment: 'Inversiones',
     },
   },
   snackbars: {
@@ -169,6 +171,7 @@ export const es: LocaleShape = {
       deleted: '{{value}} borrada exitosamente',
       restored: '{{value}} restaurada exitosamente',
       liquidated: '{{value}} liquidada exitosamente',
+      registered: 'Autentificación exitosa en {{value}}',
       done: 'Acción exitosa',
     },
     error: {

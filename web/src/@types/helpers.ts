@@ -11,6 +11,7 @@ export type ElementOf<T extends ReadonlyArray<unknown>> = T extends ReadonlyArra
 export type ArgumentOf<T> = T extends (...args: infer U) => any ? U : never;
 
 export type MutationHandlerOptions = {
+  notHandleError?: boolean;
   errorMessageCallback?: (message: ReactNode) => unknown;
 };
 

@@ -22,6 +22,7 @@ import {
   SupervisedUserCircleSharp,
   AccountBalanceWallet,
   Category,
+  ShowChart,
 } from '@material-ui/icons';
 
 import routing from '../../../constants/routing';
@@ -94,6 +95,13 @@ const CustomDrawer: React.FC<Props> = ({ children, onClose }) => {
         action: actions.routes.movements,
         Icon: <AttachMoney />,
         label: locale('navbar:movements'),
+        divides: false,
+      },
+      {
+        id: routing.authenticated.investments,
+        action: actions.routes.investments,
+        Icon: <ShowChart />,
+        label: locale('elements:plural:investment'),
         divides: false,
       },
       {

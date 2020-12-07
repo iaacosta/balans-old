@@ -147,6 +147,7 @@ export const en = {
       transaction: 'Transaction',
       transfer: 'Transfer',
       user: 'User',
+      investment: 'Investment',
     },
     plural: {
       account: 'Accounts',
@@ -158,6 +159,7 @@ export const en = {
       transaction: 'Transactions',
       transfer: 'Transfers',
       user: 'Users',
+      investment: 'Investments',
     },
   },
   snackbars: {
@@ -166,6 +168,7 @@ export const en = {
       updated: '{{value}} updated successfully',
       deleted: '{{value}} deleted successfully',
       restored: '{{value}} restored successfully',
+      registered: 'Logged in to {{value}} successfully',
       liquidated: '{{value}} liquidated successfully',
       done: 'Action done successfully',
     },

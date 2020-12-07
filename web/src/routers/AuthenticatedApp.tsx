@@ -12,6 +12,7 @@ import Accounts from '../pages/Accounts';
 import ViewportContainer from '../components/ui/misc/ViewportContainer';
 import Movements from '../pages/Movements';
 import Categories from '../pages/Categories';
+import Investments from '../pages/Investments';
 
 const Placeholder: React.FC = () => {
   const { pathname } = useLocation();
@@ -73,6 +74,11 @@ const pages = [
     action: actions.routes.movements,
     path: routing.authenticated.movements,
     component: Movements,
+  },
+  {
+    action: actions.routes.investments,
+    path: routing.authenticated.investments,
+    component: Investments,
   },
   {
     action: actions.routes.places,

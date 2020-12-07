@@ -1,5 +1,7 @@
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -115,6 +117,15 @@ export type User = {
   deletedAt?: Maybe<Scalars['Timestamp']>;
 };
 
+export type Goal = {
+  __typename?: 'Goal';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  value: Scalars['Float'];
+  deposited: Scalars['Float'];
+  profit: Scalars['Float'];
+};
+
 export type PairedTransfer = {
   __typename?: 'PairedTransfer';
   from: Transfer;
@@ -171,6 +182,11 @@ export type UpdateCategoryInput = {
   type?: Maybe<CategoryType>;
 };
 
+export type RegisterFintualApiInput = {
+  email: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type CreatePassiveInput = {
   amount: Scalars['Int'];
   accountId: Scalars['ID'];
@@ -212,6 +228,7 @@ export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
   myCategories: Array<Category>;
+  myFintualGoals: Array<Goal>;
   myPassives: Array<Passive>;
   myTransactions: Array<Transaction>;
   myTransfers: Array<Transfer>;
@@ -241,6 +258,7 @@ export type Mutation = {
   createCategory: Category;
   updateCategory: Category;
   deleteCategory: Scalars['ID'];
+  registerFintualCredentials: Scalars['Boolean'];
   createPassive: Passive;
   liquidatePassive: Passive;
   deletePassive: Scalars['ID'];
@@ -290,6 +308,11 @@ export type MutationUpdateCategoryArgs = {
 
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationRegisterFintualCredentialsArgs = {
+  input: RegisterFintualApiInput;
 };
 
 
@@ -475,6 +498,27 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteCategory'>
+);
+
+export type MyFintualGoalsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyFintualGoalsQuery = (
+  { __typename?: 'Query' }
+  & { goals: Array<(
+    { __typename?: 'Goal' }
+    & Pick<Goal, 'id' | 'name' | 'value' | 'deposited' | 'profit'>
+  )> }
+);
+
+export type RegisterFintualCredentialsMutationVariables = Exact<{
+  input: RegisterFintualApiInput;
+}>;
+
+
+export type RegisterFintualCredentialsMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'registerFintualCredentials'>
 );
 
 export type MyPassivesQueryVariables = Exact<{ [key: string]: never; }>;

@@ -33,14 +33,14 @@ export const useRedirectedQuery = <TData = any, TVariables = any>(
 
   useEffect(() => {
     if (queryData.error) {
-      handleError(
-        queryData.error,
-        options?.errorMessageCallback
-          ? options.errorMessageCallback
-          : (message) => enqueueSnackbar(message, { variant: 'error' }),
-      );
-
-      history.push(routing.authenticated.dashboard);
+      if (!options?.notHandleError) {
+        handleError(
+          queryData.error,
+          options?.errorMessageCallback ||
+            ((message: React.ReactNode) => enqueueSnackbar(message, { variant: 'error' })),
+        );
+        history.push(routing.authenticated.dashboard);
+      }
     }
   }, [options, queryData.error, history, enqueueSnackbar]);
 

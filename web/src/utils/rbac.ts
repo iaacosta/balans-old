@@ -14,6 +14,7 @@ export const actions = {
     people: 'routes:people',
     users: 'routes:users',
     categories: 'routes:categories',
+    investments: 'routes:investments',
   },
   users: {
     getAll: 'users:getAll',
@@ -45,6 +46,7 @@ export const rules = {
     actions.routes.places,
     actions.routes.users,
     actions.routes.categories,
+    actions.routes.investments,
     actions.users.getAll,
     actions.users.getOne,
     actions.users.create,

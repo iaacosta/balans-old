@@ -107,6 +107,7 @@ type ElementKeys =
   | 'elements:singular:transaction'
   | 'elements:singular:transfer'
   | 'elements:singular:user'
+  | 'elements:singular:investment'
   | 'elements:plural:account'
   | 'elements:plural:liquidatedAccount'
   | 'elements:plural:category'
@@ -115,7 +116,8 @@ type ElementKeys =
   | 'elements:plural:loan'
   | 'elements:plural:transaction'
   | 'elements:plural:transfer'
-  | 'elements:plural:user';
+  | 'elements:plural:user'
+  | 'elements:plural:investment';
 
 type SnackbarKeys =
   | 'snackbars:success:created'
@@ -123,6 +125,7 @@ type SnackbarKeys =
   | 'snackbars:success:deleted'
   | 'snackbars:success:restored'
   | 'snackbars:success:liquidated'
+  | 'snackbars:success:registered'
   | 'snackbars:success:done'
   | 'snackbars:errors:unknown';
 
