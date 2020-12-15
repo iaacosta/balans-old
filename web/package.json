@@ -88,7 +88,7 @@
     "@testing-library/react": "^11.0.4",
     "@testing-library/user-event": "^12.1.6",
     "@types/testing-library__cypress": "^5.0.7",
-    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.9.1",
     "cypress": "^6.1.0",
     "eslint-config-airbnb": "18.2.1",
