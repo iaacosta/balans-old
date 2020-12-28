@@ -64,7 +64,7 @@
     "bcrypt": "^5.0.0",
     "class-validator": "^0.12.2",
     "dataloader": "^2.0.0",
-    "dayjs": "^1.9.7",
+    "dayjs": "^1.9.8",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
     "graphql-upload": "^11.0.0",
