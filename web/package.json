@@ -101,7 +101,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "4.2.0",
     "prettier": "^2.1.2",
-    "start-server-and-test": "^1.11.4",
+    "start-server-and-test": "^1.11.7",
     "ts-loader": "^8.0.4",
     "webpack": "4.44.2"
   },
