@@ -191,6 +191,7 @@ describe('transaction API calls', () => {
 
   describe('updateTransaction', () => {
     let createdTransaction: Transaction;
+    let createdRootTransaction: Transaction;
 
     beforeAll(async () => {
       createdTransaction = (
@@ -199,6 +200,11 @@ describe('transaction API calls', () => {
           categories: testCategories,
         })
       ).databaseTransaction;
+
+      createdRootTransaction = await getRepository(Transaction).findOneOrFail({
+        operationId: createdTransaction.operationId,
+        root: true,
+      });
     });
 
     it('should update transaction if mine', async () => {
@@ -227,6 +233,16 @@ describe('transaction API calls', () => {
       expect(response).toBeRejected();
     });
 
+    it('should reject if root transaction', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: UPDATE_TRANSACTION,
+        variables: { input: { id: createdRootTransaction.id } },
+      });
+
+      expect(response).toBeRejected();
+    });
+
     it('should not authorize if account is not mine', async () => {
       const otherUser = (await createUser(connection)).databaseUser;
       const otherAccount = (await createAccount(connection, otherUser.id))
@@ -250,14 +266,24 @@ describe('transaction API calls', () => {
   });
 
   describe('deleteTransaction', () => {
-    it('should delete an transaction if mine', async () => {
-      const createdTransaction = (
+    let createdTransaction: Transaction;
+    let createdRootTransaction: Transaction;
+
+    beforeAll(async () => {
+      createdTransaction = (
         await createTransaction(connection, {
           account: testAccount,
           categories: testCategories,
         })
       ).databaseTransaction;
 
+      createdRootTransaction = await getRepository(Transaction).findOneOrFail({
+        operationId: createdTransaction.operationId,
+        root: true,
+      });
+    });
+
+    it('should delete an transaction if mine', async () => {
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
         mutation: DELETE_TRANSACTION,
@@ -273,10 +299,21 @@ describe('transaction API calls', () => {
       ).rejects.toBeTruthy();
     });
 
+    it('should not delete if root transaction', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_TRANSACTION,
+        variables: { id: createdRootTransaction.id },
+      });
+
+      expect(response).toBeRejected();
+    });
+
     it('should not delete an transaction if not mine', async () => {
       const otherUser = (await createUser(connection)).databaseUser;
       const othersAccount = (await createAccount(connection, otherUser.id))
         .databaseAccount;
+
       const othersTransaction = (
         await createTransaction(connection, {
           account: othersAccount,

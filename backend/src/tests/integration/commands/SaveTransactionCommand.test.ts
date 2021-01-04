@@ -26,7 +26,7 @@ describe('transaction helper tests', () => {
   let testAccount: Account;
   let testCategories: CategoryPair;
   let testTransaction: Transaction;
-  let rootTransaction: Transaction;
+  let testRootTransaction: Transaction;
 
   const testTransactions: Transaction[] = [];
   const testAmounts: number[] = [];
@@ -74,11 +74,11 @@ describe('transaction helper tests', () => {
   });
 
   const getTransactionPair = async (operationId: string) => {
-    const [transaction, _rootTransaction] = await getRepository(
+    const [transaction, rootTransaction] = await getRepository(
       Transaction,
     ).find({ operationId });
 
-    return { transaction, rootTransaction: _rootTransaction };
+    return { transaction, rootTransaction };
   };
 
   it('should change account balances', async () => {
@@ -102,18 +102,23 @@ describe('transaction helper tests', () => {
         );
 
         testTransaction = transactions.transaction;
-        rootTransaction = transactions.rootTransaction;
+        testRootTransaction = transactions.rootTransaction;
       });
 
       it('should create transaction pairs', async () => {
         expect(testTransaction).toBeDefined();
-        expect(rootTransaction).toBeDefined();
+        expect(testRootTransaction).toBeDefined();
+      });
+
+      it('should have correct root flags', async () => {
+        expect(testTransaction.root).toBe(false);
+        expect(testRootTransaction.root).toBe(true);
       });
 
       it('should have correct values', async () => {
         const expectedAmount = testTransactions[idx].amount;
         expect(testTransaction.amount).toBe(expectedAmount);
-        expect(rootTransaction.amount).toBe(-expectedAmount);
+        expect(testRootTransaction.amount).toBe(-expectedAmount);
       });
     });
   });

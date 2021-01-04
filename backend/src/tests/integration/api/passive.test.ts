@@ -183,10 +183,16 @@ describe('passive API calls', () => {
 
   describe('liquidatePassive', () => {
     let testPassive: Passive;
+    let testRootPassive: Passive;
 
     beforeAll(async () => {
       testPassive = (await createPassive(connection, { account: testAccount }))
         .databasePassive;
+
+      testRootPassive = await getRepository(Passive).findOneOrFail({
+        operationId: testPassive.operationId,
+        root: true,
+      });
     });
 
     it('should liquidate passive', async () => {
@@ -205,6 +211,21 @@ describe('passive API calls', () => {
       );
 
       expect(passive.liquidatedAccountId).toBe(testAccount.id);
+    });
+
+    it('should not liquidate passive if root', async () => {
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: LIQUIDATE_PASSIVE,
+        variables: {
+          input: {
+            id: testRootPassive.id,
+            liquidatedAccountId: testAccount.id,
+          },
+        },
+      });
+
+      expect(response).toBeRejected();
     });
 
     it('should not authorize unauthenticated users', async () => {
@@ -234,11 +255,17 @@ describe('passive API calls', () => {
         }).execute();
       }
 
-      return databasePassive;
+      return {
+        createdPassive: databasePassive,
+        createdRootPassive: await getRepository(Passive).findOneOrFail({
+          operationId: databasePassive.operationId,
+          root: true,
+        }),
+      };
     };
 
     it('should delete a passive if mine and not liquidated', async () => {
-      const createdPassive = await createTestPassive();
+      const { createdPassive } = await createTestPassive();
 
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
@@ -256,7 +283,7 @@ describe('passive API calls', () => {
     });
 
     it('should delete a passive if mine and liquidated', async () => {
-      const createdPassive = await createTestPassive(true);
+      const { createdPassive } = await createTestPassive(true);
 
       const { mutate } = await mountTestClient({ currentUser: testUser });
       const response = await mutate({
@@ -271,6 +298,18 @@ describe('passive API calls', () => {
       );
 
       await expect(databasePassive).rejects.toBeTruthy();
+    });
+
+    it('should not delete a passive if root', async () => {
+      const { createdRootPassive } = await createTestPassive();
+
+      const { mutate } = await mountTestClient({ currentUser: testUser });
+      const response = await mutate({
+        mutation: DELETE_PASSIVE,
+        variables: { id: createdRootPassive.id },
+      });
+
+      expect(response).toBeRejected();
     });
 
     it('should not delete a passive if not mine', async () => {

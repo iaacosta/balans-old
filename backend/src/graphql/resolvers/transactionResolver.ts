@@ -91,6 +91,7 @@ export default class TransactionResolvers {
       .leftJoinAndSelect('transaction.account', 'account')
       .where('account.userId = :userId', { userId: currentUser!.id })
       .andWhere('transaction.id = :id', { id })
+      .andWhere('transaction.root = false')
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
@@ -119,6 +120,7 @@ export default class TransactionResolvers {
       .leftJoinAndSelect('transaction.account', 'account')
       .where('account.userId = :userId', { userId: currentUser!.id })
       .andWhere('transaction.id = :id', { id })
+      .andWhere('transaction.root = false')
       .getOne();
 
     if (!transaction) throw new NotFoundError('transaction');
