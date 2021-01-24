@@ -53,13 +53,13 @@ const PassivesList: React.FC<Props> = ({ passives, loading, noAccountsCreated })
         }
       >
         {({ data, index, style }) => {
-          const { id, amount, account, liquidated } = data[index];
+          const { id, amount, account, liquidated, memo } = data[index];
           return (
             <Box style={style} key={index}>
               <ListItem classes={{ container: classes.container }} component="div">
                 <ListItemText
                   primary={<AmountTypography>{amount}</AmountTypography>}
-                  secondary={`${account.name} (${account.bank})`}
+                  secondary={`${memo} | ${account.name}`}
                 />
                 <ListItemSecondaryAction className={classes.secondaryActions}>
                   {!liquidated && (
