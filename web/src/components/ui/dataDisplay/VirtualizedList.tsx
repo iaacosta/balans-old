@@ -10,6 +10,7 @@ interface Props<T> {
   loading: boolean;
   noEntriesLabel?: string;
   children: React.FC<Omit<ListChildComponentProps, 'data'> & { data: T[] }>;
+  customItemHeight?: number;
 }
 
 const VirtualizedList = <T extends Record<string, unknown>>({
@@ -17,6 +18,7 @@ const VirtualizedList = <T extends Record<string, unknown>>({
   loading,
   noEntriesLabel,
   children,
+  customItemHeight,
 }: Props<T>): React.ReactElement<any, any> | null => {
   const theme = useTheme();
 
@@ -36,7 +38,7 @@ const VirtualizedList = <T extends Record<string, unknown>>({
         <FixedSizeList
           height={height}
           width={width}
-          itemSize={theme.spacing(9)}
+          itemSize={customItemHeight || theme.spacing(9)}
           itemData={data}
           itemCount={data.length}
         >

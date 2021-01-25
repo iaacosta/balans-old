@@ -52,7 +52,7 @@ const FormikColorField: React.FC<Props & TextFieldProps> = ({
         classes={classes}
         fullWidth={fullWidth}
         data-testid={`${name}Input`}
-        InputProps={{ startAdornment: <CategoryIcon color={fieldProps.value} size={24} /> }}
+        InputProps={{ startAdornment: <CategoryIcon color={fieldProps.value} /> }}
         onDoubleClick={(event) => event.preventDefault()}
         onClick={handleOpen}
         {...props}
