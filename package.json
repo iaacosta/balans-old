@@ -18,9 +18,9 @@
     "install": "yarn --cwd=backend install && yarn --production=false --cwd=web install",
     "build:backend": "yarn --cwd=backend build",
     "build:web": "yarn --cwd=web build",
-    "build": "yarn build:backend && yarn build:web",
+    "move:client": "mv ./web/build ./backend/dist/public",
     "heroku-prebuild": "mv ./backend/tsconfig.prod.json ./backend/tsconfig.json",
-    "heroku-postbuild": "mv ./web/build ./backend/dist/public",
+    "build": "yarn build:backend && yarn build:web && yarn move:client",
     "start": "node ./backend/dist/index.js"
   },
   "dependencies": {

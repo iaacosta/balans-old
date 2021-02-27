@@ -30,5 +30,4 @@ if (NODE_ENV === 'production') {
   config.subscribers = ['src/subscribers/**/*'];
 }
 
-console.log(config);
 module.exports = config;
