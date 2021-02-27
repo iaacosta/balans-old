@@ -6,16 +6,31 @@
   "author": "Nacho <iaacosta@uc.cl>",
   "license": "MIT",
   "private": true,
+  "cacheDirectories": [
+    "backend/node_modules",
+    "web/node_modules"
+  ],
   "devDependencies": {
     "semantic-release": "^17.3.0"
   },
   "scripts": {
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "install": "yarn --cwd=backend install && yarn --production=false --cwd=web install",
+    "build:backend": "yarn --cwd=backend build",
+    "build:web": "yarn --cwd=web build",
+    "move:client": "mv ./web/build ./backend/dist/public",
+    "heroku-prebuild": "mv ./backend/tsconfig.prod.json ./backend/tsconfig.json",
+    "build": "yarn build:backend && yarn build:web && yarn move:client",
+    "start": "node ./backend/dist/index.js"
   },
   "dependencies": {
     "semantic-release": "^17.3.0"
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "engines": {
+    "node": "^12.18.3",
+    "yarn": "^1.22.10"
   }
 }

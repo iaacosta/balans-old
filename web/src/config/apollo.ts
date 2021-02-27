@@ -8,9 +8,7 @@ import { expireToken } from '../slices/authSlice';
 import { logoutHof } from '../hooks/auth/useLogout';
 import cache from './cache';
 
-const baseLink = new HttpLink({
-  uri: process.env.REACT_APP_API_URL || 'http://localhost:5000/graphql',
-});
+const baseLink = new HttpLink({ uri: '/graphql' });
 
 const contextLink = setContext((_, { headers }) => {
   const { token } = store.getState().auth;

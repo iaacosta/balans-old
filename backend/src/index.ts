@@ -1,11 +1,14 @@
 import express from 'express';
+import { join } from 'path';
 import { createConnection } from 'typeorm';
 
 import { mountApollo } from './config/apollo';
 
 const { PORT, NODE_ENV } = process.env;
 const app = express();
-app.get('/', (req, res) => res.send('Cy.ok').status(200));
+
+app.use(express.static(join(__dirname, 'public')));
+app.get('*', (req, res) => res.sendFile(join(__dirname, 'public', 'index.html')));
 
 /* istanbul ignore next */
 if (NODE_ENV !== 'test') {
