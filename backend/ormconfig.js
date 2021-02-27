@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { NODE_ENV } = process.env;
 
 const config = {
@@ -8,9 +10,9 @@ const config = {
 
 if (NODE_ENV === 'production') {
   config.url = process.env.DATABASE_URL;
-  config.entities = ['dist/models/**/*'];
-  config.migrations = ['dist/migrations/**/*'];
-  config.subscribers = ['dist/subscribers/**/*'];
+  config.entities = [path.join(__dirname, 'dist/models/**/*')];
+  config.migrations = [path.join(__dirname, 'dist/migrations/**/*')];
+  config.subscribers = [path.join(__dirname, 'dist/subscribers/**/*')];
 } else {
   config.host = process.env.DB_HOSTNAME || 'localhost';
   config.username = process.env.DB_USERNAME;
@@ -28,4 +30,5 @@ if (NODE_ENV === 'production') {
   config.subscribers = ['src/subscribers/**/*'];
 }
 
+console.log(config);
 module.exports = config;
