@@ -59,58 +59,6 @@ jobs:
           wait-on: http://localhost:3000
           wait-on-timeout: 120
           start: yarn start
-      - name: Build staging client
-        if: github.ref == 'refs/heads/dev'
-        env:
-          REACT_APP_API_URL: https://balans-staging.herokuapp.com/graphql
-          NODE_ENV: production
-        run: yarn --cwd web build
-      - name: Deploy staging client
-        uses: jakejarvis/s3-sync-action@master
-        if: github.ref == 'refs/heads/dev'
-        with:
-          args: --acl public-read --delete
-        env:
-          AWS_S3_BUCKET: staging.balans.cf
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'sa-east-1'
-          SOURCE_DIR: 'web/build'
-      - name: Deploy staging backend
-        uses: akhileshns/heroku-deploy@v3.6.8
-        if: github.ref == 'refs/heads/dev'
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: 'balans-staging'
-          heroku_email: 'iaacosta@uc.cl'
-          usedocker: true
-          appdir: 'backend'
-      - name: Build production client
-        if: github.ref == 'refs/heads/release'
-        env:
-          REACT_APP_API_URL: https://balans-production.herokuapp.com/graphql
-          NODE_ENV: production
-        run: yarn --cwd web build
-      - name: Deploy production client
-        uses: jakejarvis/s3-sync-action@master
-        if: github.ref == 'refs/heads/release'
-        with:
-          args: --acl public-read --delete
-        env:
-          AWS_S3_BUCKET: balans.cf
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'sa-east-1'
-          SOURCE_DIR: 'web/build'
-      - name: Deploy production backend
-        uses: akhileshns/heroku-deploy@v3.6.8
-        if: github.ref == 'refs/heads/release'
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: 'balans-production'
-          heroku_email: 'iaacosta@uc.cl'
-          usedocker: true
-          appdir: 'backend'
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v2
         if: github.ref == 'refs/heads/release'
