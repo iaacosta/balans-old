@@ -13,6 +13,12 @@ if (NODE_ENV === 'production') {
   config.entities = [path.join(__dirname, 'dist/models/**/*')];
   config.migrations = [path.join(__dirname, 'dist/migrations/**/*')];
   config.subscribers = [path.join(__dirname, 'dist/subscribers/**/*')];
+  config.ssl = true,
+  config.extra = {
+    "ssl": {
+      "rejectUnauthorized": false
+    }
+  }
 } else {
   config.host = process.env.DB_HOSTNAME || 'localhost';
   config.username = process.env.DB_USERNAME;
