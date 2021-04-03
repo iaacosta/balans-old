@@ -1,9 +1,11 @@
 /* eslint-disable no-multi-assign */
 import { validateOrReject } from 'class-validator';
+import { sample, values } from 'lodash';
 
 import { accountModelFactory } from '../../factory/accountFactory';
 import { AccountType } from '../../../graphql/helpers';
 import Account from '../../../models/Account';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 describe('Account model test', () => {
   it('should create Account object', () =>
@@ -14,6 +16,7 @@ describe('Account model test', () => {
     expect(account.name).toBe(factoryAccount.name);
     expect(account.bank).toBe(factoryAccount.bank);
     expect(account.type).toBe(factoryAccount.type);
+    expect(account.currency).toBe(factoryAccount.currency);
     expect(account.balance).not.toBe(factoryAccount.initialBalance);
     expect(account.balance).toBe(0);
   });
@@ -27,6 +30,11 @@ describe('Account model test', () => {
 
     it('should not pass validation if name is empty', async () => {
       const { account } = accountModelFactory(1, { name: '' });
+      await expect(validateOrReject(account)).rejects.toBeTruthy();
+    });
+
+    it('should not pass validation if currency is not in currencies', async () => {
+      const { account } = accountModelFactory(1, { currency: 'asd' as Currency });
       await expect(validateOrReject(account)).rejects.toBeTruthy();
     });
 
@@ -72,6 +80,12 @@ describe('Account model test', () => {
         type: AccountType.checking,
       });
       account.balance = -1000;
+      await expect(validateOrReject(account)).resolves.toBeUndefined();
+    });
+
+    it('should pass validation if currency is in enum', async () => {
+      const { account } = accountModelFactory(1, { currency: sample(values(Currency)) });
+      account.balance = 1000;
       await expect(validateOrReject(account)).resolves.toBeUndefined();
     });
   });
