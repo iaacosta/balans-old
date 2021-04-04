@@ -2,6 +2,7 @@
 import { EntityManager, getManager } from 'typeorm';
 
 import { CurrentUser } from '../@types';
+import ForbiddenActionError from '../graphql/errors/ForbiddenActionError';
 import { UpdateTransactionInput } from '../graphql/helpers';
 import Account from '../models/Account';
 import Category from '../models/Category';
@@ -42,6 +43,10 @@ export default class UpdateTransactionCommand
       transaction.account = await this.manager
         .getRepository(Account)
         .findOneOrFail({ id: accountId, userId: this.user.id });
+
+      if (transaction.account.currency !== previousAccount.currency) {
+        throw new ForbiddenActionError("change a transaction's currency");
+      }
 
       Account.applyBalanceChanges({
         amount: transaction.amount,
@@ -94,7 +99,7 @@ export default class UpdateTransactionCommand
 
   public async execute(): Promise<TransactionTuple> {
     const { transaction } = this.data;
-    const rootAccount = await this.user.getRootAccount();
+    const rootAccount = await this.user.getRootAccount(transaction.account.currency);
     const rootTransaction = await transaction.getPairedTransaction();
 
     const previousAccount = await this.checkAccountChange();
