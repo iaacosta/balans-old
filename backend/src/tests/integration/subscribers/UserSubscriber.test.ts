@@ -1,10 +1,13 @@
 import { createConnection, Connection, Repository } from 'typeorm';
 import { compare } from 'bcrypt';
 import { ApolloError } from 'apollo-server-express';
+import { size } from 'lodash';
 
 import { seedTestDatabase, createPgClient } from '../../utils';
 import User from '../../../models/User';
 import { userModelFactory, createUser } from '../../factory/userFactory';
+import Account from '../../../models/Account';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 describe('user ORM tests', () => {
   let connection: Connection;
@@ -38,6 +41,17 @@ describe('user ORM tests', () => {
       it('should call validateOrReject on save', async () => {
         const { user } = userModelFactory({ password: 'nope' });
         await expect(repo.save(user)).rejects.toThrow(ApolloError);
+      });
+
+      it('creates root accounts on save', async () => {
+        const { user } = userModelFactory();
+        await expect(repo.save(user)).resolves.toBeTruthy();
+        const accounts = await connection.getRepository(Account).find({
+          userId: user.id,
+        });
+
+        // TODO: change this when tests are adapted to two all currencies
+        expect(accounts).toHaveLength(size([Currency.CLP]));
       });
     });
 
