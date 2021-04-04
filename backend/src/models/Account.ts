@@ -45,6 +45,7 @@ export default class Account {
   @IsNotEmpty()
   bank: string;
 
+  @Field(() => Currency)
   @Column()
   @IsIn(['USD', 'CLP'] as Currency[])
   currency: Currency;
