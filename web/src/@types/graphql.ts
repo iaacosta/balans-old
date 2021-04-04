@@ -1,5 +1,7 @@
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -85,6 +87,7 @@ export type Account = {
   type: AccountType;
   name: Scalars['String'];
   bank: Scalars['String'];
+  currency: Currency;
   balance: Scalars['Int'];
   unliquidatedBalance: Scalars['Int'];
   user: User;
@@ -97,6 +100,11 @@ export enum AccountType {
   Cash = 'cash',
   Vista = 'vista',
   Checking = 'checking'
+}
+
+export enum Currency {
+  Clp = 'CLP',
+  Usd = 'USD'
 }
 
 export type User = {
@@ -155,6 +163,7 @@ export type CreateAccountInput = {
   type: AccountType;
   name: Scalars['String'];
   bank: Scalars['String'];
+  currency: Currency;
   initialBalance: Scalars['Int'];
 };
 
@@ -369,7 +378,7 @@ export type MyAccountsQuery = (
   { __typename?: 'Query' }
   & { accounts: Array<(
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'currency' | 'balance' | 'unliquidatedBalance'>
   )> }
 );
 
@@ -382,7 +391,7 @@ export type CreateDebitAccountMutation = (
   { __typename?: 'Mutation' }
   & { createAccount: (
     { __typename?: 'Account' }
-    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'balance' | 'unliquidatedBalance'>
+    & Pick<Account, 'id' | 'name' | 'bank' | 'type' | 'currency' | 'balance' | 'unliquidatedBalance'>
   ) }
 );
 
