@@ -1,5 +1,6 @@
 import { InputType, Field, Int } from 'type-graphql';
 import { AccountType } from '../enums';
+import { Currency } from '../enums/currencyEnum';
 
 @InputType()
 export class CreateAccountInput {
@@ -11,6 +12,9 @@ export class CreateAccountInput {
 
   @Field()
   bank: string;
+
+  @Field(() => Currency)
+  currency: Currency;
 
   @Field(() => Int)
   initialBalance: number;

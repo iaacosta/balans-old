@@ -45,7 +45,8 @@ type AccountKeys =
   | 'accounts:form:name'
   | 'accounts:form:type'
   | 'accounts:form:initialBalance'
-  | 'accounts:form:bank';
+  | 'accounts:form:bank'
+  | 'accounts:form:currency';
 
 type MovementKeys =
   | 'movements:title'

@@ -80,6 +80,7 @@ export const en = {
       type: 'Type',
       initialBalance: 'Initial balance',
       bank: 'Bank',
+      currency: 'Currency',
     },
   },
   tables: {

@@ -20,9 +20,10 @@ import User from './User';
 import Transaction from './Transaction';
 import Transfer from './Transfer';
 import Passive from './Passive';
+import { Currency } from '../graphql/helpers/enums/currencyEnum';
 
 @ObjectType()
-@Unique(['name', 'bank', 'userId'])
+@Unique(['name', 'bank', 'userId', 'currency'])
 @Entity()
 export default class Account {
   @Field(() => ID)
@@ -43,6 +44,11 @@ export default class Account {
   @Column()
   @IsNotEmpty()
   bank: string;
+
+  @Field(() => Currency)
+  @Column()
+  @IsIn(['USD', 'CLP'] as Currency[])
+  currency: Currency;
 
   @Field(() => Int)
   @Column()
@@ -121,12 +127,14 @@ export default class Account {
     type: AccountType | 'root';
     name: string;
     bank: string;
+    currency: Currency;
     userId?: number;
   }) {
     if (!account) return;
     this.type = account.type;
     this.name = account.name;
     this.bank = account.bank;
+    this.currency = account.currency;
     this.userId = account.userId;
     this.balance = 0;
     this.unliquidatedBalance = 0;

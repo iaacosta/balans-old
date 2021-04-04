@@ -11,6 +11,7 @@ import {
 
 import Account from '../models/Account';
 import Transaction from '../models/Transaction';
+import User from '../models/User';
 
 type Events = InsertEvent<Account> | UpdateEvent<Account>;
 
@@ -25,7 +26,7 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
     const { entity, manager } = event;
     const account = await manager
       .getRepository(Account)
-      .findOne({ type: 'root', userId: entity.userId });
+      .findOne({ type: 'root', userId: entity.userId, currency: entity.currency });
     if (account) throw new Error('this user has already a root account');
   }
 
@@ -70,10 +71,9 @@ export class AccountSubscriber implements EntitySubscriberInterface<Account> {
         .execute();
     }
 
-    const rootAccount = await manager.getRepository(Account).findOneOrFail({
-      type: 'root',
-      userId: databaseEntity.userId,
-    });
+    const rootAccount = await (await manager.getRepository(User).findOneOrFail({
+      id: databaseEntity.userId,
+    })).getRootAccount();
 
     const amount = parseInt(sum, 10);
     if (Number.isNaN(amount)) return;
