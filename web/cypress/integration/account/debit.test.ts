@@ -1,7 +1,22 @@
+import { forEach } from 'lodash';
 import { buildAccount } from '../../support/build/account';
 import { validationMatchers } from '../../support/matchers';
 
 const { requiredField, minimumNumber } = validationMatchers;
+const currencies = {
+  CLP: {
+    index: 0,
+    correctNumber: 123,
+    decimalPlaces: 0,
+    decimalSeparator: ',',
+  },
+  USD: {
+    index: 1,
+    correctNumber: 123456,
+    decimalPlaces: 2,
+    decimalSeparator: '.',
+  },
+};
 
 describe('debit accounts table', () => {
   beforeEach(() => {
@@ -9,27 +24,44 @@ describe('debit accounts table', () => {
     cy.visit('/accounts');
   });
 
-  it('should be able to create an account', () => {
-    const newAccount = buildAccount();
+  forEach(currencies, ({ index, decimalPlaces, correctNumber, decimalSeparator }, currency) => {
+    describe(`${currency}`, () => {
+      it('creates an account', () => {
+        const newAccount = buildAccount();
 
-    /* open dialog and verify */
-    cy.findByTestId('createAccountButton').should('exist').click();
+        cy.findByTestId('createAccountButton').should('exist').click();
 
-    /* change fields and submit */
-    (['name', 'initialBalance'] as const).forEach((field) =>
-      cy
-        .findByTestId(`${field}Input`)
-        .within(() => cy.get('input').clear().type(`${newAccount[field]}`)),
-    );
-    cy.changeSelectOption('typeInput', 1);
-    cy.changeSelectOption('bankInput', 2);
-    cy.submitForm();
+        (['name', 'initialBalance'] as const).forEach((field) =>
+          cy
+            .findByTestId(`${field}Input`)
+            .within(() => cy.get('input').clear().type(`${newAccount[field]}`)),
+        );
+        cy.changeSelectOption('typeInput', 1);
+        cy.changeSelectOption('currencyInput', index);
+        cy.changeSelectOption('bankInput', 2);
+        cy.submitForm();
 
-    /* should notify changes */
-    cy.findByText(/account created/i).should('exist');
+        cy.findByText(/account created/i).should('exist');
+        cy.findAllByTestId('account').should('have.length', 1);
+        cy.findAllByTestId('account').should('contain', currency);
+      });
 
-    /* should show created account */
-    cy.findAllByTestId('account').should('have.length', 1);
+      it('does not allow more than specified decimals', () => {
+        cy.findByTestId('createAccountButton').should('exist').click();
+        cy.changeSelectOption('currencyInput', index);
+
+        const testNumber = correctNumber / 10 ** (decimalPlaces + 1);
+        const incorrectInput = testNumber.toFixed(decimalPlaces + 1).replace('.', decimalSeparator);
+        const expectedInput =
+          decimalPlaces === 0
+            ? correctNumber.toFixed(decimalPlaces).replace('.', decimalSeparator)
+            : incorrectInput.slice(0, incorrectInput.length - 1);
+
+        cy.findByTestId(`initialBalanceInput`).within(() =>
+          cy.get('input').clear().type(incorrectInput).should('have.value', expectedInput),
+        );
+      });
+    });
   });
 
   it('should validate account fields', () => {

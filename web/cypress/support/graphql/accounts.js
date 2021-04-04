@@ -7,6 +7,7 @@ export const createDebitAccountMutation = gql`
       name
       bank
       type
+      currency
       balance
     }
   }

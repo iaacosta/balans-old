@@ -94,7 +94,7 @@ describe('transactions table', () => {
     /* expect changes to be there */
     cy.findByTestId(rowId)
       .children()
-      .should('contain', `$ (10.000)`)
+      .should('contain', '(10.000)')
       .and('contain', `${testAccount.name} (${testAccount.bank})`)
       .and('contain', newTransaction.memo)
       .and('contain', testCategories.expense.name);

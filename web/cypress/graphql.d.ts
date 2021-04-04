@@ -1,5 +1,7 @@
 type Maybe<T> = T | null;
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 type Scalars = {
   ID: string;
@@ -84,6 +86,7 @@ type GQLAccount = {
   type: GQLAccountType;
   name: Scalars['String'];
   bank: Scalars['String'];
+  currency: GQLCurrency;
   balance: Scalars['Int'];
   unliquidatedBalance: Scalars['Int'];
   user: GQLUser;
@@ -96,6 +99,10 @@ type GQLAccountType =
   | 'cash'
   | 'vista'
   | 'checking';
+
+type GQLCurrency = 
+  | 'CLP'
+  | 'USD';
 
 type GQLUser = {
   __typename?: 'User';
@@ -153,6 +160,7 @@ type GQLCreateAccountInput = {
   type: GQLAccountType;
   name: Scalars['String'];
   bank: Scalars['String'];
+  currency: GQLCurrency;
   initialBalance: Scalars['Int'];
 };
 
@@ -369,7 +377,7 @@ type GQLCreateDebitAccountMutation = (
   { __typename?: 'Mutation' }
   & { createAccount: (
     { __typename?: 'Account' }
-    & Pick<GQLAccount, 'id' | 'name' | 'bank' | 'type' | 'balance'>
+    & Pick<GQLAccount, 'id' | 'name' | 'bank' | 'type' | 'currency' | 'balance'>
   ) }
 );
 
