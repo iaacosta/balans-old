@@ -22,6 +22,7 @@ import {
 } from '../errors/validationErrorMessages';
 import Account from './Account';
 import Category from './Category';
+import { Currency } from '../graphql/helpers/enums/currencyEnum';
 
 @ObjectType()
 @Entity()
@@ -104,7 +105,8 @@ export default class User {
     const manager = options?.manager || getManager();
     return manager
       .getRepository(Account)
-      .findOneOrFail({ userId: this.id, type: 'root' });
+      // TODO: include currency in arguments for choosing correct account
+      .findOneOrFail({ userId: this.id, type: 'root', currency: Currency.CLP });
   }
 
   constructor(user: {
