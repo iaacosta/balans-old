@@ -15,6 +15,7 @@ import { createUser } from '../../factory/userFactory';
 import Transaction from '../../../models/Transaction';
 import { createTransaction } from '../../factory/transactionFactory';
 import { createCategoryPair } from '../../factory/categoryFactory';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 describe('account ORM tests', () => {
   let connection: Connection;
@@ -36,6 +37,7 @@ describe('account ORM tests', () => {
     testRootAccount = await connection.getRepository(Account).findOneOrFail({
       userId: testUser.id,
       type: 'root',
+      currency: Currency.CLP,
     });
   });
 
@@ -51,8 +53,8 @@ describe('account ORM tests', () => {
         await expect(repo.save(account)).rejects.toThrow(ApolloError);
       });
 
-      it('should not allow two root type accounts', async () => {
-        const { account } = accountModelFactory(testUser.id, { type: 'root' });
+      it('should not allow two root type accounts with same currency', async () => {
+        const { account } = accountModelFactory(testUser.id, { type: 'root', currency: Currency.CLP });
         await expect(repo.save(account)).rejects.toThrow();
       });
     });
@@ -94,6 +96,7 @@ describe('account ORM tests', () => {
             .findOneOrFail({
               userId: testUser.id,
               type: 'root',
+              currency: Currency.CLP,
             });
 
           testAccount = (await createAccount(connection, testUser.id))
@@ -101,7 +104,7 @@ describe('account ORM tests', () => {
 
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           for (const _ of Array.from(Array(5).keys())) {
-            const { operationId } = await (
+            const { operationId } = (
               await createTransaction(connection, {
                 account: testAccount,
                 categories: await createCategoryPair(connection, testUser.id),
@@ -145,6 +148,7 @@ describe('account ORM tests', () => {
             .findOneOrFail({
               userId: testUser.id,
               type: 'root',
+              currency: Currency.CLP,
             });
 
           testAccount = (
