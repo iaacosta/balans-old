@@ -28,7 +28,7 @@ export default class DeleteTransactionCommand
 
   public async execute(): Promise<TransactionTuple> {
     const { transaction } = this.data;
-    const rootAccount = await this.user.getRootAccount();
+    const rootAccount = await this.user.getRootAccount(transaction.account.currency);
     const rootTransaction = await transaction.getPairedTransaction();
 
     Account.applyBalanceChanges({
