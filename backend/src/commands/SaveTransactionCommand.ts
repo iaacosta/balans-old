@@ -65,7 +65,7 @@ export default class SaveTransactionCommand
   }
 
   public async execute(): Promise<TransactionTuple> {
-    const rootAccount = await this.user.getRootAccount({
+    const rootAccount = await this.user.getRootAccount(undefined, {
       manager: this.manager,
     });
 

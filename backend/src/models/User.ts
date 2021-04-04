@@ -101,12 +101,14 @@ export default class User {
     }
   }
 
-  getRootAccount(options?: { manager?: EntityManager }): Promise<Account> {
+  getRootAccount(
+    currency?: Currency,
+    options?: { manager?: EntityManager },
+  ): Promise<Account> {
     const manager = options?.manager || getManager();
     return manager
       .getRepository(Account)
-      // TODO: include currency in arguments for choosing correct account
-      .findOneOrFail({ userId: this.id, type: 'root', currency: Currency.CLP });
+      .findOneOrFail({ userId: this.id, type: 'root', currency: currency || Currency.CLP });
   }
 
   constructor(user: {
