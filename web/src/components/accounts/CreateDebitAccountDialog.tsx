@@ -4,8 +4,9 @@ import React, { useMemo, useEffect, useContext } from 'react';
 import { DialogTitle, DialogContent, Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
+import _ from 'lodash';
 
-import { AccountType } from '../../@types/graphql';
+import { AccountType, Currency } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
 import FormikSelectField from '../formik/FormikSelectField';
 import DialogFormButtons from '../ui/dialogs/DialogFormButtons';
@@ -25,6 +26,7 @@ const schema = yup.object().shape({
     otherwise: yup.number().required(),
   }),
   type: yup.string().oneOf(['checking', 'vista', 'cash']).required(),
+  currency: yup.string().oneOf(_.values(Currency)),
 });
 
 const defaultBanks = [
@@ -60,6 +62,7 @@ const CreateDebitAccountDialog: React.FC = () => {
       bank: '',
       initialBalance: initialEmptyNumber,
       type: '' as AccountType,
+      currency: Currency.Clp,
     }),
     [],
   );
@@ -83,7 +86,7 @@ const CreateDebitAccountDialog: React.FC = () => {
                 <Grid item xs={12}>
                   <FormikTextField name="name" label={locale('accounts:form:name')} fullWidth />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <FormikSelectField
                     name="type"
                     label={locale('accounts:form:type')}
@@ -105,11 +108,20 @@ const CreateDebitAccountDialog: React.FC = () => {
                     ]}
                   />
                 </Grid>
+                <Grid item xs={6}>
+                  <FormikSelectField
+                    name="currency"
+                    label={locale('accounts:form:currency')}
+                    fullWidth
+                    options={[Currency.Clp, Currency.Usd]}
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <FormikCurrencyField
                     name="initialBalance"
                     label={locale('accounts:form:initialBalance')}
                     fullWidth
+                    currency={values.currency}
                   />
                 </Grid>
                 {values.type !== 'cash' && (
