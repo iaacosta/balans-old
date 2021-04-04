@@ -2,15 +2,11 @@ import accounting from 'accounting';
 
 accounting.settings = {
   currency: {
-    symbol: '$',
     format: {
       pos: '%s %v',
       neg: '%s (%v)',
-      zero: '%s -',
+      zero: '%s %v',
     },
-    decimal: ',',
-    thousand: '.',
-    precision: 0,
   },
   number: {},
 };
