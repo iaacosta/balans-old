@@ -10,6 +10,7 @@ export const myTransactionsQuery = gql`
         id
         name
         bank
+        currency
         balance
       }
       category {

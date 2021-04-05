@@ -46,7 +46,7 @@ const TransactionListItem: React.FC<Props> = ({ transaction }) => {
   return (
     <Paper className={classes.paper} elevation={1}>
       <Box className={classes.info}>
-        <AmountTypography>{amount}</AmountTypography>
+        <AmountTypography currency={account.currency}>{amount}</AmountTypography>
         <Typography variant="body2">{memo}</Typography>
         <Typography className={classes.secondary} variant="caption" color="textSecondary">
           {account.name} | {longDateFormatter(issuedAt)}
