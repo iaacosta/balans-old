@@ -10,6 +10,7 @@ import { createUser } from '../../factory/userFactory';
 import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
 import { AccountType } from '../../../graphql/helpers';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 const MY_TRANSFERS = gql`
   query MyTransfers {
@@ -96,6 +97,7 @@ describe('transfer API calls', () => {
     connection = await createConnection();
     await pgClient.connect();
     await seedTestDatabase(pgClient);
+    process.env.ALLOW_CURRENCIES = 'true';
     testUser = (await createUser(connection)).databaseUser;
 
     testFromAccount = (
@@ -249,6 +251,48 @@ describe('transfer API calls', () => {
       });
 
       expect(response).toBeRejectedByAuth();
+    });
+
+    it('does not authorize from usd account', async () => {
+      const testTransfer = transferFactory();
+      const testUsdAccount = (await (createAccount(connection, testUser.id, {
+        currency: Currency.USD,
+      }))).databaseAccount;
+
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: CREATE_TRANSFER,
+        variables: {
+          input: {
+            ...testTransfer,
+            fromAccountId: testUsdAccount.id,
+            toAccountId: testToAccount.id,
+          },
+        },
+      });
+
+      expect(response).toBeRejected();
+    });
+
+    it('does not authorize from usd account', async () => {
+      const testTransfer = transferFactory();
+      const testUsdAccount = (await (createAccount(connection, testUser.id, {
+        currency: Currency.USD,
+      }))).databaseAccount;
+
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: CREATE_TRANSFER,
+        variables: {
+          input: {
+            ...testTransfer,
+            fromAccountId: testFromAccount.id,
+            toAccountId: testUsdAccount.id,
+          },
+        },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 
