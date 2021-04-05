@@ -20,6 +20,8 @@ import SavePassiveCommand from '../../commands/SavePassiveCommand';
 import LiquidatePassiveCommand from '../../commands/LiquidatePassiveCommand';
 import NotFoundError from '../errors/NotFoundError';
 import DeletePassiveCommand from '../../commands/DeletePassiveCommand';
+import { Currency } from '../helpers/enums/currencyEnum';
+import ForbiddenActionError from '../errors/ForbiddenActionError';
 
 @Resolver(Passive)
 export default class PassiveResolvers {
@@ -55,6 +57,10 @@ export default class PassiveResolvers {
     const account = await this.accountRepository.findOneOrFail({
       where: { id: accountId, userId: currentUser!.id, type: Not('root') },
     });
+
+    if (account.currency !== Currency.CLP) {
+      throw new ForbiddenActionError('create passives in non-clp account');
+    }
 
     return getManager().transaction(async (passiveManager) => {
       const command = new SavePassiveCommand(
@@ -96,6 +102,10 @@ export default class PassiveResolvers {
         type: Not('root'),
       },
     });
+
+    if (liquidatedAccount.currency !== Currency.CLP) {
+      throw new ForbiddenActionError('liquidate passives in non-clp account');
+    }
 
     return getManager().transaction(async (passiveManager) => {
       const command = new LiquidatePassiveCommand(

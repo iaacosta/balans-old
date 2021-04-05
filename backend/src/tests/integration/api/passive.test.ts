@@ -11,6 +11,7 @@ import { createAccount } from '../../factory/accountFactory';
 import Account from '../../../models/Account';
 import { AccountType } from '../../../graphql/helpers';
 import LiquidatePassiveCommand from '../../../commands/LiquidatePassiveCommand';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 const MY_PASSIVES = gql`
   query MyPassives {
@@ -94,6 +95,7 @@ describe('passive API calls', () => {
     connection = await createConnection();
     await pgClient.connect();
     await seedTestDatabase(pgClient);
+    process.env.ALLOW_CURRENCIES = 'true';
     testUser = (await createUser(connection)).databaseUser;
 
     testAccount = (
@@ -179,6 +181,21 @@ describe('passive API calls', () => {
 
       expect(response).toBeRejectedByAuth();
     });
+
+    it('should not authorize usd account creation', async () => {
+      const testPassive = passiveFactory();
+      const testUsdAccount = (await (createAccount(connection, testUser.id, {
+        currency: Currency.USD,
+      }))).databaseAccount;
+
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: CREATE_PASSIVE,
+        variables: { input: { ...testPassive, accountId: testUsdAccount.id } },
+      });
+
+      expect(response).toBeRejected();
+    });
   });
 
   describe('liquidatePassive', () => {
@@ -238,6 +255,22 @@ describe('passive API calls', () => {
       });
 
       expect(response).toBeRejectedByAuth();
+    });
+
+    it('should not authorize usd account liquidation', async () => {
+      const testUsdAccount = (await (createAccount(connection, testUser.id, {
+        currency: Currency.USD,
+      }))).databaseAccount;
+
+      const { mutate } = await mountTestClient();
+      const response = await mutate({
+        mutation: LIQUIDATE_PASSIVE,
+        variables: {
+          input: { id: testPassive.id, liquidatedAccountId: testUsdAccount.id },
+        },
+      });
+
+      expect(response).toBeRejected();
     });
   });
 

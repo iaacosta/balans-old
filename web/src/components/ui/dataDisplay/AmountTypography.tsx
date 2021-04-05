@@ -2,8 +2,11 @@ import React from 'react';
 import { makeStyles, Typography, TypographyProps } from '@material-ui/core';
 import clsx from 'clsx';
 import { formatMoney } from 'accounting';
+import { Currency } from '../../../@types/graphql';
+import accountingConstants from '../../../constants/accountingConstants';
 
 export const useAmountStyles = makeStyles((theme) => ({
+  base: { display: 'flex', alignItems: 'center' },
   expense: { color: theme.palette.error.main },
   income: { color: theme.palette.success.main },
   neutral: { color: theme.palette.info.main },
@@ -12,6 +15,9 @@ export const useAmountStyles = makeStyles((theme) => ({
 type Props = Omit<TypographyProps, 'children'> & {
   children: number;
   noColor?: boolean;
+  currency?: Currency;
+  hideCurrencySymbol?: boolean;
+  currencySymbolProps?: TypographyProps;
   formattingConditions?: {
     neutral?: (value: number) => boolean;
     expense?: (value: number) => boolean;
@@ -32,11 +38,15 @@ const AmountTypography = ({
   className,
   children,
   noColor,
+  currency,
+  currencySymbolProps,
+  hideCurrencySymbol,
   formattingConditions: conditions,
   ...props
 }: Props): Return => {
   const classes = useAmountStyles();
-  const cls = clsx({
+  const currencyOptions = accountingConstants[currency || 'CLP'];
+  const cls = clsx(classes.base, {
     [classes.expense]:
       !noColor &&
       (conditions?.expense ? conditions?.expense : defaultFormattingConditions.expense)(children),
@@ -48,9 +58,17 @@ const AmountTypography = ({
       (conditions?.neutral ? conditions?.neutral : defaultFormattingConditions.neutral)(children),
   });
 
+  const symbol = hideCurrencySymbol ? '$' : currencyOptions.symbol;
   return (
     <Typography {...props} className={clsx(className, cls)}>
-      {formatMoney(children)}
+      {currencySymbolProps && <Typography {...currencySymbolProps}>{symbol}</Typography>}
+      {formatMoney(
+        children / 10 ** currencyOptions.decimalPlaces,
+        currencySymbolProps ? '' : symbol,
+        currencyOptions.decimalPlaces,
+        currencyOptions.thousandSeparator,
+        currencyOptions.decimalSeparator,
+      )}
     </Typography>
   );
 };

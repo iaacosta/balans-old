@@ -8,6 +8,7 @@ import { createAccount, accountFactory } from '../../factory/accountFactory';
 import User from '../../../models/User';
 import { createUser } from '../../factory/userFactory';
 import Transaction from '../../../models/Transaction';
+import { Currency } from '../../../graphql/helpers/enums/currencyEnum';
 
 const MY_ACCOUNTS = gql`
   query MyAccounts {
@@ -148,6 +149,7 @@ describe('account API calls', () => {
         response.data!.createAccount.id,
       );
       expect(createdAccount.name).toBe(testAccount.name);
+      expect(createdAccount.currency).toBe(testAccount.currency);
     });
 
     it('should create two transactions with initial balance', async () => {
@@ -164,6 +166,7 @@ describe('account API calls', () => {
       const rootAccount = await getRepository(Account).findOneOrFail({
         type: 'root',
         userId: testUser.id,
+        currency: Currency.CLP,
       });
 
       const transaction = await getRepository(Transaction).findOne({

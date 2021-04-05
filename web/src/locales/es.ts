@@ -82,6 +82,7 @@ export const es: LocaleShape = {
       type: 'Tipo',
       initialBalance: 'Balance inicial',
       bank: 'Banco',
+      currency: 'Moneda',
     },
   },
   tables: {

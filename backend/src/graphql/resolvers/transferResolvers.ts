@@ -20,6 +20,8 @@ import Account from '../../models/Account';
 import NotFoundError from '../errors/NotFoundError';
 import SaveTransferCommand from '../../commands/SaveTransferCommand';
 import DeleteTransferCommand from '../../commands/DeleteTransferCommand';
+import { Currency } from '../helpers/enums/currencyEnum';
+import ForbiddenActionError from '../errors/ForbiddenActionError';
 
 @ObjectType()
 class PairedTransfer {
@@ -91,6 +93,10 @@ export default class TransferResolvers {
       id: toAccountId,
       userId: currentUser!.id,
     });
+
+    if ([fromAccount.currency, toAccount.currency].includes(Currency.USD)) {
+      throw new ForbiddenActionError('transfer from nor to non-clp accounts');
+    }
 
     return this.manager.transaction((transactionManager) => {
       const command = new SaveTransferCommand(

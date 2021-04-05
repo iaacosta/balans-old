@@ -20,6 +20,7 @@ interface Props {
 
 const useStyles = makeStyles((theme) => ({
   balance: { marginTop: theme.spacing(2) },
+  currencySymbol: { marginRight: theme.spacing(1) },
   type: { margin: theme.spacing(0, 0, 1, 1), lineHeight: theme.typography.body2.lineHeight },
   actions: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   buttons: { display: 'flex', '& > *:not(:last-child)': { marginRight: theme.spacing(1) } },
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DebitAccountCard: React.FC<Props> = ({
-  debitAccount: { id, name, bank, balance, unliquidatedBalance, type },
+  debitAccount: { id, name, bank, balance, currency, unliquidatedBalance, type },
 }) => {
   const classes = useStyles();
   const isMobile = useBreakpoint({ layout: 'xs' });
@@ -56,12 +57,24 @@ const DebitAccountCard: React.FC<Props> = ({
           <Typography variant="body2" color="textSecondary">
             {name} / {bank}
           </Typography>
-          <AmountTypography className={classes.balance} variant="h2" noColor>
+          <AmountTypography
+            currencySymbolProps={{
+              variant: 'h5',
+              color: 'textSecondary',
+              className: classes.currencySymbol,
+            }}
+            currency={currency}
+            className={classes.balance}
+            variant="h2"
+            noColor
+          >
             {balance + unliquidatedBalance}
           </AmountTypography>
           <Box className={classes.subBalanceWrapper}>
             <Box className={classes.subBalance}>
-              <AmountTypography variant="subtitle1">{balance}</AmountTypography>
+              <AmountTypography hideCurrencySymbol currency={currency} variant="subtitle1">
+                {balance}
+              </AmountTypography>
               <Typography className={classes.subBalanceAnnotation} variant="body2">
                 {locale('others:liquidated')}
               </Typography>
@@ -70,7 +83,9 @@ const DebitAccountCard: React.FC<Props> = ({
               +
             </Typography>
             <Box className={classes.subBalance}>
-              <AmountTypography variant="subtitle1">{unliquidatedBalance}</AmountTypography>
+              <AmountTypography hideCurrencySymbol currency={currency} variant="subtitle1">
+                {unliquidatedBalance}
+              </AmountTypography>
               <Typography className={classes.subBalanceAnnotation} variant="body2">
                 {locale('others:unliquidated')}
               </Typography>
@@ -79,7 +94,7 @@ const DebitAccountCard: React.FC<Props> = ({
         </CardContent>
         <CardActions className={classes.actions}>
           <Typography className={classes.type} variant="overline" color="textSecondary">
-            {locale(localeKeyFromAccountType(type))}
+            {locale(localeKeyFromAccountType(type))} ({currency})
           </Typography>
           <Box className={classes.buttons}>
             <EnhancedIconButton contained disabled color="success">

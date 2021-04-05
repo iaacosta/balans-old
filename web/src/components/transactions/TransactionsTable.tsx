@@ -38,7 +38,11 @@ const TransactionsTable: React.FC<Props> = ({
       {
         Header: locale('movements:form:amount'),
         accessor: 'amount',
-        Cell: ({ value }) => <AmountTypography variant="body2">{value}</AmountTypography>,
+        Cell: ({ value, row }) => (
+          <AmountTypography currency={row.original.account.currency} variant="body2">
+            {value}
+          </AmountTypography>
+        ),
       },
       {
         Header: locale('movements:form:account'),

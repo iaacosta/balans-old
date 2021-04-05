@@ -1,9 +1,8 @@
-# Description
-[Description of the pull request]
+# Contexto
 
-...
 
-# Additional changes
-[Changes done in this pull request that are additional to the purpose of the branch (such as formatting code or deleting files)]
+# En esta PR
 
-None.
+
+# Capturas / screenshots
+

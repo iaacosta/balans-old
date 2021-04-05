@@ -5,8 +5,9 @@ import { Connection } from 'typeorm';
 
 import Account from '../../models/Account';
 import SaveTransactionCommand from '../../commands/SaveTransactionCommand';
+import User from '../../models/User';
 
-export type BuildType = Pick<Account, 'name' | 'bank' | 'type'> & {
+export type BuildType = Pick<Account, 'name' | 'bank' | 'type' | 'currency'> & {
   initialBalance: number;
 };
 
@@ -15,6 +16,8 @@ export const accountBuilder = build<BuildType>('Account', {
     name: fake((faker) => faker.commerce.productName()),
     bank: fake((faker) => faker.company.companyName()),
     type: oneOf('cash', 'vista', 'checking'),
+    // TODO: include USD
+    currency: oneOf('CLP'),
     initialBalance: fake((faker) => faker.random.number(3000)),
   },
 });
@@ -44,9 +47,9 @@ export const createAccount = async (
     .getRepository(Account)
     .save(account);
 
-  const rootAccount = await entityManager
-    .getRepository(Account)
-    .findOne({ type: 'root', userId });
+  const rootAccount = await (await entityManager
+    .getRepository(User)
+    .findOneOrFail({ id: userId })).getRootAccount(account.currency);
 
   if (factoryAccount.initialBalance !== 0) {
     const transactionCommands = new SaveTransactionCommand(

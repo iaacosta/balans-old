@@ -19,6 +19,12 @@ export const seedTestDatabase = async (_client: Client): Promise<void> => {
     'DELETE FROM "account";',
     'ALTER SEQUENCE transaction_id_seq RESTART;',
     'DELETE FROM "transaction";',
+    'ALTER SEQUENCE transfer_id_seq RESTART;',
+    'DELETE FROM "transfer";',
+    'ALTER SEQUENCE passive_id_seq RESTART;',
+    'DELETE FROM "passive";',
+    'ALTER SEQUENCE category_id_seq RESTART;',
+    'DELETE FROM "category";',
   ];
 
   for (const query of queries) {

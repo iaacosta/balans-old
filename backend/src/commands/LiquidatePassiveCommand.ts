@@ -30,7 +30,7 @@ export default class LiquidatePassiveCommand
   private async findAccounts() {
     const { liquidatedAccount } = this.data;
     const originalAccount = this.data.passive.account;
-    const rootAccount = await this.user.getRootAccount({
+    const rootAccount = await this.user.getRootAccount(undefined, {
       manager: this.manager,
     });
 

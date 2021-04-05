@@ -7,6 +7,7 @@ export const myAccountsQuery = gql`
       name
       bank
       type
+      currency
       balance
       unliquidatedBalance
     }
@@ -20,6 +21,7 @@ export const createDebitAccountMutation = gql`
       name
       bank
       type
+      currency
       balance
       unliquidatedBalance
     }
