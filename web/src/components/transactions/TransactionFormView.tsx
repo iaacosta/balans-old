@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Formik, FormikConfig, Form } from 'formik';
 import * as yup from 'yup';
 import { Grid, DialogTitle, DialogContent, makeStyles } from '@material-ui/core';
+import { keyBy } from 'lodash';
 
 import { MyAccountsQuery, MyCategoriesQuery } from '../../@types/graphql';
 import FormikTextField from '../formik/FormikTextField';
@@ -44,6 +45,8 @@ const TransactionFormView = <T extends Record<string, unknown>>({
   const { locale } = useLocale();
   const localeKey: LocaleKeys = mode === 'create' ? 'forms:create' : 'forms:update';
   const getCategoriesByType = (type: TransactionType) => categories[type];
+
+  const accountsById = useMemo(() => keyBy(accounts, 'id'), [accounts]);
 
   return (
     <Formik
@@ -89,6 +92,7 @@ const TransactionFormView = <T extends Record<string, unknown>>({
                     <FormikCurrencyField
                       name="amount"
                       label={locale('movements:form:amount')}
+                      currency={accountsById[values.accountId as string].currency}
                       fullWidth
                     />
                   </Grid>

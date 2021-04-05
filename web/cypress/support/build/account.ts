@@ -10,7 +10,7 @@ export const buildAccount = (overrides?: Partial<BaseAccount>) => {
       name: fake((faker) => faker.commerce.product()),
       bank: fake((faker) => faker.company.companyName()),
       initialBalance: fake((faker) => faker.random.number(2000000)),
-      currency: oneOf<GQLCurrency>('CLP', 'USD'),
+      currency: oneOf<GQLCurrency>('CLP'),
       type: oneOf<GQLAccountType>('cash', 'checking', 'vista'),
     },
   });

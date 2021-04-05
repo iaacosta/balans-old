@@ -56,7 +56,7 @@ export default class SavePassiveCommand
   }
 
   async execute(): Promise<PassiveTuple> {
-    const rootAccount = await this.user.getRootAccount({
+    const rootAccount = await this.user.getRootAccount(undefined, {
       manager: this.manager,
     });
 

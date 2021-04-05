@@ -554,7 +554,7 @@ export type MyTransactionsQuery = (
     & Pick<Transaction, 'id' | 'amount' | 'memo' | 'issuedAt'>
     & { account: (
       { __typename?: 'Account' }
-      & Pick<Account, 'id' | 'name' | 'bank' | 'balance'>
+      & Pick<Account, 'id' | 'name' | 'bank' | 'currency' | 'balance'>
     ), category?: Maybe<(
       { __typename?: 'Category' }
       & Pick<Category, 'id' | 'name' | 'color'>

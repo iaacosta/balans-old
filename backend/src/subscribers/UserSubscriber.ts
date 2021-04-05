@@ -32,7 +32,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
   async afterInsert({ entity, manager }: InsertEvent<User>): Promise<void> {
     // TODO: change this when tests are adapted to multiple currencies
-    const currencies = process.env.NODE_ENV === 'test' ? [Currency.CLP] : Currency;
+    const currencies = process.env.NODE_ENV === 'test' && !process.env.ALLOW_CURRENCIES ? [Currency.CLP] : Currency;
     const accounts = values(currencies).map((currency) => (
       new Account({
         name: 'Root account',

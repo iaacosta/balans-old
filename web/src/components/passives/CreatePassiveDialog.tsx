@@ -5,11 +5,16 @@ import { useMyDebitAccounts, useCreatePassive } from '../../hooks/graphql';
 import PassiveFormView from './PassiveFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { initialEmptyNumber } from '../../utils/formik';
+import { Currency } from '../../@types/graphql';
 
 const CreatePassiveDialog: React.FC = () => {
   const { onClose } = useContext(DialogFormContext);
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const [createPassive, { loading: createLoading }] = useCreatePassive();
+
+  const clpAccounts = useMemo(() => accounts.filter(({ currency }) => currency === Currency.Clp), [
+    accounts,
+  ]);
 
   const initialValues = useMemo(
     () => ({
@@ -17,15 +22,15 @@ const CreatePassiveDialog: React.FC = () => {
       type: 'debt' as 'debt' | 'loan',
       memo: '',
       issuedAt: new Date(),
-      accountId: (accounts && accounts[0].id) || '',
+      accountId: clpAccounts[0].id || '',
     }),
-    [accounts],
+    [clpAccounts],
   );
 
   return (
     <PassiveFormView
       mode="create"
-      accounts={accounts}
+      accounts={clpAccounts}
       initialValues={initialValues}
       initialLoading={accountsLoading}
       submitLoading={createLoading}

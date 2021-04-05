@@ -5,7 +5,7 @@ import { Connection } from 'typeorm';
 
 import Account from '../../models/Account';
 import SaveTransactionCommand from '../../commands/SaveTransactionCommand';
-import { Currency } from '../../graphql/helpers/enums/currencyEnum';
+import User from '../../models/User';
 
 export type BuildType = Pick<Account, 'name' | 'bank' | 'type' | 'currency'> & {
   initialBalance: number;
@@ -47,9 +47,9 @@ export const createAccount = async (
     .getRepository(Account)
     .save(account);
 
-  const rootAccount = await entityManager
-    .getRepository(Account)
-    .findOne({ type: 'root', userId, currency: Currency.CLP });
+  const rootAccount = await (await entityManager
+    .getRepository(User)
+    .findOneOrFail({ id: userId })).getRootAccount(account.currency);
 
   if (factoryAccount.initialBalance !== 0) {
     const transactionCommands = new SaveTransactionCommand(
