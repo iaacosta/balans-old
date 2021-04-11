@@ -221,6 +221,7 @@ export type Query = {
   __typename?: 'Query';
   myAccounts: Array<Account>;
   myCategories: Array<Category>;
+  clpUsdExchangeRate: Scalars['Float'];
   myPassives: Array<Passive>;
   myTransactions: Array<Transaction>;
   myTransfers: Array<Transfer>;
@@ -484,6 +485,14 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteCategory'>
+);
+
+export type ClpUsdExchangeRateQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ClpUsdExchangeRateQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'clpUsdExchangeRate'>
 );
 
 export type MyPassivesQueryVariables = Exact<{ [key: string]: never; }>;
