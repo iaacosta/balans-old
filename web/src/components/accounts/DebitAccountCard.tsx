@@ -6,16 +6,19 @@ import {
   Delete as DeleteIcon,
 } from '@material-ui/icons';
 
-import { MyAccountsQuery } from '../../@types/graphql';
+import { Currency, MyAccountsQuery } from '../../@types/graphql';
 import EnhancedIconButton from '../ui/misc/EnhancedIconButton';
 import { useBreakpoint } from '../../hooks/utils/useBreakpoint';
 import { useDeleteDebitAccount } from '../../hooks/graphql';
 import { useLocale } from '../../hooks/utils/useLocale';
 import { localeKeyFromAccountType } from '../../utils/accounts';
 import AmountTypography from '../ui/dataDisplay/AmountTypography';
+import accountingConstants from '../../constants/accountingConstants';
 
 interface Props {
   debitAccount: MyAccountsQuery['accounts'][number];
+  showAmountsInClp: boolean;
+  clpUsdExchangeRate: number;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +46,8 @@ const useStyles = makeStyles((theme) => ({
 
 const DebitAccountCard: React.FC<Props> = ({
   debitAccount: { id, name, bank, balance, currency, unliquidatedBalance, type },
+  showAmountsInClp,
+  clpUsdExchangeRate,
 }) => {
   const classes = useStyles();
   const isMobile = useBreakpoint({ layout: 'xs' });
@@ -50,6 +55,14 @@ const DebitAccountCard: React.FC<Props> = ({
   const [deleteDebitAccount, { loading: deleteLoading }] = useDeleteDebitAccount();
 
   const iconFontSize = isMobile ? 'small' : 'default';
+
+  const displayedCurrency = showAmountsInClp && currency === Currency.Usd ? Currency.Clp : currency;
+
+  const applyExchangeRate = (value: number, valueCurrency: Currency) =>
+    showAmountsInClp && valueCurrency === Currency.Usd
+      ? (value * clpUsdExchangeRate) / 10 ** accountingConstants[Currency.Usd].decimalPlaces
+      : value;
+
   return (
     <>
       <Card>
@@ -63,17 +76,17 @@ const DebitAccountCard: React.FC<Props> = ({
               color: 'textSecondary',
               className: classes.currencySymbol,
             }}
-            currency={currency}
+            currency={displayedCurrency}
             className={classes.balance}
             variant="h2"
             noColor
           >
-            {balance + unliquidatedBalance}
+            {applyExchangeRate(balance + unliquidatedBalance, currency)}
           </AmountTypography>
           <Box className={classes.subBalanceWrapper}>
             <Box className={classes.subBalance}>
-              <AmountTypography hideCurrencySymbol currency={currency} variant="subtitle1">
-                {balance}
+              <AmountTypography hideCurrencySymbol currency={displayedCurrency} variant="subtitle1">
+                {applyExchangeRate(balance, currency)}
               </AmountTypography>
               <Typography className={classes.subBalanceAnnotation} variant="body2">
                 {locale('others:liquidated')}
@@ -83,8 +96,8 @@ const DebitAccountCard: React.FC<Props> = ({
               +
             </Typography>
             <Box className={classes.subBalance}>
-              <AmountTypography hideCurrencySymbol currency={currency} variant="subtitle1">
-                {unliquidatedBalance}
+              <AmountTypography hideCurrencySymbol currency={displayedCurrency} variant="subtitle1">
+                {applyExchangeRate(unliquidatedBalance, currency)}
               </AmountTypography>
               <Typography className={classes.subBalanceAnnotation} variant="body2">
                 {locale('others:unliquidated')}

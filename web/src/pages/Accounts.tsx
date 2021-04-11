@@ -59,7 +59,7 @@ const Accounts: React.FC = () => {
         />
       </Paper>
       <Paper className={classes.accounts} square elevation={1}>
-        {selected === 'debit' && <DebitAccountsGrid />}
+        {selected === 'debit' && <DebitAccountsGrid showAmountsInClp={showAmountsInClp} />}
       </Paper>
       <Box className={classes.buttonWrapper}>
         {selected === 'debit' && (

@@ -2,20 +2,29 @@ import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import ContainerLoader from '../ui/misc/ContainerLoader';
 import DebitAccountCard from './DebitAccountCard';
-import { useMyDebitAccounts } from '../../hooks/graphql';
+import { useMyDebitAccounts, useClpUsdExchangeRate } from '../../hooks/graphql';
 import { useLocale } from '../../hooks/utils/useLocale';
 
-const DebitAccountsGrid: React.FC = () => {
-  const { accounts, loading } = useMyDebitAccounts();
+type Props = {
+  showAmountsInClp: boolean;
+};
+
+const DebitAccountsGrid: React.FC<Props> = ({ showAmountsInClp }) => {
+  const { accounts, loading: accountsLoading } = useMyDebitAccounts();
+  const { clpUsdExchangeRate, loading: clpUsdExchangeRateLoading } = useClpUsdExchangeRate();
   const { locale } = useLocale();
 
-  if (loading) return <ContainerLoader />;
+  if (accountsLoading || clpUsdExchangeRateLoading) return <ContainerLoader />;
 
   return accounts.length > 0 ? (
     <Grid container data-testid="account" spacing={3}>
       {accounts.map((account) => (
         <Grid key={account.id} data-testid={`account${account.id}`} item xs={12} sm={6}>
-          <DebitAccountCard debitAccount={account} />
+          <DebitAccountCard
+            clpUsdExchangeRate={clpUsdExchangeRate}
+            showAmountsInClp={showAmountsInClp}
+            debitAccount={account}
+          />
         </Grid>
       ))}
     </Grid>
