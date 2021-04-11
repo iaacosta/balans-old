@@ -19,7 +19,7 @@ const DebitAccountsGrid: React.FC<Props> = ({ showAmountsInClp }) => {
   return accounts.length > 0 ? (
     <Grid container data-testid="account" spacing={3}>
       {accounts.map((account) => (
-        <Grid key={account.id} data-testid={`account${account.id}`} item xs={12} sm={6}>
+        <Grid key={account.id} data-testid={`account${account.id}`} item xs={12} md={6} lg={4}>
           <DebitAccountCard
             clpUsdExchangeRate={clpUsdExchangeRate}
             showAmountsInClp={showAmountsInClp}

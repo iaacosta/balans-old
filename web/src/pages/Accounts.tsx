@@ -11,7 +11,6 @@ import CreateDebitAccountDialog from '../components/accounts/CreateDebitAccountD
 import { useLocale } from '../hooks/utils/useLocale';
 
 const useStyles = makeStyles((theme) => ({
-  main: { maxWidth: theme.spacing(130) },
   title: { marginBottom: theme.spacing(2) },
   accounts: {
     flex: 1,
@@ -42,7 +41,7 @@ const Accounts: React.FC = () => {
   });
 
   return (
-    <ViewportContainer className={classes.main}>
+    <ViewportContainer>
       <Typography className={classes.title} variant="h5">
         {locale('accounts:title')}
       </Typography>
