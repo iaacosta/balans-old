@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Typography, makeStyles, Paper, Box } from '@material-ui/core';
+import React, { useMemo, useState } from 'react';
+import { Typography, makeStyles, Paper, Box, FormControlLabel, Switch } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 
 import { useTabs } from '../hooks/utils/useTabs';
@@ -19,12 +19,14 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     [theme.breakpoints.down('xs')]: { padding: theme.spacing(2) },
   },
+  controls: { padding: theme.spacing(1, 4) },
   buttonWrapper: { display: 'flex', justifyContent: 'flex-end', marginTop: theme.spacing(2) },
 }));
 
 const Accounts: React.FC = () => {
   const classes = useStyles();
   const { locale } = useLocale();
+  const [showAmountsInClp, setShowAmountsInClp] = useState(false);
 
   const tabs = useMemo(
     () => [
@@ -45,6 +47,17 @@ const Accounts: React.FC = () => {
         {locale('accounts:title')}
       </Typography>
       <CustomTabs tabs={tabs} selected={selected} change={change} />
+      <Paper className={classes.controls} square>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showAmountsInClp}
+              onChange={() => setShowAmountsInClp(!showAmountsInClp)}
+            />
+          }
+          label={locale('accounts:actions:amountsInCLP')}
+        />
+      </Paper>
       <Paper className={classes.accounts} square elevation={1}>
         {selected === 'debit' && <DebitAccountsGrid />}
       </Paper>

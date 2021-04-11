@@ -82,6 +82,9 @@ export const en = {
       bank: 'Bank',
       currency: 'Currency',
     },
+    actions: {
+      amountsInCLP: 'Show amounts in CLP',
+    },
   },
   tables: {
     actions: 'Actions',

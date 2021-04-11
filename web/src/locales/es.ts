@@ -84,6 +84,9 @@ export const es: LocaleShape = {
       bank: 'Banco',
       currency: 'Moneda',
     },
+    actions: {
+      amountsInCLP: 'Mostrar montos en CLP',
+    },
   },
   tables: {
     actions: 'Acciones',

@@ -46,7 +46,8 @@ type AccountKeys =
   | 'accounts:form:type'
   | 'accounts:form:initialBalance'
   | 'accounts:form:bank'
-  | 'accounts:form:currency';
+  | 'accounts:form:currency'
+  | 'accounts:actions:amountsInCLP';
 
 type MovementKeys =
   | 'movements:title'
