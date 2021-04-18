@@ -1,4 +1,4 @@
-import { InputType, Field, Int, ID } from 'type-graphql';
+import { InputType, Field, Int, ID, Float } from 'type-graphql';
 
 @InputType()
 export class CreateTransferInput {
@@ -13,6 +13,9 @@ export class CreateTransferInput {
 
   @Field({ nullable: true })
   memo?: string;
+
+  @Field(() => Float, { nullable: true })
+  operationExchangeRate?: number;
 
   @Field(() => Date)
   issuedAt: Date;

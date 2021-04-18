@@ -13,6 +13,7 @@ type Data = {
   fromAccount: Account;
   toAccount: Account;
   operationId: string;
+  operationExchangeRate?: CreateTransferInput['operationExchangeRate'];
 } & CreateMovementCommandInput<CreateTransferInput>;
 
 export default class SaveTransferCommand
@@ -33,6 +34,11 @@ export default class SaveTransferCommand
     this.manager = manager || getManager();
   }
 
+  private get convertedAmount() {
+    const exchangeRate = this.data.operationExchangeRate || 1;
+    return Math.round(this.data.amount / exchangeRate);
+  }
+
   private buildTransfers() {
     const {
       amount,
@@ -41,6 +47,7 @@ export default class SaveTransferCommand
       toAccount,
       issuedAt,
       operationId,
+      operationExchangeRate,
     } = this.data;
 
     return {
@@ -50,21 +57,24 @@ export default class SaveTransferCommand
         accountId: fromAccount.id,
         operationId,
         issuedAt,
+        operationExchangeRate,
       }),
       to: new Transfer({
-        amount,
+        amount: this.convertedAmount,
         memo,
         accountId: toAccount.id,
         operationId,
         issuedAt,
+        operationExchangeRate,
       }),
     };
   }
 
   async execute(): Promise<TransferTuple> {
-    Account.applyBalanceChanges({
-      amount: this.data.amount,
+    Account.applyDetailedBalanceChange({
+      fromAmount: this.data.amount,
       from: this.data.fromAccount,
+      toAmount: this.convertedAmount,
       to: this.data.toAccount,
     });
 

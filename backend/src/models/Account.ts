@@ -105,6 +105,16 @@ export default class Account {
     data.to.balance += data.amount;
   }
 
+  static applyDetailedBalanceChange(data: {
+    fromAmount: number;
+    toAmount: number;
+    from: Account;
+    to: Account;
+  }): void {
+    data.from.balance -= data.fromAmount;
+    data.to.balance += data.toAmount;
+  }
+
   static applyUnliquidatedBalanceChanges(data: {
     amount: number;
     from: Account;

@@ -31,10 +31,11 @@ export default class DeleteTransferCommand
   }
 
   async execute(): Promise<TransferTuple> {
-    Account.applyBalanceChanges({
-      amount: this.data.toTransfer.amount,
+    Account.applyDetailedBalanceChange({
       from: this.data.toTransfer.account,
+      fromAmount: this.data.toTransfer.amount,
       to: this.data.fromTransfer.account,
+      toAmount: -this.data.fromTransfer.amount,
     });
 
     await this.manager.save([
