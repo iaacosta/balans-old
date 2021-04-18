@@ -5,32 +5,28 @@ import { useMyDebitAccounts, useCreateTransfer } from '../../hooks/graphql';
 import TransferFormView from './TransferFormView';
 import DialogFormContext from '../../contexts/DialogFormContext';
 import { initialEmptyNumber } from '../../utils/formik';
-import { Currency } from '../../@types/graphql';
 
 const CreateTransferDialog: React.FC = () => {
   const { onClose } = useContext(DialogFormContext);
   const { accounts, loading: accountsLoading } = useMyDebitAccounts();
   const [createTransfer, { loading: createLoading }] = useCreateTransfer();
 
-  const clpAccounts = useMemo(() => accounts.filter(({ currency }) => currency === Currency.Clp), [
-    accounts,
-  ]);
-
   const initialValues = useMemo(
     () => ({
       amount: initialEmptyNumber,
       memo: '',
-      fromAccountId: clpAccounts[0].id || '',
-      toAccountId: clpAccounts[1].id || '',
+      fromAccountId: accounts[0].id || '',
+      toAccountId: accounts[1].id || '',
+      operationExchangeRate: 1,
       issuedAt: new Date(),
     }),
-    [clpAccounts],
+    [accounts],
   );
 
   return (
     <TransferFormView
       mode="create"
-      accounts={clpAccounts}
+      accounts={accounts}
       initialValues={initialValues}
       initialLoading={accountsLoading}
       submitLoading={createLoading}

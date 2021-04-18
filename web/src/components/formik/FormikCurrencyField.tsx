@@ -16,6 +16,7 @@ interface Props {
   name: string;
   label: string;
   currency?: Currency;
+  unbindDecimals?: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -25,12 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomInput: React.FC<{ currency: Currency } & InputBaseComponentProps> = ({
-  inputRef,
-  onChange,
-  currency,
-  ...other
-}) => {
+const CustomInput: React.FC<
+  { currency: Currency; unbindDecimals?: boolean } & InputBaseComponentProps
+> = ({ inputRef, onChange, currency, unbindDecimals, ...other }) => {
   const { decimalPlaces, thousandSeparator, decimalSeparator } = accountingConstants[currency];
 
   return (
@@ -45,8 +43,8 @@ const CustomInput: React.FC<{ currency: Currency } & InputBaseComponentProps> = 
           },
         } as any);
       }}
-      decimalScale={decimalPlaces}
-      fixedDecimalScale
+      decimalScale={unbindDecimals ? undefined : decimalPlaces}
+      fixedDecimalScale={!unbindDecimals}
       thousandSeparator={thousandSeparator}
       decimalSeparator={decimalSeparator}
       {...((other as unknown) as NumberFormatProps)}
@@ -60,6 +58,7 @@ const FormikCurrencyField: React.FC<Props & TextFieldProps> = ({
   label,
   name,
   variant,
+  unbindDecimals,
   ...props
 }) => {
   const classes = useStyles();
@@ -79,10 +78,10 @@ const FormikCurrencyField: React.FC<Props & TextFieldProps> = ({
       data-testid={`${name}Input`}
       value={value / 10 ** accountingConstants[currency].decimalPlaces}
       InputProps={{
-        ...InputProps,
         startAdornment: <InputAdornment position="start">{currency}$</InputAdornment>,
         inputComponent: CustomInput as any,
-        inputProps: { currency },
+        inputProps: { currency, unbindDecimals },
+        ...InputProps,
       }}
       {...props}
       {...fieldProps}
